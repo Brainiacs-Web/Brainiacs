@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generate Your Key</title>
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0b1938, #0b2545);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+    }
+
+    .wrapper {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 90%;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .wrapper h1 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .wrapper p {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    .generate-btn {
+      background: linear-gradient(135deg, #fe5196, #f77062);
+      border: none;
+      border-radius: 6px;
+      color: #ffffff;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .generate-btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+  
+  <script>
+    const FINAL_PAGE      = "NT-Batches.html";
+    const LINKVERTISE_LINK = "https://bharatlinks.com/qX2h";
+    const EXPIRY_HOURS    = 24;
+
+    const now        = new Date().getTime();
+    const lastVisit  = localStorage.getItem("visitedDemoPage");
+
+    // Check if the user visited within the last 24 hours
+    if (lastVisit && now - lastVisit < EXPIRY_HOURS * 60 * 60 * 1000) {
+      // Visited within 24 hours – go directly to demo.html
+      window.location.href = FINAL_PAGE;
+    } 
+    // If more than 24 hours have passed (or no visit saved), do nothing yet;
+    // user can click the button to proceed, which will trigger the redirection.
+    
+    // This function is triggered on button click:
+    function generateKey() {
+      // Store the current time in localStorage
+      localStorage.setItem("visitedDemoPage", new Date().getTime());
+      
+      // Redirect through Linkvertise or directly to the final page
+      window.location.href = LINKVERTISE_LINK;
+    }
+  </script>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Generate Your Key</h1>
+    <p>Click below to generate your premium key (valid for 24 hours).</p>
+    <button class="generate-btn" onclick="generateKey()">Generate Key</button>
+  </div>
+</body>
+</html>

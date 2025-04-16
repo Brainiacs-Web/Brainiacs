@@ -1,1 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RolexCoderZ Batches</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #e0f2ff;  /* Page background color */
+      color: #000;              /* Dark text for contrast */
+      line-height: 1.5;
+      -webkit-tap-highlight-color: transparent; /* For mobile touch feedback */
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    /* Container & Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-size: 1.75rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #000;
+    }
+    .search-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-top: 1rem;
+    }
+    .search-container input {
+      width: 280px;
+      padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #000;
+      font-size: 1rem;
+      outline: none;
+    }
+    .search-container i {
+      position: absolute;
+      right: 0.75rem;
+      color: #000;
+      font-size: 1.2rem;
+    }
+    /* Loved Batches Button */
+    .loved-batches {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: transform 0.2s ease;
+    }
+    .loved-batches i {
+      font-size: 1.5rem;
+      color: #000;
+      margin-right: 0.5rem;
+    }
+    .loved-batches:hover {
+      transform: scale(1.05);
+    }
+    .loved-batches span {
+      font-size: 1rem;
+      color: #000;
+    }
+    /* Filter Buttons */
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 2rem 0;
+    }
+    .filter-buttons button {
+      background-color: #333;
+      color: #e0f2ff;
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(224, 242, 255, 0.2);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.15s ease;
+    }
+    .filter-buttons button:hover,
+    .filter-buttons button.active {
+      background-color: #e0f2ff;
+      color: #000;
+      transform: scale(1.05);
+    }
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.5rem;
+    }
+    /* Batch Card Styles */
+    .batch-card {
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .batch-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(224, 242, 255, 0.2);
+    }
+    .batch-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+    .batch-card-content {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+    }
+    /* Batch Title Wrapper */
+    .batch-title-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .batch-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #e0f2ff;
+      margin: 0;
+    }
+    /* Custom Heart Icon for Like Button (placed after batch title) */
+    .heart-icon {
+      display: inline-block;
+      font-size: 1.75rem;  /* Slightly decreased from 2rem for a refined look */
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      color: #fff;
+    }
+    .heart-icon::before {
+      content: "\2661";  /* Outlined heart (♡) */
+    }
+    .heart-icon.liked::before {
+      content: "\2665";  /* Filled heart (♥) */
+      color: #ff4757;
+    }
+    .heart-icon:hover {
+      transform: scale(1.1);
+    }
+    /* Card stats */
+    .batch-stats {
+      display: flex;
+      gap: 1rem;
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      color: rgba(224, 242, 255, 0.8);
+    }
+    .batch-description {
+      font-size: 0.9rem;
+      color: rgba(224, 242, 255, 0.8);
+      margin-bottom: 1rem;
+    }
+    /* Card Footer */
+    .batch-card-footer {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .batch-card-footer button {
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      padding: 0.75rem 1rem;
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-coming-soon {
+      background-color: rgba(224, 242, 255, 0.1);
+      color: #e0f2ff;
+    }
+    .btn-coming-soon:hover {
+      background-color: rgba(224, 242, 255, 0.2);
+      box-shadow: 0 0 10px rgba(224, 242, 255, 0.8);
+    }
+    .btn-study {
+      background-color: #e0f2ff;
+      color: #000;
+    }
+    .btn-study:hover {
+      background-color: #b3d9ff;
+      box-shadow: 0 0 10px rgba(179, 217, 255, 0.8);
+    }
+    /* Ripple effect for buttons */
+    .batch-card-footer button::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      transition: width 0.4s ease, height 0.4s ease;
+      opacity: 0;
+    }
+    .batch-card-footer button:active::after {
+      width: 200px;
+      height: 200px;
+      opacity: 0;
+      transition: 0s;
+    }
+    /* Hide cards when filtering out */
+    .hidden {
+      display: none !important;
+    }
+    /* "No Batches Found" container */
+    #noBatchesFound {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 1rem;
+      display: none;
+    }
+    /* Responsive Adjustments for Android and other mobile devices */
+    @media (max-width: 768px) {
+      header {
+        align-items: flex-start;
+      }
+      .search-container input {
+        width: 200px;
+      }
+      .batch-title {
+        font-size: 1rem;
+      }
+      .heart-icon {
+        font-size: 1.5rem;
+      }
+      .filter-buttons button {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="logo">RolexCoderZ</div>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="search-container">
+          <input type="text" id="searchInput" placeholder="Search batches by class, stream or state" />
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="loved-batches" id="lovedBatchesBtn">
+          <i class="fas fa-heart"></i>
+          <span>Loved Batches</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- FILTER BUTTONS -->
+    <div class="filter-buttons" id="filterButtons">
+      <button class="active" data-filter="all">All Batches</button>
+      <button data-filter="11">Class 11</button>
+      <button data-filter="12">Class 12</button>
+      <button data-filter="Science">Science</button>
+      <button data-filter="Commerce">Commerce</button>
+      <button data-filter="Humanities">Humanities</button>
+    </div>
+
+    <!-- CARDS GRID -->
+    <div class="cards-grid" id="cardsGrid">
+      <!-- Example Card 1 -->
+      <div class="batch-card" data-class="12" data-stream="Commerce">
+        <img src="https://via.placeholder.com/600x400/111/fff?text=Batch+Banner" alt="Batch Banner">
+        <div class="batch-card-content">
+          <div class="batch-title-wrapper">
+            <div class="batch-title">Commerce Class 12th</div>
+            <!-- Custom Heart Icon placed beside the batch name -->
+            <span class="heart-icon" data-liked="false"></span>
+          </div>
+          <div class="batch-stats">
+            <span>70+ Lessons</span>
+            <span>130+ Resources</span>
+            <span>24/7 Support</span>
+          </div>
+          <div class="batch-description">
+            Comprehensive course for Class 12th CBSE Commerce students.
+          </div>
+          <div class="batch-card-footer">
+            <button class="btn-coming-soon">Coming Soon</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example Card 2 -->
+      <div class="batch-card" data-class="12" data-stream="Science">
+        <img src="https://i.postimg.cc/wTmQdD1B/aarambh-class-9th-banner-app.png" alt="Batch Banner">
+        <div class="batch-card-content">
+          <div class="batch-title-wrapper">
+            <div class="batch-title">Science Class 12th (PCMB)</div>
+            <span class="heart-icon" data-liked="false"></span>
+          </div>
+          <div class="batch-stats">
+            <span>80+ Lessons</span>
+            <span>140+ Resources</span>
+            <span>24/7 Support</span>
+          </div>
+          <div class="batch-description">
+            Foundation + Boards. Best CBSE Class 12th Science coverage.
+          </div>
+          <div class="batch-card-footer">
+            <button class="btn-study">Let’s Study</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional cards as needed... -->
+    </div>
+
+    <!-- "No Batches Found" Container -->
+    <div id="noBatchesFound">No Batches Found</div>
+  </div>
+
+  <script>
+    const filterButtons = document.querySelectorAll('#filterButtons button');
+    const searchInput = document.getElementById('searchInput');
+    const lovedBatchesBtn = document.getElementById('lovedBatchesBtn');
+    const noBatchesFound = document.getElementById('noBatchesFound');
+
+    // Track "Loved Batches" mode
+    let lovedBatchesActive = false;
+
+    function updateCards() {
+      const activeFilter = document.querySelector('#filterButtons button.active').getAttribute('data-filter');
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      let anyCardVisible = false;
+      document.querySelectorAll('.batch-card').forEach(card => {
+        const cardClass = card.getAttribute('data-class');
+        const cardStream = card.getAttribute('data-stream').toLowerCase();
+        const cardTitle = card.querySelector('.batch-title').innerText.toLowerCase();
+        const cardDesc = card.querySelector('.batch-description').innerText.toLowerCase();
+        const isLiked = card.querySelector('.heart-icon').getAttribute('data-liked') === 'true';
+        let filterMatch = (activeFilter === 'all' ||
+          activeFilter === cardClass ||
+          activeFilter.toLowerCase() === cardStream);
+        let searchMatch = (cardTitle.includes(searchTerm) ||
+          cardDesc.includes(searchTerm) ||
+          cardStream.includes(searchTerm));
+        let lovedMatch = !lovedBatchesActive || isLiked;
+        if (filterMatch && searchMatch && lovedMatch) {
+          card.classList.remove('hidden');
+          anyCardVisible = true;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      noBatchesFound.style.display = anyCardVisible ? 'none' : 'block';
+    }
+
+    // Filter button events
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateCards();
+      });
+    });
+
+    // Search input event
+    searchInput.addEventListener('input', updateCards);
+
+    // Toggle like state on heart icon click
+    document.querySelectorAll('.heart-icon').forEach(icon => {
+      icon.addEventListener('click', () => {
+        const isLiked = icon.getAttribute('data-liked') === 'true';
+        if (!isLiked) {
+          icon.setAttribute('data-liked', 'true');
+          icon.classList.add('liked');
+        } else {
+          icon.setAttribute('data-liked', 'false');
+          icon.classList.remove('liked');
+        }
+        updateCards();
+      });
+    });
+
+    // Loved Batches toggle
+    lovedBatchesBtn.addEventListener('click', () => {
+      lovedBatchesActive = !lovedBatchesActive;
+      updateCards();
+    });
+
+    // Initial load
+    updateCards();
+  </script>
+</body>
+</html>
 

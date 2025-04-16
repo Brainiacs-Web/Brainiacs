@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Brainiacs Batches</title>
+  <!-- Icon library for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     /* Reset & Base Styles */
     * {
@@ -12,10 +14,19 @@
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
     body {
-      background-color: #e0f2ff;  /* Page background color */
-      color: #000;              /* Dark text for contrast */
+      /* Animated gradient background */
+      background: linear-gradient(-45deg, #0f0f0f, #1a1a1a, #0a0a0a, #1c1c1c);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #ffffff;
       line-height: 1.5;
-      -webkit-tap-highlight-color: transparent; /* For mobile touch feedback */
+      -webkit-tap-highlight-color: transparent;
+      padding: 1rem;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     a {
       text-decoration: none;
@@ -33,12 +44,17 @@
       justify-content: space-between;
       margin-bottom: 2rem;
       flex-wrap: wrap;
+      animation: slideDown 0.5s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .logo {
       font-size: 1.75rem;
       font-weight: bold;
       letter-spacing: 1px;
-      color: #000;
+      color: #ff9f43;
     }
     .search-container {
       position: relative;
@@ -51,15 +67,15 @@
       padding: 0.5rem 2.5rem 0.5rem 0.75rem;
       border: none;
       border-radius: 4px;
-      background-color: #fff;
-      color: #000;
+      background-color: #1a1a1a;
+      color: #ffffff;
       font-size: 1rem;
       outline: none;
     }
     .search-container i {
       position: absolute;
       right: 0.75rem;
-      color: #000;
+      color: #ffffff;
       font-size: 1.2rem;
     }
     /* Loved Batches Button */
@@ -69,18 +85,19 @@
       cursor: pointer;
       margin-top: 1rem;
       transition: transform 0.2s ease;
+      position: relative;
     }
     .loved-batches i {
       font-size: 1.5rem;
-      color: #000;
+      color: #ff9f43;
       margin-right: 0.5rem;
-    }
-    .loved-batches:hover {
-      transform: scale(1.05);
     }
     .loved-batches span {
       font-size: 1rem;
-      color: #000;
+      color: #ffffff;
+    }
+    .loved-batches:hover {
+      transform: scale(1.05);
     }
     /* Filter Buttons */
     .filter-buttons {
@@ -90,149 +107,206 @@
       margin: 2rem 0;
     }
     .filter-buttons button {
-      background-color: #333;
-      color: #e0f2ff;
+      background-color: #1a1a1a;
+      color: #ffffff;
       padding: 0.5rem 1rem;
-      border: 1px solid rgba(224, 242, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 4px;
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.15s ease;
+      position: relative;
+      overflow: hidden;
     }
     .filter-buttons button:hover,
     .filter-buttons button.active {
-      background-color: #e0f2ff;
-      color: #000;
+      background-color: #ff9f43;
+      color: #0f0f0f;
       transform: scale(1.05);
     }
-    /* Cards Grid */
+    /* CARDS GRID */
     .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 1.5rem;
-    }
-    /* Batch Card Styles */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+    /* -------------------------------
+       Enhanced Batch Card Styles
+    ------------------------------- */
     .batch-card {
+      position: relative;
       background-color: #1a1a1a;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      animation: popIn 0.4s ease-out;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
     .batch-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(224, 242, 255, 0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
     }
-    .batch-card img {
+    /* TOP SECTION: Image & Corner Elements */
+    .batch-card .top-section {
+      position: relative;
       width: 100%;
-      height: 160px;
+      height: 220px;
+      overflow: hidden;
+      background-color: #111;
+    }
+    .batch-card .top-section img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       display: block;
     }
-    .batch-card-content {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      position: relative;
+    /* NEW Badge */
+    .batch-card .badge-new {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #ff4757;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     }
-    /* Batch Title Wrapper */
-    .batch-title-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .batch-title {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #e0f2ff;
-      margin: 0;
-    }
-    /* Custom Heart Icon for Like Button (placed after batch title) */
-    .heart-icon {
-      display: inline-block;
-      font-size: 1.75rem;  /* Slightly decreased from 2rem for a refined look */
+    /* Heart (Like) Icon in top-section */
+    .batch-card .heart-icon {
+      position: absolute;
+      top: 2.3rem;
+      right: 0.75rem;
+      font-size: 1.3rem;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.3rem;
+      border-radius: 50%;
       cursor: pointer;
       transition: transform 0.2s ease;
-      color: #fff;
     }
-    .heart-icon::before {
-      content: "\2661";  /* Outlined heart (♡) */
+    .batch-card .heart-icon:hover {
+      transform: scale(1.15);
     }
-    .heart-icon.liked::before {
-      content: "\2665";  /* Filled heart (♥) */
+    .batch-card .heart-icon.liked {
       color: #ff4757;
     }
-    .heart-icon:hover {
-      transform: scale(1.1);
+    /* CONTENT SECTION */
+    .batch-card .content-section {
+      padding: 1rem;
     }
-    /* Card stats */
-    .batch-stats {
+    /* Subject Pill */
+    .batch-card .subject-pill {
+      display: inline-block;
+      background-color: #0fe0c5;
+      color: #0f0f0f;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+    }
+    /* Batch Title */
+    .batch-card .batch-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 0.25rem 0;
+      color: #fff;
+    }
+    /* Meta Info: Board & Status */
+    .batch-card .meta-info {
       display: flex;
+      align-items: center;
       gap: 1rem;
       margin: 0.5rem 0;
-      font-size: 0.9rem;
-      color: rgba(224, 242, 255, 0.8);
     }
-    .batch-description {
-      font-size: 0.9rem;
-      color: rgba(224, 242, 255, 0.8);
-      margin-bottom: 1rem;
+    .batch-card .meta-info .board {
+      background: #333;
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
     }
-    /* Card Footer */
-    .batch-card-footer {
+    .batch-card .meta-info .status {
+      background: #444;
+      color: #ff9f43;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    /* Stats Row */
+    .batch-card .stats-row {
       display: flex;
-      gap: 0.5rem;
-      align-items: center;
+      justify-content: space-between;
+      margin: 1rem 0;
+      font-size: 0.9rem;
     }
-    .batch-card-footer button {
+    .stats-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .stats-item i {
+      color: #ff9f43;
+      font-size: 1rem;
+    }
+    /* Description */
+    .batch-card .description {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+    /* Price/Offer Area */
+    .batch-card .price-offer {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .batch-card .price-offer .price {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #f05;
+      text-decoration: line-through;
+    }
+    .batch-card .price-offer .offer {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #0fe0c5;
+      background: rgba(15, 224, 197, 0.2);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+    /* Footer: CTA Button */
+    .batch-card .footer {
+      padding: 0 1rem 1rem;
+    }
+    .batch-card .footer button {
+      width: 100%;
       border: none;
       border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s, box-shadow 0.3s;
       padding: 0.75rem 1rem;
-      flex: 1;
-      position: relative;
-      overflow: hidden;
+      background-color: #ff9f43;
+      color: #0f0f0f;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
     }
-    .btn-coming-soon {
-      background-color: rgba(224, 242, 255, 0.1);
-      color: #e0f2ff;
-    }
-    .btn-coming-soon:hover {
-      background-color: rgba(224, 242, 255, 0.2);
-      box-shadow: 0 0 10px rgba(224, 242, 255, 0.8);
-    }
-    .btn-study {
-      background-color: #e0f2ff;
-      color: #000;
-    }
-    .btn-study:hover {
-      background-color: #b3d9ff;
-      box-shadow: 0 0 10px rgba(179, 217, 255, 0.8);
-    }
-    /* Ripple effect for buttons */
-    .batch-card-footer button::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.5);
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      transition: width 0.4s ease, height 0.4s ease;
-      opacity: 0;
-    }
-    .batch-card-footer button:active::after {
-      width: 200px;
-      height: 200px;
-      opacity: 0;
-      transition: 0s;
+    .batch-card .footer button:hover {
+      background-color: #ff7f00;
+      transform: scale(1.03);
     }
     /* Hide cards when filtering out */
     .hidden {
@@ -245,7 +319,44 @@
       font-size: 1rem;
       display: none;
     }
-    /* Responsive Adjustments for Android and other mobile devices */
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .modal-content {
+      background-color: #1a1a1a;
+      margin: auto;
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      animation: slideIn 0.4s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ffffff;
+    }
+    /* Responsive Adjustments */
     @media (max-width: 768px) {
       header {
         align-items: flex-start;
@@ -295,84 +406,142 @@
 
     <!-- CARDS GRID -->
     <div class="cards-grid" id="cardsGrid">
-      <!-- Example Card 1 -->
-      <div class="batch-card" data-class="12" data-stream="Commerce">
-        <img src="https://via.placeholder.com/600x400/111/fff?text=Batch+Banner" alt="Batch Banner">
-        <div class="batch-card-content">
-          <div class="batch-title-wrapper">
-            <div class="batch-title">Commerce Class 12th</div>
-            <!-- Custom Heart Icon placed beside the batch name -->
-            <span class="heart-icon" data-liked="false"></span>
+      <!-- Commerce Class 12th Card -->
+      <div class="batch-card" data-batch-id="batch1" data-class="12" data-stream="Commerce">
+        <div class="top-section">
+          <img src="https://via.placeholder.com/600x400/111/fff?text=Commerce+12th+Banner" alt="Batch Banner">
+          <span class="badge-new">New</span>
+          <span class="heart-icon" data-liked="false"><i class="fas fa-heart"></i></span>
+        </div>
+        <div class="content-section">
+          <span class="subject-pill">Commerce</span>
+          <h3 class="batch-title">Commerce Class 12th</h3>
+          <div class="meta-info">
+            <span class="board">CBSE</span>
+            <span class="status">Coming Soon</span>
           </div>
-          <div class="batch-stats">
-            <span>70+ Lessons</span>
-            <span>130+ Resources</span>
-            <span>24/7 Support</span>
+          <div class="stats-row">
+            <div class="stats-item"><i class="fas fa-book-open"></i><span>70+ Lessons</span></div>
+            <div class="stats-item"><i class="fas fa-file-alt"></i><span>130+ Resources</span></div>
+            <div class="stats-item"><i class="fas fa-headset"></i><span>24/7 Support</span></div>
           </div>
-          <div class="batch-description">
+          <div class="description">
             Comprehensive course for Class 12th CBSE Commerce students.
           </div>
-          <div class="batch-card-footer">
-            <button class="btn-coming-soon">Coming Soon</button>
+          <div class="price-offer">
+            <span class="price">₹4000</span>
+            <span class="offer">Free</span>
           </div>
+        </div>
+        <div class="footer">
+          <button>Coming Soon</button>
         </div>
       </div>
 
-      <!-- Example Card 2 -->
-      <div class="batch-card" data-class="12" data-stream="Science">
-        <img src="https://i.postimg.cc/wTmQdD1B/aarambh-class-9th-banner-app.png" alt="Batch Banner">
-        <div class="batch-card-content">
-          <div class="batch-title-wrapper">
-            <div class="batch-title">Science Class 12th (PCMB)</div>
-            <span class="heart-icon" data-liked="false"></span>
+      <!-- Science Class 12th Card -->
+      <div class="batch-card" data-batch-id="batch2" data-class="12" data-stream="Science">
+        <div class="top-section">
+          <img src="https://i.postimg.cc/wTmQdD1B/aarambh-class-9th-banner-app.png" alt="Batch Banner">
+          <!-- Optionally add badge if needed -->
+          <span class="heart-icon" data-liked="false"><i class="fas fa-heart"></i></span>
+        </div>
+        <div class="content-section">
+          <span class="subject-pill">Science</span>
+          <h3 class="batch-title">Science Class 12th (PCMB)</h3>
+          <div class="meta-info">
+            <span class="board">CBSE</span>
+            <span class="status">Available</span>
           </div>
-          <div class="batch-stats">
-            <span>80+ Lessons</span>
-            <span>140+ Resources</span>
-            <span>24/7 Support</span>
+          <div class="stats-row">
+            <div class="stats-item"><i class="fas fa-book-open"></i><span>80+ Lessons</span></div>
+            <div class="stats-item"><i class="fas fa-file-alt"></i><span>140+ Resources</span></div>
+            <div class="stats-item"><i class="fas fa-headset"></i><span>24/7 Support</span></div>
           </div>
-          <div class="batch-description">
+          <div class="description">
             Foundation + Boards. Best CBSE Class 12th Science coverage.
           </div>
-          <div class="batch-card-footer">
-            <button class="btn-study">Let’s Study</button>
+          <div class="price-offer">
+            <span class="price">₹5000</span>
+            <span class="offer">Free</span>
           </div>
         </div>
+        <div class="footer">
+          <button id="studyBtn">Let’s Study</button>
+        </div>
+        
       </div>
-
-      <!-- Additional cards as needed... -->
+      <!-- Additional cards can be added in a similar structure -->
     </div>
 
     <!-- "No Batches Found" Container -->
     <div id="noBatchesFound">No Batches Found</div>
   </div>
 
+  <!-- Modal for additional batch details -->
+  <div id="batchModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2 id="modalTitle">Batch Title</h2>
+      <p id="modalDesc">Detailed description about the batch will appear here. Add any additional information that could excite the user about this batch.</p>
+      <button id="modalAction" class="btn-study">Let’s Study</button>
+    </div>
+  </div>
+
+  <!-- Include canvas-confetti library for confetti burst -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
+    // Define DOM elements and initial state
     const filterButtons = document.querySelectorAll('#filterButtons button');
     const searchInput = document.getElementById('searchInput');
     const lovedBatchesBtn = document.getElementById('lovedBatchesBtn');
     const noBatchesFound = document.getElementById('noBatchesFound');
-
-    // Track "Loved Batches" mode
+    const cards = document.querySelectorAll('.batch-card');
+    const modal = document.getElementById('batchModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalAction = document.getElementById('modalAction');
+    const closeModal = document.querySelector('.close-modal');
+    
     let lovedBatchesActive = false;
 
+    // Load liked state from local storage for each card
+    function loadLikedStates() {
+      let likedBatches = JSON.parse(localStorage.getItem('likedBatches') || '{}');
+      cards.forEach(card => {
+        const cardId = card.getAttribute('data-batch-id');
+        const heartIcon = card.querySelector('.heart-icon');
+        if (likedBatches[cardId]) {
+          heartIcon.setAttribute('data-liked', 'true');
+          heartIcon.classList.add('liked');
+        } else {
+          heartIcon.setAttribute('data-liked', 'false');
+          heartIcon.classList.remove('liked');
+        }
+      });
+    }
+
+    // Save liked state to local storage
+    function saveLikedState(cardId, isLiked) {
+      let likedBatches = JSON.parse(localStorage.getItem('likedBatches') || '{}');
+      likedBatches[cardId] = isLiked;
+      localStorage.setItem('likedBatches', JSON.stringify(likedBatches));
+    }
+    
+    // Update card visibility based on filters and search
     function updateCards() {
       const activeFilter = document.querySelector('#filterButtons button.active').getAttribute('data-filter');
       const searchTerm = searchInput.value.trim().toLowerCase();
       let anyCardVisible = false;
-      document.querySelectorAll('.batch-card').forEach(card => {
+      cards.forEach(card => {
         const cardClass = card.getAttribute('data-class');
         const cardStream = card.getAttribute('data-stream').toLowerCase();
         const cardTitle = card.querySelector('.batch-title').innerText.toLowerCase();
-        const cardDesc = card.querySelector('.batch-description').innerText.toLowerCase();
+        const cardDesc = card.querySelector('.description').innerText.toLowerCase();
         const isLiked = card.querySelector('.heart-icon').getAttribute('data-liked') === 'true';
-        let filterMatch = (activeFilter === 'all' ||
-          activeFilter === cardClass ||
-          activeFilter.toLowerCase() === cardStream);
-        let searchMatch = (cardTitle.includes(searchTerm) ||
-          cardDesc.includes(searchTerm) ||
-          cardStream.includes(searchTerm));
-        let lovedMatch = !lovedBatchesActive || isLiked;
+        const filterMatch = (activeFilter === 'all' || activeFilter === cardClass || activeFilter.toLowerCase() === cardStream);
+        const searchMatch = (cardTitle.includes(searchTerm) || cardDesc.includes(searchTerm) || cardStream.includes(searchTerm));
+        const lovedMatch = !lovedBatchesActive || isLiked;
+        
         if (filterMatch && searchMatch && lovedMatch) {
           card.classList.remove('hidden');
           anyCardVisible = true;
@@ -382,7 +551,7 @@
       });
       noBatchesFound.style.display = anyCardVisible ? 'none' : 'block';
     }
-
+    
     // Filter button events
     filterButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -391,34 +560,76 @@
         updateCards();
       });
     });
-
+    
     // Search input event
     searchInput.addEventListener('input', updateCards);
-
-    // Toggle like state on heart icon click
+    
+    // Toggle like state on heart icon click with confetti burst
     document.querySelectorAll('.heart-icon').forEach(icon => {
-      icon.addEventListener('click', () => {
+      icon.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent card click (modal open)
+        const card = icon.closest('.batch-card');
+        const cardId = card.getAttribute('data-batch-id');
         const isLiked = icon.getAttribute('data-liked') === 'true';
         if (!isLiked) {
           icon.setAttribute('data-liked', 'true');
           icon.classList.add('liked');
+          saveLikedState(cardId, true);
+          // Trigger a brief confetti burst on like
+          confetti({
+            particleCount: 20,
+            spread: 60,
+            origin: { y: 0.6 }
+          });
         } else {
           icon.setAttribute('data-liked', 'false');
           icon.classList.remove('liked');
+          saveLikedState(cardId, false);
         }
         updateCards();
       });
     });
-
+    
     // Loved Batches toggle
     lovedBatchesBtn.addEventListener('click', () => {
       lovedBatchesActive = !lovedBatchesActive;
+      lovedBatchesBtn.classList.toggle('active', lovedBatchesActive);
       updateCards();
     });
-
-    // Initial load
+    
+    // Open modal on card click for detailed view
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const title = card.querySelector('.batch-title').innerText;
+        const desc = card.querySelector('.description').innerText;
+        modalTitle.innerText = title;
+        modalDesc.innerText = desc + " More detailed information about this batch can be provided here to engage you.";
+        // Set modal button text based on the footer button text of the card
+        const btnText = card.querySelector('.footer button').innerText;
+        modalAction.innerText = btnText;
+        modal.style.display = "flex";
+      });
+    });
+    
+    // Close modal
+    closeModal.addEventListener('click', () => {
+      modal.style.display = "none";
+    });
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+    
+    const studyBtn = document.getElementById('studyBtn');
+  studyBtn.addEventListener('click', (event) => {
+    event.stopPropagation(); // Prevent the card click event if not needed
+    window.location.href = "check.html";
+  });
+  
+    // Initial load: load liked states and update cards
+    loadLikedStates();
     updateCards();
   </script>
 </body>
 </html>
-

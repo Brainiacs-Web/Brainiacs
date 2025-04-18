@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Prevent zooming and scale layout properly -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Admin Preview - Test Series Detail</title>
+  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <!-- Import Poppins font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase SDK (Modular version) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+
+  <style>
+:root {
+  /* Color Palette */
+  --primary-color: #009688;
+  --secondary-color: #00796b;
+  --accent-color: #ff5722;
+  --light-bg: #e0f2f1;
+  --white: #ffffff;
+  --text-color: #333333;
+  --card-shadow: rgba(0,0,0,0.1);
+  --hover-bg: rgba(0,150,136,0.1);
+
+  /* Danger (for deletions) */
+  --danger-color: #f44336;
+}
+
+body.dark-mode {
+  --primary-color: #4db6ac;
+  --secondary-color: #00897b;
+  --accent-color: #ff8a65;
+  --light-bg: #121212;
+  --white: #1e1e1e;
+  --text-color: #dddddd;
+  --card-shadow: rgba(0,0,0,0.6);
+  --hover-bg: rgba(77,182,172,0.15);
+}
+
+/* Base Reset & Fonts */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background: linear-gradient(to bottom, var(--light-bg), var(--white));
+  color: var(--text-color);
+  overflow-x: hidden;
+  transition: background .3s, color .3s;
+}
+
+/* Top Container: Test Header */
+.top-container {
+  width: 100%;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 10px var(--card-shadow);
+  padding: 20px 30px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.left-info { display: flex; flex-direction: column; gap: 5px; }
+.left-info span { font-weight: 600; font-size: 1rem; color: var(--primary-color); }
+
+/* Subject Selector Row */
+#subject-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 600px;
+}
+#subject-buttons button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: 2px solid var(--primary-color);
+  background: var(--white);
+  color: var(--primary-color);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#subject-buttons button.activeSubject {
+  background: var(--primary-color);
+  color: var(--white);
+}
+#subject-buttons button:hover {
+  background: var(--hover-bg);
+}
+
+/* Container for Sidebar and Question Preview */
+.preview-container {
+  display: flex;
+  max-width: 1200px;
+  margin: 20px auto;
+  gap: 20px;
+}
+
+/* Sidebar Question List */
+.sidebar-questions {
+  width: 250px;
+  background: var(--white);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 8px var(--card-shadow);
+  max-height: 600px;
+  overflow-y: auto;
+}
+.sidebar-questions h3 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  text-align: center;
+  color: var(--primary-color);
+}
+.sidebar-questions ul {
+  list-style: none;
+}
+.sidebar-questions li {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sidebar-questions li:hover {
+  background: var(--light-bg);
+}
+.sidebar-questions li.active {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+/* Main Content Container */
+.container {
+  flex: 1;
+  background: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 10px var(--card-shadow);
+}
+
+/* Question Card */
+.question-card {
+  padding: 20px;
+  padding-left: 60px; /* space for inline buttons */
+  border-radius: 8px;
+  background: var(--light-bg);
+  box-shadow: 0 2px 8px var(--card-shadow);
+  margin-bottom: 20px;
+  position: relative;
+}
+.question-card .question-number {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.question-card .question-text {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+.question-image {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Options list styling for MCQ */
+.options-list {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+.options-list li {
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+/* Inline Editing Input Styles */
+.inline-input,
+.inline-select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 15px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Edit and Delete Buttons */
+.edit-btn,
+.delete-btn {
+  position: absolute;
+  top: 10px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  color: var(--white);
+}
+.edit-btn {
+  right: 10px;
+  background: var(--accent-color);
+}
+.edit-btn:hover {
+  background: darken(var(--accent-color), 10%);
+}
+.delete-btn {
+  right: 80px;
+  background: var(--danger-color);
+}
+.delete-btn:hover {
+  background: darken(var(--danger-color), 10%);
+}
+
+/* Navigation Buttons (Previous/Next) */
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+.nav-buttons button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--white);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.nav-buttons button:hover {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+}
+
+/* Responsive */
+@media screen and (max-width: 600px) {
+  .preview-container { flex-direction: column; }
+  .sidebar-questions { width: 100%; max-height: none; }
+  .container { padding: 10px; }
+  .question-card { padding: 15px; padding-left: 15px; }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Top Container: Test Header -->
+  <div class="top-container">
+    <div class="left-info">
+      <div><strong>Test Name</strong>: <span id="test-name"></span></div>
+      <div><strong>Subject</strong>: <span id="current-subject">Loading...</span></div>
+      <div><strong>Question</strong>: <span id="current-question-index">0</span>/<span id="total-questions">0</span></div>
+    </div>
+    <div class="top-right">
+      <button onclick="loadQuestions()">Refresh Questions</button>
+    </div>
+  </div>
+
+  <!-- Subject Selector Row (Dynamically Loaded) -->
+  <div id="subject-buttons">
+    <!-- Subjects will be dynamically injected here -->
+  </div>
+
+  <!-- Main Preview Container: Sidebar + Question Preview -->
+  <div class="preview-container">
+    <!-- Navigation Sidebar / Question List -->
+    <div id="question-list" class="sidebar-questions">
+      <h3>Questions</h3>
+      <ul></ul>
+    </div>
+    
+    <!-- Main Container: Single Question Preview with Navigation -->
+    <div class="container" id="content">
+      <div id="question-card" class="question-card">
+        <!-- Question details will be rendered here -->
+      </div>
+      <div class="nav-buttons">
+        <button onclick="prevQuestion()">Previous</button>
+        <button onclick="nextQuestion()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDocs,
+      getDoc,
+      updateDoc,
+      deleteDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+    // Firebase configuration and initialization
+     const firebaseConfig = {
+      apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
+      authDomain: "brainiacs-13a3f.firebaseapp.com",
+      projectId: "brainiacs-13a3f",
+      storageBucket: "brainiacs-13a3f.firebasestorage.app",
+      messagingSenderId: "530382354851",
+      appId: "1:530382354851:web:f65bde4a1b3f86d75d8216"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Get test series name from URL query parameter (?test=MyTestSeries)
+    const params = new URLSearchParams(window.location.search);
+    const testName = params.get("test") || "DefaultTest";
+    document.getElementById("test-name").textContent = testName;
+
+    let currentSubject = "";
+    let subjectsArray = [];
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let isEditing = false;
+
+    // For Undo/Redo functionality
+    let undoStack = [];
+    let redoStack = [];
+
+    // Load subjects from Firestore test series document
+    async function loadSubjects() {
+      try {
+        const testDoc = await getDoc(doc(db, "Questions", testName));
+        if (testDoc.exists()) {
+          subjectsArray = testDoc.data().subjects || [];
+          const subjectContainer = document.getElementById("subject-buttons");
+          subjectContainer.innerHTML = "";
+          subjectsArray.forEach(sub => {
+            const btn = document.createElement("button");
+            btn.textContent = sub;
+            btn.id = "subject-" + sub;
+            btn.onclick = () => loadSubject(sub);
+            subjectContainer.appendChild(btn);
+          });
+          // Set first subject as default if available
+          if (subjectsArray.length > 0) {
+            currentSubject = subjectsArray[0];
+            document.getElementById("current-subject").textContent = currentSubject;
+            updateSubjectButtons();
+            loadQuestions();
+          } else {
+            subjectContainer.innerHTML = "<p>No subjects found.</p>";
+          }
+        } else {
+          document.getElementById("subject-buttons").innerHTML = "<p>Test series not found.</p>";
+        }
+      } catch (error) {
+        console.error("Error loading subjects:", error);
+      }
+    }
+
+    // Load questions from Firestore for the given test series and subject
+    async function loadQuestions() {
+      try {
+        const qSnapshot = await getDocs(collection(db, "Questions", testName, currentSubject));
+        questions = [];
+        qSnapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          data.id = docSnap.id; // auto-generated document ID
+          questions.push(data);
+        });
+        currentQuestionIndex = 0;
+        isEditing = false;
+        // Reset Undo/Redo stacks when loading new questions
+        undoStack = [];
+        redoStack = [];
+        renderQuestion();
+        updateNavInfo();
+        renderQuestionList();
+      } catch (error) {
+        console.error("Error loading questions:", error);
+      }
+    }
+
+    // Render the question list sidebar
+    function renderQuestionList() {
+      const listContainer = document.getElementById("question-list");
+      const ul = listContainer.querySelector("ul");
+      ul.innerHTML = "";
+      questions.forEach((q, index) => {
+        const li = document.createElement("li");
+        li.textContent = "Q" + (index + 1);
+        li.onclick = () => {
+          currentQuestionIndex = index;
+          isEditing = false;
+          renderQuestion();
+        };
+        if (index === currentQuestionIndex) li.classList.add("active");
+        ul.appendChild(li);
+      });
+    }
+
+    // Render the current question; if in edit mode, show inline inputs including Undo/Redo
+    function renderQuestion() {
+      const container = document.getElementById("question-card");
+      if (questions.length === 0) {
+        container.innerHTML = "<p>No questions available in this subject.</p>";
+        updateNavInfo();
+        return;
+      }
+      const question = questions[currentQuestionIndex];
+      let html = `<p class="question-number">Question ${currentQuestionIndex + 1}</p>`;
+      
+      if (isEditing) {
+        // Inline editing mode with Undo/Redo buttons
+        html += `<div class="question-text">
+                   <input class="inline-input" type="text" id="editInlineQuestion" value="${question.question ? escapeHTML(question.question) : ""}" placeholder="Edit question text">
+                 </div>`;
+        html += `<div>
+                   <label>Question Image URL:</label>
+                   <input class="inline-input" type="text" id="editInlineQuestionImage" value="${question.questionImage || ""}" placeholder="Edit image URL">
+                 </div>`;
+        html += `<div>
+                   <label>Question Type:</label>
+                   <select class="inline-select" id="editInlineQuestionType">
+                     <option value="MCQ" ${question.questionType === "MCQ" ? "selected" : ""}>MCQ</option>
+                     <option value="Integer" ${question.questionType === "Integer" ? "selected" : ""}>Integer</option>
+                   </select>
+                 </div>`;
+        if (question.questionType === "MCQ") {
+          html += `<div id="inlineMCQSection">
+                     <label>Option A:</label>
+                     <input class="inline-input" type="text" id="editInlineOptionA" value="${question.options ? escapeHTML(question.options[0]) : ""}" placeholder="Option A">
+                     <label>Option B:</label>
+                     <input class="inline-input" type="text" id="editInlineOptionB" value="${question.options ? escapeHTML(question.options[1]) : ""}" placeholder="Option B">
+                     <label>Option C:</label>
+                     <input class="inline-input" type="text" id="editInlineOptionC" value="${question.options ? escapeHTML(question.options[2]) : ""}" placeholder="Option C">
+                     <label>Option D:</label>
+                     <input class="inline-input" type="text" id="editInlineOptionD" value="${question.options ? escapeHTML(question.options[3]) : ""}" placeholder="Option D">
+                     <label>Correct Answer:</label>
+                     <select class="inline-select" id="editInlineCorrectAnswer">
+                       <option value="">--Select Answer--</option>
+                       <option value="A" ${question.correctAnswer === "A" ? "selected" : ""}>A</option>
+                       <option value="B" ${question.correctAnswer === "B" ? "selected" : ""}>B</option>
+                       <option value="C" ${question.correctAnswer === "C" ? "selected" : ""}>C</option>
+                       <option value="D" ${question.correctAnswer === "D" ? "selected" : ""}>D</option>
+                     </select>
+                   </div>`;
+        } else if (question.questionType === "Integer") {
+          html += `<div id="inlineIntegerSection">
+                     <label>Integer Answer:</label>
+                     <input class="inline-input" type="number" id="editInlineIntegerAnswer" value="${question.answer || ""}" placeholder="Enter integer answer">
+                   </div>`;
+        }
+        html += `<div>
+                   <label>Solution:</label>
+                   <input class="inline-input" type="text" id="editInlineSolution" value="${question.solution ? escapeHTML(question.solution) : ""}" placeholder="Edit solution text">
+                 </div>`;
+        html += `<div>
+                   <label>Solution Image URL:</label>
+                   <input class="inline-input" type="text" id="editInlineSolutionImage" value="${question.solutionImage || ""}" placeholder="Edit solution image URL">
+                 </div>`;
+        // Add Undo, Redo, and Save buttons
+        html += `<div style="margin-top:10px;">
+                   <button class="edit-btn" onclick="undoInlineEdit()">Undo</button>
+                   <button class="edit-btn" onclick="redoInlineEdit()">Redo</button>
+                   <button class="edit-btn" onclick="saveInlineEdit()">Save</button>
+                 </div>`;
+      } else {
+        // Display mode
+        html += `<div class="question-text">
+                   ${question.question || (question.questionImage ? `<img src="${question.questionImage}" alt="Question Image" class="question-image">` : "No question content")}
+                 </div>`;
+        if (question.questionType === "MCQ" && question.options && question.options.length > 0) {
+          html += `<ol class="options-list" type="A">`;
+          question.options.forEach(option => {
+            html += `<li>${option}</li>`;
+          });
+          html += `</ol>`;
+          html += `<p><strong>Correct Answer:</strong> ${question.correctAnswer}</p>`;
+        } else if (question.questionType === "Integer") {
+          html += `<p><strong>Answer:</strong> ${question.answer}</p>`;
+        }
+        html += `<p><strong>Solution:</strong> ${question.solution || (question.solutionImage ? `<img src="${question.solutionImage}" alt="Solution Image" class="question-image">` : "No solution provided")}</p>`;
+        // Delete and Edit buttons
+        html += `<button class="delete-btn" onclick="deleteQuestion()">Delete</button>`;
+        html += `<button class="edit-btn" onclick="enterEditMode()">Edit</button>`;
+      }
+      container.innerHTML = html;
+      
+      // If in edit mode, attach change listeners to inline inputs to push state changes
+      if (isEditing) {
+        document.querySelectorAll('.inline-input, .inline-select').forEach(el => {
+          el.addEventListener('change', pushState);
+        });
+      }
+      updateNavInfo();
+      renderQuestionList();
+    }
+
+    // Helper to escape HTML special characters
+    function escapeHTML(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    }
+
+    // Enter inline edit mode for current question
+    function enterEditMode() {
+      isEditing = true;
+      renderQuestion(); // Render inline inputs first
+      pushState();      // Now capture the state from the newly rendered elements
+    }
+
+    // Capture current state of inline editing fields
+    function captureInlineState() {
+      return {
+        question: document.getElementById("editInlineQuestion").value,
+        questionImage: document.getElementById("editInlineQuestionImage").value,
+        questionType: document.getElementById("editInlineQuestionType").value,
+        optionA: document.getElementById("editInlineOptionA") ? document.getElementById("editInlineOptionA").value : "",
+        optionB: document.getElementById("editInlineOptionB") ? document.getElementById("editInlineOptionB").value : "",
+        optionC: document.getElementById("editInlineOptionC") ? document.getElementById("editInlineOptionC").value : "",
+        optionD: document.getElementById("editInlineOptionD") ? document.getElementById("editInlineOptionD").value : "",
+        correctAnswer: document.getElementById("editInlineCorrectAnswer") ? document.getElementById("editInlineCorrectAnswer").value : "",
+        integerAnswer: document.getElementById("editInlineIntegerAnswer") ? document.getElementById("editInlineIntegerAnswer").value : "",
+        solution: document.getElementById("editInlineSolution").value,
+        solutionImage: document.getElementById("editInlineSolutionImage").value
+      };
+    }
+
+    // Apply a given state to inline editing fields
+    function applyInlineState(state) {
+      document.getElementById("editInlineQuestion").value = state.question;
+      document.getElementById("editInlineQuestionImage").value = state.questionImage;
+      document.getElementById("editInlineQuestionType").value = state.questionType;
+      if(document.getElementById("editInlineOptionA")) document.getElementById("editInlineOptionA").value = state.optionA;
+      if(document.getElementById("editInlineOptionB")) document.getElementById("editInlineOptionB").value = state.optionB;
+      if(document.getElementById("editInlineOptionC")) document.getElementById("editInlineOptionC").value = state.optionC;
+      if(document.getElementById("editInlineOptionD")) document.getElementById("editInlineOptionD").value = state.optionD;
+      if(document.getElementById("editInlineCorrectAnswer")) document.getElementById("editInlineCorrectAnswer").value = state.correctAnswer;
+      if(document.getElementById("editInlineIntegerAnswer")) document.getElementById("editInlineIntegerAnswer").value = state.integerAnswer;
+      document.getElementById("editInlineSolution").value = state.solution;
+      document.getElementById("editInlineSolutionImage").value = state.solutionImage;
+    }
+
+    // Push current state into undo stack and clear redo stack
+    function pushState() {
+      const state = captureInlineState();
+      undoStack.push(state);
+      redoStack = [];
+    }
+
+    // Undo inline edit: revert to previous state if available
+    function undoInlineEdit() {
+      if (undoStack.length > 1) {
+        const currentState = undoStack.pop();
+        redoStack.push(currentState);
+        const prevState = undoStack[undoStack.length - 1];
+        applyInlineState(prevState);
+      } else {
+        alert("No more undo steps available.");
+      }
+    }
+
+    // Redo inline edit: reapply state from redo stack if available
+    function redoInlineEdit() {
+      if (redoStack.length > 0) {
+        const state = redoStack.pop();
+        undoStack.push(state);
+        applyInlineState(state);
+      } else {
+        alert("No more redo steps available.");
+      }
+    }
+
+    // Save inline edits and update Firestore using the document ID
+    async function saveInlineEdit() {
+      const subject = currentSubject;
+      const question = questions[currentQuestionIndex];
+      const updatedData = {
+        question: document.getElementById("editInlineQuestion").value.trim(),
+        questionImage: document.getElementById("editInlineQuestionImage").value.trim(),
+        questionType: document.getElementById("editInlineQuestionType").value,
+        solution: document.getElementById("editInlineSolution").value.trim(),
+        solutionImage: document.getElementById("editInlineSolutionImage").value.trim(),
+        updatedAt: serverTimestamp()
+      };
+      if(updatedData.questionType === "MCQ") {
+        updatedData.options = [
+          document.getElementById("editInlineOptionA").value.trim(),
+          document.getElementById("editInlineOptionB").value.trim(),
+          document.getElementById("editInlineOptionC").value.trim(),
+          document.getElementById("editInlineOptionD").value.trim()
+        ];
+        updatedData.correctAnswer = document.getElementById("editInlineCorrectAnswer").value;
+      } else if(updatedData.questionType === "Integer") {
+        updatedData.answer = document.getElementById("editInlineIntegerAnswer").value.trim();
+      } else {
+        alert("Invalid question type!");
+        return;
+      }
+      try {
+        await updateDoc(doc(db, "Questions", testName, subject, question.id), updatedData);
+        alert("Question updated successfully!");
+        isEditing = false;
+        loadQuestions();
+      } catch (error) {
+        alert("Error updating question: " + error.message);
+      }
+    }
+
+    // Delete the current question from Firestore
+    async function deleteQuestion() {
+      const question = questions[currentQuestionIndex];
+      const subject = currentSubject;
+      if (confirm("Are you sure you want to delete this question?")) {
+        try {
+          await deleteDoc(doc(db, "Questions", testName, subject, question.id));
+          alert("Question deleted successfully!");
+          loadQuestions();
+        } catch (error) {
+          alert("Error deleting question: " + error.message);
+        }
+      }
+    }
+
+    // Navigation: Previous and Next question
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        isEditing = false;
+        renderQuestion();
+      }
+    }
+    function nextQuestion() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        isEditing = false;
+        renderQuestion();
+      }
+    }
+    function updateNavInfo() {
+      document.getElementById("current-question-index").textContent = currentQuestionIndex + 1;
+      document.getElementById("total-questions").textContent = questions.length;
+      document.getElementById("current-subject").textContent = currentSubject;
+    }
+
+    // Update active state for subject buttons
+    function updateSubjectButtons() {
+      const btns = document.getElementById("subject-buttons").children;
+      for (const btn of btns) {
+        if (btn.textContent === currentSubject) {
+          btn.classList.add("activeSubject");
+        } else {
+          btn.classList.remove("activeSubject");
+        }
+      }
+    }
+
+    // Called when a subject button is clicked
+    function loadSubject(subject) {
+      currentSubject = subject;
+      updateSubjectButtons();
+      loadQuestions();
+    }
+
+    // On page load, load subjects then questions
+    document.addEventListener("DOMContentLoaded", () => {
+      updateSubjectButtons();
+      loadSubjects();
+    });
+
+    // Expose functions to the global scope for inline event handlers
+    window.loadSubject = loadSubject;
+    window.enterEditMode = enterEditMode;
+    window.prevQuestion = prevQuestion;
+    window.nextQuestion = nextQuestion;
+    window.saveInlineEdit = saveInlineEdit;
+    window.deleteQuestion = deleteQuestion;
+    window.undoInlineEdit = undoInlineEdit;
+    window.redoInlineEdit = redoInlineEdit;
+  </script>
+</body>
+</html>

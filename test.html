@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#009688" />
+  <link rel="icon" sizes="192x192" href="icon-192.png">
+  <title>Test Series - BRAINIACS</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #009688;
+      --secondary-color: #00796b;
+      --accent-color: #ff5722;
+      --light-bg: #e0f2f1;
+      --white: #fff;
+      --text-color: #333;
+      --card-shadow: rgba(0,0,0,0.1);
+      --hover-bg: rgba(0,150,136,0.1);
+    }
+    body.dark-mode {
+      --primary-color: #4db6ac;
+      --secondary-color: #00897b;
+      --accent-color: #ff8a65;
+      --light-bg: #121212;
+      --white: #1e1e1e;
+      --text-color: #ddd;
+      --card-shadow: rgba(0,0,0,0.6);
+      --hover-bg: rgba(77,182,172,0.15);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
+    body {
+      background: var(--light-bg);
+      color: var(--text-color);
+      transition: background .3s, color .3s;
+    }
+    a { color: var(--primary-color); text-decoration:none; }
+    .navbar {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 20px;
+      background:var(--white);
+      box-shadow:0 4px 10px var(--card-shadow);
+      position:fixed; top:0; width:100%; z-index:100;
+    }
+    .logo { font-size:1.5rem; font-weight:700; color:var(--primary-color); }
+    .nav-right { display:flex; align-items:center; gap:10px; }
+    .search-input {
+      padding:6px 10px;
+      border:1px solid #ccc;
+      border-radius:4px 0 0 4px;
+      font-size:.9rem;
+      width:180px; max-width:60vw;
+    }
+    .search-btn {
+      padding:6px 12px;
+      border:1px solid #ccc; border-left:none;
+      border-radius:0 4px 4px 0;
+      background:var(--primary-color);
+      color:var(--white);
+      cursor:pointer;
+    }
+    .dark-toggle {
+      font-size:1.2rem;
+      background:none; border:none;
+      cursor:pointer; color:var(--text-color);
+      transition:color .3s;
+    }
+    .dark-toggle:hover { color:var(--primary-color); }
+
+    .main-content {
+      padding:80px 20px 20px;
+      max-width:900px; margin:0 auto;
+    }
+    .test-series h2 {
+      font-size:1.8rem;
+      margin-bottom:20px;
+      color:var(--primary-color);
+    }
+    .test-card {
+      display:flex; justify-content:space-between; align-items:center;
+      background:var(--white);
+      box-shadow:0 2px 6px var(--card-shadow);
+      padding:16px; border-radius:8px;
+      margin-bottom:15px;
+      transition:transform .2s;
+      cursor:pointer;
+    }
+    .test-card:hover { transform: translateY(-3px); }
+    .test-card.scheduled { cursor:default; transform:none; }
+    .test-card h3 { font-size:1.2rem; color:var(--secondary-color); }
+    .test-card p { font-size:.95rem; margin-top:4px; }
+
+    .footer {
+      text-align:center;
+      padding:15px 20px;
+      background:var(--secondary-color);
+      color:var(--white);
+      margin-top:40px;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">BRAINIACS</div>
+    <div class="nav-right">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search tests…" />
+      <button id="searchBtn" class="search-btn"><i class="fas fa-search"></i></button>
+      <button id="darkToggle" class="dark-toggle"><i class="fas fa-moon"></i></button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="test-series">
+      <h2>Join Test Series</h2>
+      <div id="testSeriesContainer">Loading tests…</div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2025 BRAINIACS – All rights reserved.</p>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Init Firebase
+    const firebaseConfig = {
+  apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
+  authDomain: "brainiacs-13a3f.firebaseapp.com",
+  projectId: "brainiacs-13a3f",
+  storageBucket: "brainiacs-13a3f.firebasestorage.app",
+  messagingSenderId: "530382354851",
+  appId: "1:530382354851:web:f65bde4a1b3f86d75d8216"
+};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const container   = document.getElementById("testSeriesContainer");
+    const searchBtn   = document.getElementById("searchBtn");
+    const searchInput = document.getElementById("searchInput");
+    let allTests = [];
+
+    // Render a list of test-docs
+    function renderTests(list) {
+      container.innerHTML = "";
+      if (!list.length) {
+        container.textContent = "No tests match your search.";
+        return;
+      }
+      list.forEach(doc => {
+        const data = doc.data;
+        const card = document.createElement("div");
+        card.className = "test-card" + (data.published ? "" : " scheduled");
+        // Use data-name for filtering
+        card.dataset.name = data.testName.toLowerCase();
+        // Scheduled label
+        let schedHTML = "";
+        if (!data.published && data.scheduledAt) {
+          const d = data.scheduledAt.seconds
+            ? new Date(data.scheduledAt.seconds * 1000)
+            : new Date(data.scheduledAt);
+          if (d > new Date()) {
+            schedHTML = `<p style="color: var(--accent-color)">Starts on: ${d.toLocaleString()}</p>`;
+          }
+        }
+        // Arrow if published
+        const arrow = data.published ? '<i class="fas fa-arrow-right"></i>' : "";
+        card.innerHTML = `
+          <div>
+            <h3>${data.testName}</h3>
+            <p>Duration: ${data.testDuration} minutes</p>
+            <p>Subjects: ${data.subjects.join(", ")}</p>
+            ${schedHTML}
+          </div>
+          <div>${arrow}</div>
+        `;
+        if (data.published) {
+          card.addEventListener("click", () => {
+            window.location.href = `testpage.html?test=${doc.id}`;
+          });
+        }
+        container.appendChild(card);
+      });
+    }
+
+    // Fetch all tests once
+    document.addEventListener("DOMContentLoaded", () => {
+      db.collection("Questions").get()
+        .then(snapshot => {
+          allTests = snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data()
+          }));
+          renderTests(allTests);
+        })
+        .catch(err => {
+          container.textContent = "Error loading tests.";
+          console.error(err);
+        });
+    });
+
+    // Filtering logic
+    function filterTests() {
+      const q = searchInput.value.trim().toLowerCase();
+      if (!q) {
+        renderTests(allTests);
+      } else {
+        const filtered = allTests.filter(t =>
+          t.data.testName.toLowerCase().includes(q)
+        );
+        renderTests(filtered);
+      }
+    }
+
+    searchBtn.addEventListener("click", filterTests);
+    searchInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") filterTests();
+    });
+
+    // Dark mode toggle
+    document.getElementById("darkToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      const iconClass = document.body.classList.contains("dark-mode") ? "fa-sun" : "fa-moon";
+      document.getElementById("darkToggle").innerHTML = `<i class="fas ${iconClass}"></i>`;
+    });
+  </script>
+</body>
+</html>

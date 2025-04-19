@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BRAINIACS Flash Cards</title>
+  <title>BRAINIACS</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* Brainiacs Color Palette */
     :root {
       --primary-color: #009688;
       --secondary-color: #00796b;
@@ -17,62 +16,64 @@
       --card-shadow: rgba(0,0,0,0.1);
       --hover-bg: rgba(0,150,136,0.1);
     }
+    *, *::before, *::after { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px;
+      padding: 40px 20px;
       font-family: "Poppins", sans-serif;
-      background: var(--light-bg);
-      color: var(--text-color);
+      background: linear-gradient(135deg, var(--light-bg), var(--white));
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      color: var(--text-color);
     }
     h1 {
-      font-size: 2.5rem;
+      font-size: 3.5rem;
+      margin-bottom: 0.2em;
       color: var(--primary-color);
+      text-shadow: 1px 1px 2px var(--card-shadow);
+    }
+    .subtitle {
+      font-weight: 300;
       margin-bottom: 30px;
+      color: var(--secondary-color);
+      opacity: 0.85;
     }
-
     .flash-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
       width: 100%;
-      max-width: 400px;
+      max-width: 800px;
     }
-
     .flash-card {
       background: var(--white);
-      border-radius: 8px;
-      box-shadow: 0 4px 10px var(--card-shadow);
-      padding: 20px;
+      border-radius: 20px;
+      padding: 30px 20px;
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: 600;
-      cursor: pointer;
-      transition: transform .2s, background .2s;
-      position: relative;
-      overflow: hidden;
-    }
-    .flash-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: var(--accent-color);
-      transform: translateY(100%);
-      transition: transform .3s ease;
-      z-index: 0;
-    }
-    .flash-card span {
-      position: relative;
-      z-index: 1;
       color: var(--primary-color);
+      box-shadow: 0 4px 12px var(--card-shadow);
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: bounceIn 0.6s ease forwards;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
     }
-    .flash-card:hover::before {
-      transform: translateY(0);
-    }
-    .flash-card:hover span {
+    .flash-card:nth-child(2) { animation-delay: 0.15s; }
+    .flash-card:nth-child(3) { animation-delay: 0.3s; }
+    .flash-card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 8px 20px var(--card-shadow);
+      background: var(--hover-bg);
       color: var(--white);
+    }
+    @keyframes bounceIn {
+      0%   { opacity: 0; transform: translateY(40px) scale(0.95); }
+      60%  { opacity: 1; transform: translateY(-10px) scale(1.02); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
   </style>
 </head>
@@ -81,10 +82,23 @@
   <h1>BRAINIACS</h1>
 
   <div class="flash-container">
-    <div class="flash-card"><span>Arjuna Jee</span></div>
-    <div class="flash-card"><span>Lakshya Jee</span></div>
-    <div class="flash-card"><span>Prayas Jee</span></div>
+    <div class="flash-card" data-name="arjuna">Arjuna Jee</div>
+    <div class="flash-card" data-name="lakshya">Lakshya Jee</div>
+    <div class="flash-card" data-name="prayas">Prayas Jee</div>
   </div>
+
+  <script>
+    document.querySelectorAll('.flash-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const url = {
+          arjuna:  'Arjunajeetests.html',
+          lakshya: 'Lakshyajeetests.html',
+          prayas:  'prayasjeetests.html'
+        }[card.dataset.name];
+        if (url) window.location.href = url;
+      });
+    });
+  </script>
 
 </body>
 </html>

@@ -1,4 +1,1 @@
-# _config.yml — minimal Jekyll configuration
-title: Brainiacs
-baseurl: "/Brainiacs"          # the repo name, keep the leading slash
-permalink: /:path/             # default → /filename/  (drops “.html”)
+

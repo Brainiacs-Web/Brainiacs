@@ -16,472 +16,197 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
   <style>
-   :root {
-  --primary-color:    #009688;
-  --secondary-color:  #00796b;
-  --accent-color:     #ff5722;
-  --light-bg:         #e0f2f1;
-  --white:            #fff;
-  --text-color:       #333;
-  --hover-bg:         rgba(0,150,136,0.1);
-  --card-shadow:      rgba(0,0,0,0.1);
-  --transition-speed: 0.3s;
-  --sidebar-width:    240px;
-}
-
-body.dark-mode {
-  --primary-color:   #4db6ac;
-  --secondary-color: #00897b;
-  --accent-color:    #ff8a65;
-  --light-bg:        #121212;
-  --white:           #1e1e1e;
-  --text-color:      #ddd;
-  --hover-bg:        rgba(77,182,172,0.15);
-  --card-shadow:     rgba(0,0,0,0.6);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
-body {
-  background: var(--light-bg);
-  color: var(--text-color);
-  line-height: 1.6;
-  transition: background var(--transition-speed),
-              color var(--transition-speed);
-}
-
-a {
-  color: var(--primary-color);
-  text-decoration: none;
-}
-
-#admin-dashboard {
-  display: flex;
-  min-height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-  position: fixed;
-  top: 0; left: 0;
-  width: var(--sidebar-width);
-  height: 100%;
-  background: var(--white);
-  box-shadow: 2px 0 5px var(--card-shadow);
-  padding: 25px 15px;
-  overflow-y: auto;
-  transition: transform var(--transition-speed);
-}
-
-.sidebar h2 {
-  text-align: center;
-  margin-bottom: 30px;
-  color: var(--primary-color);
-}
-
-.sidebar nav a {
-  display: block;
-  padding: 12px 15px;
-  margin-bottom: 15px;
-  color: var(--text-color);
-  border-radius: 6px;
-  transition: background var(--transition-speed),
-              transform var(--transition-speed);
-}
-
-.sidebar nav a:hover,
-.sidebar nav a.active {
-  background: var(--hover-bg);
-  transform: translateX(4px);
-}
-
-/* Main Content */
-.main-content {
-  margin-left: calc(var(--sidebar-width) + 20px);
-  padding: 40px 20px;
-  width: calc(100% - var(--sidebar-width) - 20px);
-  background: var(--light-bg);
-  transition: margin var(--transition-speed);
-}
-
-@media screen and (max-width: 768px) {
-  .main-content {
-    padding: 30px 15px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .sidebar { display: none; }
-  .main-content {
-    margin-left: 0;
-    padding: 20px;
-    width: 100%;
-  }
-}
-
-/* Bottom Nav (mobile) */
-.bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0; left: 0;
-  width: 100%;
-  background: var(--white);
-  box-shadow: 0 -2px 5px var(--card-shadow);
-  padding: 8px 0;
-  justify-content: space-around;
-  z-index: 1100;
-}
-
-.bottom-nav a {
-  flex: 1;
-  text-align: center;
-  color: var(--text-color);
-  transition: background var(--transition-speed);
-}
-
-.bottom-nav a.active {
-  background: var(--hover-bg);
-  color: var(--primary-color);
-}
-
-.bottom-nav a i {
-  font-size: 1.5rem;
-}
-
-@media screen and (max-width: 480px) {
-  .bottom-nav { display: flex; }
-}
-
-/* Floating Action Button */
-.fab {
-  position: fixed;
-  bottom: 20px; right: 20px;
-  width: 50px; height: 50px;
-  background: var(--primary-color);
-  color: var(--white);
-  cursor: grab;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  cursor: pointer;
-  box-shadow: 0 2px 5px var(--card-shadow);
-  transition: transform var(--transition-speed);
-}
-
-.fab:hover {
-  transform: scale(1.1);
-}
-
-/* Cards */
-.card {
-  background: var(--white);
-  border-radius: 8px;
-  padding: 30px;
-  box-shadow: 0 2px 10px var(--card-shadow);
-  margin-bottom: 30px;
-}
-
-.card h2 {
-  text-align: center;
-  color: var(--primary-color);
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-/* Forms */
-form label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-form input,
-form select,
-form textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color var(--transition-speed),
-              box-shadow var(--transition-speed);
-  background: var(--white);
-}
-
-form input:focus,
-form select:focus,
-form textarea:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 5px var(--hover-bg);
-}
-
-form button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
-  background: var(--primary-color);
-  color: var(--white);
-  cursor: pointer;
-  transition: background var(--transition-speed),
-              transform var(--transition-speed);
-}
-
-form button:hover {
-  background: var(--secondary-color);
-  transform: translateY(-2px);
-}
-
-/* Tables */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-table th,
-table td {
-  padding: 12px;
-  border: 1px solid #eee;
-  text-align: left;
-}
-
-table th {
-  background: var(--white);
-  font-weight: 600;
-}
-
-/* Search Bar */
-.search-bar {
-  margin-bottom: 20px;
-}
-
-.search-bar input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* Modals */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: var(--white);
-  padding: 30px;
-  width: 90%;
-  max-width: 600px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px var(--card-shadow);
-  position: relative;
-}
-
-.modal-content .close {
-  position: absolute;
-  top: 12px; right: 20px;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #aaa;
-  transition: color var(--transition-speed),
-              transform var(--transition-speed);
-}
-
-.modal-content .close:hover {
-  color: var(--primary-color);
-  transform: rotate(90deg);
-}
-
-/* Test‐Card (Preview) */
-.test-card {
-  background: var(--white);
-  padding: 20px;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px var(--card-shadow);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.test-card h3 {
-  color: var(--primary-color);
-  margin-bottom: 8px;
-}
-
-.btn-group button {
-  padding: 10px 14px;
-  border: none;
-  border-radius: 4px;
-  background: var(--primary-color);
-  color: var(--white);
-  cursor: pointer;
-  transition: background var(--transition-speed),
-              transform var(--transition-speed);
-}
-
-.btn-group button:hover {
-  background: var(--secondary-color);
-  transform: translateY(-2px);
-}
-
+    :root {
+      --primary-color:    #009688;
+      --secondary-color:  #00796b;
+      --accent-color:     #ff5722;
+      --light-bg:         #e0f2f1;
+      --white:            #fff;
+      --text-color:       #333;
+      --hover-bg:         rgba(0,150,136,0.1);
+      --card-shadow:      rgba(0,0,0,0.1);
+      --transition-speed: 0.3s;
+      --sidebar-width:    240px;
+    }
+    body.dark-mode {
+      --primary-color:   #4db6ac;
+      --secondary-color:#00897b;
+      --accent-color:   #ff8a65;
+      --light-bg:       #121212;
+      --white:          #1e1e1e;
+      --text-color:     #ddd;
+      --hover-bg:       rgba(77,182,172,0.15);
+      --card-shadow:    rgba(0,0,0,0.6);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
+    body { background:var(--light-bg); color:var(--text-color); line-height:1.6; transition:background var(--transition-speed), color var(--transition-speed); }
+    a { color:var(--primary-color); text-decoration:none; }
+    #admin-dashboard { display:flex; min-height:100vh; }
+    .sidebar { position:fixed; top:0; left:0; width:var(--sidebar-width); height:100%; background:var(--white); box-shadow:2px 0 5px var(--card-shadow); padding:25px 15px; overflow-y:auto; transition:transform var(--transition-speed); }
+    .sidebar h2 { text-align:center; margin-bottom:30px; color:var(--primary-color); }
+    .sidebar nav a { display:block; padding:12px 15px; margin-bottom:15px; color:var(--text-color); border-radius:6px; transition:background var(--transition-speed), transform var(--transition-speed); }
+    .sidebar nav a:hover, .sidebar nav a.active { background:var(--hover-bg); transform:translateX(4px); }
+    .main-content { margin-left:calc(var(--sidebar-width) + 20px); padding:40px 20px; width:calc(100% - var(--sidebar-width) - 20px); background:var(--light-bg); transition:margin var(--transition-speed); }
+    @media (max-width:768px) { .main-content { padding:30px 15px; } }
+    @media (max-width:480px) { .sidebar{display:none;} .main-content{margin-left:0;width:100%;padding:20px;} }
+    .bottom-nav { display:none; position:fixed; bottom:0; left:0; width:100%; background:var(--white); box-shadow:0 -2px 5px var(--card-shadow); padding:8px 0; justify-content:space-around; z-index:1100; }
+    .bottom-nav a { flex:1; text-align:center; color:var(--text-color); transition:background var(--transition-speed); }
+    .bottom-nav a.active { background:var(--hover-bg); color:var(--primary-color); }
+    .bottom-nav a i { font-size:1.5rem; }
+    @media (max-width:480px) { .bottom-nav{display:flex;} }
+    .fab { position:fixed; bottom:20px; right:20px; width:50px; height:50px; background:var(--primary-color); color:var(--white); border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:2rem; box-shadow:0 2px 5px var(--card-shadow); transition:transform var(--transition-speed); cursor:grab; }
+    .fab:hover { transform:scale(1.1); }
+    .card { background:var(--white); border-radius:8px; padding:30px; box-shadow:0 2px 10px var(--card-shadow); margin-bottom:30px; }
+    .card h2 { text-align:center; color:var(--primary-color); margin-bottom:20px; font-weight:600; }
+    form label { display:block; margin-bottom:10px; font-weight:600; }
+    form input, form select, form textarea { width:100%; padding:12px; margin-bottom:15px; border:1px solid #ccc; border-radius:4px; transition: border-color var(--transition-speed), box-shadow var(--transition-speed); background:var(--white); }
+    form input:focus, form select:focus, form textarea:focus { outline:none; border-color:var(--primary-color); box-shadow:0 0 5px var(--hover-bg); }
+    form button { width:100%; padding:12px; border:none; border-radius:4px; background:var(--primary-color); color:var(--white); cursor:pointer; transition: background var(--transition-speed), transform var(--transition-speed); }
+    form button:hover { background:var(--secondary-color); transform:translateY(-2px); }
+    table { width:100%; border-collapse:collapse; margin-top:20px; }
+    table th, table td { padding:12px; border:1px solid #eee; text-align:left; }
+    table th { background:var(--white); font-weight:600; }
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; }
+    .modal-content { background:var(--white); padding:30px; width:90%; max-width:600px; border-radius:8px; box-shadow:0 2px 10px var(--card-shadow); position:relative; }
+    .modal-content .close { position:absolute; top:12px; right:20px; font-size:1.5rem; cursor:pointer; color:#aaa; transition: color var(--transition-speed), transform var(--transition-speed); }
+    .modal-content .close:hover { color:var(--primary-color); transform:rotate(90deg); }
+    .test-card { background:var(--white); padding:20px; border-radius:6px; box-shadow:0 2px 6px var(--card-shadow); display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+    .test-card h3 { color:var(--primary-color); margin-bottom:8px; }
+    .btn-group button { padding:10px 14px; border:none; border-radius:4px; background:var(--primary-color); color:var(--white); cursor:pointer; transition: background var(--transition-speed), transform var(--transition-speed); }
+    .btn-group button:hover { background:var(--secondary-color); transform:translateY(-2px); }
   </style>
-  
 </head>
 <body>
   <div id="admin-dashboard">
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
+    <div class="sidebar">
       <h2>Brainiacs</h2>
       <nav>
-        <a href="#" data-tab="test-setup" class="active">
-          <i class="fas fa-cogs"></i> Setup
-        </a>
-        <a href="#" data-tab="add-question">
-          <i class="fas fa-plus-circle"></i> Add Qs
-        </a>
-        <a href="#" data-tab="test-preview">
-          <i class="fas fa-eye"></i> Preview
-        </a>
+        <a href="#" data-tab="test-setup" class="active"><i class="fas fa-cogs"></i> Setup</a>
+        <a href="#" data-tab="add-question"><i class="fas fa-plus-circle"></i> Add Qs</a>
+        <a href="#" data-tab="test-preview"><i class="fas fa-eye"></i> Preview</a>
+        <a href="#" data-tab="chapters"><i class="fas fa-book"></i> Chapters</a>
       </nav>
     </div>
-
-    <!-- Bottom Navigation (for small screens) -->
-    <div class="bottom-nav" id="bottomNav">
-      <a href="#" data-tab="test-setup" class="active">
-        <i class="fas fa-cogs"></i>
-      </a>
-      <a href="#" data-tab="add-question">
-        <i class="fas fa-plus-circle"></i>
-      </a>
-      <a href="#" data-tab="test-preview">
-        <i class="fas fa-eye"></i>
-      </a>
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <a href="#" data-tab="test-setup" class="active"><i class="fas fa-cogs"></i></a>
+      <a href="#" data-tab="add-question"><i class="fas fa-plus-circle"></i></a>
+      <a href="#" data-tab="test-preview"><i class="fas fa-eye"></i></a>
+      <a href="#" data-tab="chapters"><i class="fas fa-book"></i></a>
     </div>
-    
-    <!-- Floating "+" to add Batch -->
-    <div class="fab" id="fab">
-      <i class="fas fa-plus"></i>
-    </div>
+    <!-- Floating + -->
+    <div class="fab" id="fab"><i class="fas fa-plus"></i></div>
 
-    <!-- Main Content -->
     <div class="main-content">
-      <div id="content-area">
-        <!-- Setup Section -->
-        <section id="test-setup-section" class="card">
-          <h2>Setup</h2>
-          <form id="test-setup-form">
-            <label for="testName">Test Name</label>
-            <input type="text" id="testName" required />
+      <!-- Setup -->
+      <section id="test-setup-section" class="card">
+        <h2>Setup</h2>
+        <form id="test-setup-form">
+          <label for="testName">Test Name</label>
+          <input type="text" id="testName" required />
+          <label for="batchSelect">Batch</label>
+          <select id="batchSelect" required><option value="">--Select Batch--</option></select>
+          <label for="testDuration">Duration (min)</label>
+          <input type="number" id="testDuration" required />
+          <label for="subjects">Subjects (comma-sep)</label>
+          <input type="text" id="subjects" placeholder="Physics, Chem, Bio" required />
+          <label for="scheduledDate">Schedule</label>
+          <input type="datetime-local" id="scheduledDate" required />
+          <button type="submit">Create Test</button>
+        </form>
+      </section>
 
-            <label for="batchSelect">Batch</label>
-            <select id="batchSelect" required>
-              <option value="">--Select Batch--</option>
-            </select>
-
-            <label for="testDuration">Duration (min)</label>
-            <input type="number" id="testDuration" required />
-
-            <label for="subjects">Subjects</label>
-            <input type="text" id="subjects" placeholder="Ex: Physics, Chem, Bio" required />
-
-            <label for="scheduledDate">Schedule</label>
-            <input type="datetime-local" id="scheduledDate" required />
-
-            <button type="submit">Create Test</button>
-          </form>
-        </section>
-        
-        <!-- Add Qs Section -->
-        <section id="add-question-section" class="card" style="display:none;">
-          <h2>Add Qs</h2>
-          <form id="question-form">
-            <label for="questionBatch">Batch</label>
-            <select id="questionBatch" required>
-              <option value="">--Select Batch--</option>
-            </select>
-
-            <div>
-              <label for="testSeries">Series</label>
-              <select id="testSeries" required>
-                <option value="">--Select Series--</option>
-              </select>
+      <!-- Add Qs -->
+      <section id="add-question-section" class="card" style="display:none;">
+        <h2>Add Qs</h2>
+        <form id="question-form">
+          <label for="questionBatch">Batch</label>
+          <select id="questionBatch" required><option value="">--Select Batch--</option></select>
+          <label for="testSeries">Series</label>
+          <select id="testSeries" required><option value="">--Select Series--</option></select>
+          <label for="subject">Subject</label>
+          <select id="subject" required><option value="">--Select Subject--</option></select>
+          <label for="question">Question</label>
+          <input type="text" id="question" placeholder="Enter question" />
+          <label for="questionImageURL">Image URL</label>
+          <input type="text" id="questionImageURL" placeholder="Paste image URL" />
+          <label for="questionType">Type</label>
+          <select id="questionType" required>
+            <option value="">--Select Type--</option>
+            <option value="MCQ">MCQ</option>
+            <option value="Integer">Integer</option>
+          </select>
+          <div id="mcq-section" style="display:none;">
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;">
+                <label for="optionA">A</label>
+                <input type="text" id="optionA" placeholder="Option A" />
+              </div>
+              <div style="flex:1;">
+                <label for="optionB">B</label>
+                <input type="text" id="optionB" placeholder="Option B" />
+              </div>
             </div>
-            <div>
-              <label for="subject">Subject</label>
-              <select id="subject" required>
-                <option value="">--Select Subject--</option>
-              </select>
+            <div style="display:flex;gap:10px;">
+              <div style="flex:1;">
+                <label for="optionC">C</label>
+                <input type="text" id="optionC" placeholder="Option C" />
+              </div>
+              <div style="flex:1;">
+                <label for="optionD">D</label>
+                <input type="text" id="optionD" placeholder="Option D" />
+              </div>
             </div>
-            <div>
-              <label for="question">Question</label>
-              <input type="text" id="question" placeholder="Enter question" />
-            </div>
-            <div>
-              <label for="questionImageURL">Image URL</label>
-              <input type="text" id="questionImageURL" placeholder="Paste image URL" />
-            </div>
-            <div>
-              <label for="questionType">Type</label>
-              <select id="questionType" required>
-                <option value="">--Select Type--</option>
-                <option value="MCQ">MCQ</option>
-                <option value="Integer">Integer</option>
-              </select>
-            </div>
-            <!-- MCQ Options -->
-            <div id="mcq-section" style="display:none;">
-              <!-- ... same as before ... -->
-            </div>
-            <!-- Integer Answer -->
-            <div id="integer-section" style="display:none;">
-              <!-- ... same as before ... -->
-            </div>
-            <div>
-              <label for="solution">Solution</label>
-              <input type="text" id="solution" placeholder="Enter solution" />
-            </div>
-            <div>
-              <label for="solutionImageURL">Solution URL</label>
-              <input type="text" id="solutionImageURL" placeholder="Paste solution URL" />
-            </div>
-            <div style="text-align: center;">
-              <button type="button" id="previewBtn">Preview</button>
-              <button type="reset">Clear</button>
-              <button type="submit">Add Q</button>
-            </div>
-          </form>
-          <!-- Preview Modal -->
-          <div id="previewModal" class="modal">
-            <div class="modal-content">
-              <span class="close">&times;</span>
-              <h2>Preview</h2>
-              <div id="previewContent"></div>
-            </div>
+            <label for="correctAnswer">Answer</label>
+            <select id="correctAnswer"><option value="">--Select--</option><option>A</option><option>B</option><option>C</option><option>D</option></select>
           </div>
-        </section>
-        
-        <!-- Test Preview Section -->
-        <section id="test-preview-section" class="card" style="display:none;">
-          <h2>Preview</h2>
-          <div id="testPreviewContainer"></div>
-        </section>
-      </div>
+          <div id="integer-section" style="display:none;">
+            <label for="integerAnswer">Answer</label>
+            <input type="number" id="integerAnswer" placeholder="Enter answer" />
+          </div>
+          <label for="solution">Solution</label>
+          <input type="text" id="solution" placeholder="Enter solution" />
+          <label for="solutionImageURL">Solution Image URL</label>
+          <input type="text" id="solutionImageURL" placeholder="Paste solution URL" />
+          <div style="text-align:center;">
+            <button type="button" id="previewBtn">Preview</button>
+            <button type="reset">Clear</button>
+            <button type="submit">Add Q</button>
+          </div>
+        </form>
+        <div id="previewModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Preview</h2>
+            <div id="previewContent"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Preview -->
+      <section id="test-preview-section" class="card" style="display:none;">
+        <h2>Preview</h2>
+        <div id="testPreviewContainer"></div>
+      </section>
+
+      <!-- Chapters -->
+      <section id="chapters-section" class="card" style="display:none;">
+        <h2>Subject Chapters</h2>
+        <form id="chapter-form">
+          <label for="chapterBatch">Batch</label>
+          <select id="chapterBatch" required><option value="">--Select Batch--</option></select>
+          <label for="chapterSeries">Series</label>
+          <select id="chapterSeries" required><option value="">--Select Series--</option></select>
+          <label for="chapterSubject">Subject</label>
+          <select id="chapterSubject" required><option value="">--Select Subject--</option></select>
+          <label for="chapterName">Chapter Name</label>
+          <input type="text" id="chapterName" placeholder="e.g. Kinematics" required />
+          <button type="submit">Add Chapter</button>
+        </form>
+        <h3 style="margin-top:20px;">Existing Chapters</h3>
+        <ul id="chaptersList"></ul>
+      </section>
     </div>
   </div>
 
@@ -497,19 +222,13 @@ table th {
       </form>
     </div>
   </div>
-  
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import {
-      getFirestore,
-      collection,
-      addDoc,
-      setDoc,
-      doc,
-      getDocs,
-      updateDoc,
-      deleteDoc,
-      serverTimestamp
+      getFirestore, collection, addDoc, setDoc, doc,
+      getDocs, getDoc, updateDoc, deleteDoc,
+      serverTimestamp, arrayUnion
     } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -521,14 +240,124 @@ table th {
       appId: "1:530382354851:web:f65bde4a1b3f86d75d8216"
     };
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const db  = getFirestore(app);
 
-    function switchTab(tabName) {
-      document.querySelectorAll("section").forEach(sec => {
-        sec.style.display = (sec.id === tabName + "-section") ? "block" : "none";
+    function switchTab(tab) {
+      document.querySelectorAll("section").forEach(s => {
+        s.style.display = s.id === tab + "-section" ? "block" : "none";
       });
       document.querySelectorAll(".sidebar nav a, .bottom-nav a").forEach(a => {
-        a.classList.toggle("active", a.getAttribute("data-tab") === tabName);
+        a.classList.toggle("active", a.dataset.tab === tab);
+      });
+    }
+
+    async function populateBatchSelects() {
+      const snaps = await getDocs(collection(db, "Batches"));
+      [ "batchSelect", "questionBatch", "chapterBatch" ].forEach(id => {
+        const sel = document.getElementById(id);
+        sel.innerHTML = `<option value="">--Select Batch--</option>`;
+        snaps.forEach(d => {
+          const o = document.createElement("option");
+          o.value = d.id;
+          o.textContent = d.data().name;
+          sel.appendChild(o);
+        });
+      });
+    }
+
+    async function loadTestSeries() {
+      const sel = document.getElementById("testSeries");
+      sel.innerHTML = `<option value="">--Select Series--</option>`;
+      const snaps = await getDocs(collection(db, "Questions"));
+      snaps.forEach(d => {
+        const o = document.createElement("option");
+        o.value = d.id;
+        o.textContent = d.id;
+        o.setAttribute("data-subjects", JSON.stringify(d.data().subjects || []));
+        sel.appendChild(o);
+      });
+    }
+
+    async function loadChapterSeries(batch) {
+      const sel = document.getElementById("chapterSeries");
+      sel.innerHTML = `<option value="">--Select Series--</option>`;
+      if (!batch) return;
+      const snaps = await getDocs(collection(db, "Questions"));
+      snaps.forEach(d => {
+        if (d.data().batch === batch) {
+          const o = document.createElement("option");
+          o.value = d.id;
+          o.textContent = d.id;
+          o.setAttribute("data-subjects", JSON.stringify(d.data().subjects || []));
+          sel.appendChild(o);
+        }
+      });
+    }
+
+    function loadSubjects(seriesId, targetId) {
+      const sel = document.getElementById(targetId);
+      sel.innerHTML = `<option value="">--Select Subject--</option>`;
+      if (!seriesId) return;
+      const opt = document.querySelector(`#${targetId === "subject" ? "testSeries" : "chapterSeries"} option[value="${seriesId}"]`);
+      JSON.parse(opt.getAttribute("data-subjects") || "[]").forEach(s => {
+        const o = document.createElement("option");
+        o.value = s;
+        o.textContent = s;
+        sel.appendChild(o);
+      });
+    }
+
+    async function loadTestPreview() {
+      const cont = document.getElementById("testPreviewContainer");
+      cont.innerHTML = "";
+      const now   = Date.now();
+      const snaps = await getDocs(collection(db, "Questions"));
+      snaps.forEach(d => {
+        const data = d.data();
+        const card = document.createElement("div");
+        card.className = "test-card";
+        const sched = data.scheduledAt?.seconds * 1000;
+        let status = "", action = "";
+        if (data.published) {
+          status = `<p style="color:green;font-weight:600;">Published</p>`;
+          action = `<button onclick="deleteTest('${d.id}')">Delete</button>`;
+        } else if (sched && now < sched) {
+          status = `<p style="color:orange;font-weight:600;">Scheduled</p>`;
+          action = `<button disabled>Not Live</button>`;
+        } else {
+          status = `<p style="color:blue;font-weight:600;">Ready</p>`;
+          action = `<button onclick="sendTest('${d.id}')">Send</button>`;
+        }
+        card.innerHTML = `
+          <div>
+            <h3>${d.id}</h3>
+            <p>Batch: ${data.batch}</p>
+            <p>Dur: ${data.testDuration} min</p>
+            <p>Sub: ${data.subjects.join(", ")}</p>
+            ${sched ? `<p>Schedule: ${new Date(sched).toLocaleString()}</p>` : ""}
+            ${status}
+          </div>
+          <div class="btn-group">
+            <button onclick="previewTest('${d.id}')">Preview</button>
+            ${action}
+          </div>`;
+        cont.appendChild(card);
+      });
+    }
+
+    async function loadChapters() {
+      const series  = document.getElementById("chapterSeries").value;
+      const subject = document.getElementById("chapterSubject").value;
+      const list    = document.getElementById("chaptersList");
+      list.innerHTML = "";
+      if (!series || !subject) return;
+      const docRef = doc(db, "Chapters", series, "Subjects", subject);
+      const snap   = await getDoc(docRef);
+      if (!snap.exists()) return;
+      (snap.data().chapters || []).forEach(ch => {
+        const li = document.createElement("li");
+        li.textContent = ch;
+        list.appendChild(li);
       });
     }
 
@@ -536,282 +365,178 @@ table th {
       const previewModal = document.getElementById("previewModal");
       const batchModal   = document.getElementById("batchModal");
 
-      // Populate batch dropdowns
-      async function populateBatchSelects() {
-        const bs = document.getElementById("batchSelect");
-        const qb = document.getElementById("questionBatch");
-        bs.innerHTML = `<option value="">--Select Batch--</option>`;
-        qb.innerHTML = `<option value="">--Select Batch--</option>`;
-        const snaps = await getDocs(collection(db, "Batches"));
-        snaps.forEach(d => {
-          const name = d.data().name || d.id;
-          [bs, qb].forEach(sel => {
-            const o = document.createElement("option");
-            o.value = d.id; o.textContent = name;
-            sel.appendChild(o);
-          });
-        });
-      }
-
-      // Navigation events
+      // Navigation
       document.querySelectorAll(".sidebar nav a, .bottom-nav a").forEach(a => {
         a.addEventListener("click", e => {
           e.preventDefault();
-          const tab = a.getAttribute("data-tab");
+          const tab = a.dataset.tab;
           switchTab(tab);
           if (tab === "add-question") loadTestSeries();
           if (tab === "test-preview") loadTestPreview();
+          if (tab === "chapters") {
+            populateBatchSelects();
+            document.getElementById("chaptersList").innerHTML = "";
+          }
         });
       });
 
-      // Floating "+" → Add Batch
-      document.getElementById("fab").addEventListener("click", () => {
-        batchModal.style.display = "flex";
-      });
+      // FAB drag + open batch modal
+      (function() {
+        const fab = document.getElementById('fab');
+        let dragging=false, offsetX=0, offsetY=0;
+        fab.style.position='fixed';
+        fab.style.top=(window.innerHeight - fab.offsetHeight - 20)+'px';
+        fab.style.left=(window.innerWidth - fab.offsetWidth - 20)+'px';
+        fab.addEventListener('mousedown', e => {
+          dragging=true; fab.style.cursor='grabbing';
+          const r=fab.getBoundingClientRect();
+          offsetX=e.clientX-r.left; offsetY=e.clientY-r.top;
+          e.preventDefault();
+        });
+        document.addEventListener('mousemove', e => {
+          if (!dragging) return;
+          let x=e.clientX-offsetX, y=e.clientY-offsetY;
+          x=Math.max(0,Math.min(window.innerWidth-fab.offsetWidth,x));
+          y=Math.max(0,Math.min(window.innerHeight-fab.offsetHeight,y));
+          fab.style.left=x+'px'; fab.style.top=y+'px';
+        });
+        document.addEventListener('mouseup', () => {
+          dragging=false; fab.style.cursor='grab';
+        });
+        fab.addEventListener('click', () => batchModal.style.display='flex');
+      })();
 
       // Close modals
-      document.querySelector("#previewModal .close")
-        .addEventListener("click", () => previewModal.style.display = "none");
-      document.querySelector("#batchModal .close")
-        .addEventListener("click", () => batchModal.style.display = "none");
+      document.querySelectorAll(".modal .close").forEach(x => {
+        x.addEventListener("click", () => x.closest(".modal").style.display='none');
+      });
       window.addEventListener("click", e => {
-        if (e.target === previewModal) previewModal.style.display = "none";
-        if (e.target === batchModal)    batchModal.style.display = "none";
+        if (e.target.classList.contains("modal")) e.target.style.display='none';
       });
 
-      // Add Batch form
+      // Add Batch
       document.getElementById("batch-form").addEventListener("submit", async e => {
         e.preventDefault();
         const name = document.getElementById("batchName").value.trim();
         if (!name) return alert("Enter a batch name");
-        await addDoc(collection(db, "Batches"), { name, createdAt: serverTimestamp() });
+        await addDoc(collection(db,"Batches"), { name, createdAt: serverTimestamp() });
         alert("Batch added!");
         e.target.reset();
-        batchModal.style.display = "none";
+        batchModal.style.display='none';
         populateBatchSelects();
       });
 
-      (function() {
-    const fab = document.getElementById('fab');
-    let isDragging = false;
-    let offsetX = 0, offsetY = 0;
-
-    // Initialize with top/left instead of bottom/right
-    fab.style.position = 'fixed';
-    fab.style.top  = (window.innerHeight - fab.offsetHeight - 20) + 'px';
-    fab.style.left = (window.innerWidth - fab.offsetWidth - 20) + 'px';
-    fab.style.bottom = fab.style.right = '';
-
-    // Change cursor to indicate drag
-    fab.style.cursor = 'grab';
-
-    fab.addEventListener('mousedown', e => {
-      isDragging = true;
-      fab.style.cursor = 'grabbing';
-      // calculate offset of click inside the fab
-      const rect = fab.getBoundingClientRect();
-      offsetX = e.clientX - rect.left;
-      offsetY = e.clientY - rect.top;
-      // prevent text‑selection
-      e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', e => {
-      if (!isDragging) return;
-      // compute new position
-      let x = e.clientX - offsetX;
-      let y = e.clientY - offsetY;
-      // clamp to viewport edges
-      x = Math.max(0, Math.min(window.innerWidth - fab.offsetWidth, x));
-      y = Math.max(0, Math.min(window.innerHeight - fab.offsetHeight, y));
-      fab.style.left = x + 'px';
-      fab.style.top  = y + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (!isDragging) return;
-      isDragging = false;
-      fab.style.cursor = 'grab';
-    });
-
-    // Re-clamp on resize
-    window.addEventListener('resize', () => {
-      const rect = fab.getBoundingClientRect();
-      fab.style.left = Math.min(rect.left, window.innerWidth - fab.offsetWidth) + 'px';
-      fab.style.top  = Math.min(rect.top,  window.innerHeight - fab.offsetHeight) + 'px';
-    });
-  })();
-
       // Create Test
-      document.getElementById("test-setup-form")
-        .addEventListener("submit", async e => {
-          e.preventDefault();
-          const testName = document.getElementById("testName").value.trim();
-          const batch    = document.getElementById("batchSelect").value;
-          const testDuration = document.getElementById("testDuration").value.trim();
-          const subjectsArray = document.getElementById("subjects").value
-            .split(",").map(s => s.trim()).filter(s => s);
-          const scheduledAt = new Date(document.getElementById("scheduledDate").value);
-
-          if (!testName || !batch || !testDuration || subjectsArray.length === 0 || isNaN(scheduledAt))
-            return alert("All fields are required!");
-
-          await setDoc(doc(db, "Questions", testName), {
-            testName, batch, testDuration,
-            subjects: subjectsArray, scheduledAt,
-            published: false, createdAt: serverTimestamp()
-          });
-          alert("Test created successfully!");
-          e.target.reset();
+      document.getElementById("test-setup-form").addEventListener("submit", async e => {
+        e.preventDefault();
+        const testName    = document.getElementById("testName").value.trim();
+        const batch       = document.getElementById("batchSelect").value;
+        const testDuration= document.getElementById("testDuration").value.trim();
+        const subjects    = document.getElementById("subjects").value.split(",").map(s=>s.trim()).filter(Boolean);
+        const sched       = new Date(document.getElementById("scheduledDate").value);
+        if (!testName||!batch||!testDuration||!subjects.length||isNaN(sched)) return alert("All fields are required!");
+        await setDoc(doc(db,"Questions",testName), {
+          testName, batch, testDuration,
+          subjects, scheduledAt: sched,
+          published:false, createdAt: serverTimestamp()
         });
+        alert("Test created!");
+        e.target.reset();
+      });
 
-      // Load Test Series for Add‑Qs
-      async function loadTestSeries() {
-        const sel = document.getElementById("testSeries");
-        sel.innerHTML = `<option value="">--Select Series--</option>`;
-        const snaps = await getDocs(collection(db, "Questions"));
-        snaps.forEach(d => {
-          const o = document.createElement("option");
-          o.value = d.id;
-          o.textContent = d.id;
-          o.setAttribute("data-subjects", JSON.stringify(d.data().subjects || []));
-          sel.appendChild(o);
-        });
-      }
-      document.getElementById("testSeries")
-        .addEventListener("change", function() {
-          const subs = JSON.parse(this.selectedOptions[0]
-            .getAttribute("data-subjects") || "[]");
-          const subSel = document.getElementById("subject");
-          subSel.innerHTML = `<option value="">--Select Subject--</option>`;
-          subs.forEach(s => {
-            const o = document.createElement("option");
-            o.value = s; o.textContent = s;
-            subSel.appendChild(o);
-          });
-        });
+      // Add Qs: type toggle, series->subjects
+      document.getElementById("questionType").addEventListener("change", e => {
+        document.getElementById("mcq-section").style.display = e.target.value==="MCQ"?"block":"none";
+        document.getElementById("integer-section").style.display = e.target.value==="Integer"?"block":"none";
+      });
+      document.getElementById("testSeries").addEventListener("change", e => {
+        loadSubjects(e.target.value, "subject");
+      });
+      document.getElementById("previewBtn").addEventListener("click", () => {
+        let html = "<p><strong>Question:</strong></p>";
+        const q = document.getElementById("question").value.trim();
+        const qi= document.getElementById("questionImageURL").value.trim();
+        html += q?`<p>${q}</p>`:qi?`<img src="${qi}" style="max-width:100%"/>`:"<p><em>None</em></p>";
+        const tp = document.getElementById("questionType").value;
+        html += `<p><strong>Type:</strong>${tp}</p>`;
+        if(tp==="MCQ"){
+          html += "<ol type='A'>" + ["optionA","optionB","optionC","optionD"].map(id=>
+            `<li>${document.getElementById(id).value.trim()||"<em>–</em>"}</li>`
+          ).join("") + "</ol>";
+          html += `<p><strong>Answer:</strong>${document.getElementById("correctAnswer").value||"<em>–</em>"}</p>`;
+        } else {
+          html += `<p><strong>Answer:</strong>${document.getElementById("integerAnswer").value||"<em>–</em>"}</p>`;
+        }
+        const sol = document.getElementById("solution").value.trim();
+        const si  = document.getElementById("solutionImageURL").value.trim();
+        html += `<p><strong>Solution:</strong></p>${sol?`<p>${sol}</p>`:si?`<img src="${si}" style="max-width:100%"/>`:"<p><em>None</em></p>"}`;
+        document.getElementById("previewContent").innerHTML = html;
+        previewModal.style.display='flex';
+      });
+      document.getElementById("question-form").addEventListener("submit", async e => {
+        e.preventDefault();
+        const batch  = document.getElementById("questionBatch").value;
+        const series = document.getElementById("testSeries").value;
+        const subj   = document.getElementById("subject").value;
+        if (!batch||!series||!subj) return alert("Select batch, series & subject!");
+        const data = {
+          batch,
+          question: document.getElementById("question").value.trim(),
+          questionImage: document.getElementById("questionImageURL").value.trim(),
+          questionType: document.getElementById("questionType").value,
+          solution: document.getElementById("solution").value.trim(),
+          solutionImage: document.getElementById("solutionImageURL").value.trim(),
+          addedAt: serverTimestamp()
+        };
+        if(data.questionType==="MCQ"){
+          data.options = ["optionA","optionB","optionC","optionD"].map(id=>document.getElementById(id).value.trim());
+          data.correctAnswer = document.getElementById("correctAnswer").value;
+          if(!data.correctAnswer) return alert("Pick the correct answer!");
+        }
+        if(data.questionType==="Integer"){
+          data.answer = document.getElementById("integerAnswer").value.trim();
+          if(!data.answer) return alert("Enter the integer answer!");
+        }
+        await addDoc(collection(db,"Questions",series,subj), data);
+        alert("Question added!");
+        e.target.reset();
+      });
 
-      // Question‑type toggle & Preview
-      document.getElementById("questionType")
-        .addEventListener("change", function() {
-          document.getElementById("mcq-section").style.display = this.value === "MCQ" ? "block" : "none";
-          document.getElementById("integer-section").style.display = this.value === "Integer" ? "block" : "none";
-        });
-      document.getElementById("previewBtn")
-        .addEventListener("click", () => {
-          let html = "<p><strong>Question:</strong></p>";
-          const q  = document.getElementById("question").value.trim();
-          const qi = document.getElementById("questionImageURL").value.trim();
-          html += q ? `<p>${q}</p>`
-                   : qi ? `<img src="${qi}" style="max-width:100%"/>`
-                        : "<p><em>None</em></p>";
-          html += `<p><strong>Type:</strong> ${document.getElementById("questionType").value}</p>`;
-          if (document.getElementById("questionType").value === "MCQ") {
-            html += "<ol type='A'>" +
-              ["optionA","optionB","optionC","optionD"].map(k =>
-                `<li>${document.getElementById(k).value||"<em>–</em>"}</li>`
-              ).join("") +
-              "</ol>" +
-              `<p><strong>Answer:</strong> ${document.getElementById("correctAnswer").value||"<em>–</em>"}</p>`;
-          } else {
-            html += `<p><strong>Answer:</strong> ${document.getElementById("integerAnswer").value||"<em>–</em>"}</p>`;
-          }
-          html += "<p><strong>Solution:</strong></p>";
-          const sol = document.getElementById("solution").value.trim();
-          const soli= document.getElementById("solutionImageURL").value.trim();
-          html += sol ? `<p>${sol}</p>`
-                      : soli? `<img src="${soli}" style="max-width:100%"/>`
-                             : "<p><em>None</em></p>";
-          document.getElementById("previewContent").innerHTML = html;
-          previewModal.style.display = "flex";
-        });
+      // Chapters: batch→series, series→subjects
+      document.getElementById("chapterBatch").addEventListener("change", e => {
+        loadChapterSeries(e.target.value);
+        document.getElementById("chapterSubject").innerHTML = `<option value="">--Select Subject--</option>`;
+      });
+      document.getElementById("chapterSeries").addEventListener("change", e => {
+        loadSubjects(e.target.value, "chapterSubject");
+      });
 
-      // Submit Question
-      document.getElementById("question-form")
-        .addEventListener("submit", async e => {
-          e.preventDefault();
-          const series = document.getElementById("testSeries").value;
-          const subj   = document.getElementById("subject").value;
-          const batch  = document.getElementById("questionBatch").value;
-          if (!series || !subj || !batch)
-            return alert("Select Batch, series & subject");
+      // Submit Chapter
+      document.getElementById("chapter-form").addEventListener("submit", async e => {
+        e.preventDefault();
+        const series  = document.getElementById("chapterSeries").value;
+        const subject = document.getElementById("chapterSubject").value;
+        const name    = document.getElementById("chapterName").value.trim();
+        if (!series||!subject||!name) return alert("All fields required");
+        const docRef = doc(db, "Chapters", series, "Subjects", subject);
+        await updateDoc(docRef, { chapters: arrayUnion(name) })
+          .catch(async () => { await setDoc(docRef, { chapters:[name] }); });
+        alert(`Chapter "${name}" added`);
+        document.getElementById("chapterName").value = "";
+        loadChapters();
+      });
 
-          const data = {
-            batch,
-            question: document.getElementById("question").value.trim() || "",
-            questionImage: document.getElementById("questionImageURL").value.trim() || "",
-            questionType: document.getElementById("questionType").value,
-            solution: document.getElementById("solution").value.trim() || "",
-            solutionImage: document.getElementById("solutionImageURL").value.trim() || "",
-            addedAt: serverTimestamp()
-          };
-          if (data.questionType === "MCQ") {
-            data.options = ["optionA","optionB","optionC","optionD"]
-              .map(id => document.getElementById(id).value.trim());
-            data.correctAnswer = document.getElementById("correctAnswer").value;
-            if (!data.correctAnswer) return alert("Pick correct answer");
-          }
-          if (data.questionType === "Integer") {
-            data.answer = document.getElementById("integerAnswer").value.trim();
-            if (!data.answer) return alert("Enter integer answer");
-          }
-          await addDoc(collection(db, "Questions", series, subj), data);
-          alert("Question added!");
-          e.target.reset();
-        });
-
-      // Test Preview Tab
-      async function loadTestPreview() {
-        const cont = document.getElementById("testPreviewContainer");
-        cont.innerHTML = "";
-        const snaps = await getDocs(collection(db, "Questions"));
-        const now   = new Date();
-        snaps.forEach(d => {
-          const data  = d.data();
-          const card  = document.createElement("div");
-          card.className = "test-card";
-          const sched = data.scheduledAt && new Date(data.scheduledAt.seconds * 1000);
-          let status = "", action = "";
-          if (data.published) {
-            status = `<p style="color:green;font-weight:600;">Pub</p>`;
-            action = `<button onclick="deleteTest('${d.id}')">Delete</button>`;
-          } else if (sched && now < sched) {
-            status = `<p style="color:orange;font-weight:600;">Sched</p>`;
-            action = `<button disabled>Not Live</button>`;
-          } else {
-            status = `<p style="color:blue;font-weight:600;">Ready</p>`;
-            action = `<button onclick="sendTest('${d.id}')">Send</button>`;
-          }
-          card.innerHTML = `
-            <div>
-              <h3>${d.id}</h3>
-              <p>Batch: ${data.batch || "–"}</p>
-              <p>Dur: ${data.testDuration} min</p>
-              <p>Sub: ${data.subjects.join(", ")}</p>
-              ${sched ? `<p>Schedule: ${sched.toLocaleString()}</p>` : ""}
-              ${status}
-            </div>
-            <div class="btn-group">
-              <button onclick="previewTest('${d.id}')">Preview</button>
-              ${action}
-            </div>
-          `;
-          cont.appendChild(card);
-        });
-      }
-
+      // Test actions
       window.previewTest = id => window.location.href = `test_series_detail.html?test=${id}`;
-      window.sendTest = async id => {
+      window.sendTest    = async id => {
         if (!confirm("Send this test?")) return;
-        await updateDoc(doc(db, "Questions", id), { published: true, publishedAt: serverTimestamp() });
-        alert("Test sent!");
-        loadTestPreview();
+        await updateDoc(doc(db,"Questions",id),{published:true,publishedAt:serverTimestamp()});
+        alert("Test sent!"); loadTestPreview();
       };
-      window.deleteTest = async id => {
+      window.deleteTest  = async id => {
         if (!confirm("Delete test?")) return;
-        await deleteDoc(doc(db, "Questions", id));
-        alert("Deleted!");
-        loadTestPreview();
+        await deleteDoc(doc(db,"Questions",id));
+        alert("Deleted!"); loadTestPreview();
       };
 
       // Initialize

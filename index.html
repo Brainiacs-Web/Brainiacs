@@ -6,7 +6,7 @@
   <title>BRAINIACS - Test series</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* — your existing styles — */
+    /* --- Styles same as your check.html --- */
     :root {
       --primary-color: #009688;
       --secondary-color: #00796b;
@@ -51,7 +51,7 @@
     /* Modal */
     #keyModal {
       position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.6); display:none;
+      background:rgba(0,0,0,0.6); display:flex;
       align-items:center; justify-content:center; z-index:9999;
     }
     #keyModal .modal-content {
@@ -62,9 +62,6 @@
       margin-top:1em; padding:.6em 1.2em; font-size:1rem; font-weight:600;
       background:var(--primary-color); color:var(--white);
       border:none; border-radius:4px; cursor:pointer;
-    }
-    #keyModal button:disabled {
-      opacity:.6; cursor:default;
     }
   </style>
 </head>
@@ -79,58 +76,24 @@
     <div class="flash-card" data-name="prayas">Prayas Jee</div>
   </div>
 
-  <!-- Blocking modal -->
+  <!-- Modal -->
   <div id="keyModal">
     <div class="modal-content">
       <h2>Access Key Required</h2>
-      <p>You must generate a 12-digit access key to continue.</p>
-      <button id="generateKeyBtn">Generate Key</button>
+      <p>Click the button below to continue.</p>
+      <button id="continueBtn">Continue</button>
     </div>
   </div>
 
   <script>
-    const TWO_MIN = 2*60*1000;
-    const ONE_DAY = 24*60*60*1000;
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // — NEW: skip modal entirely if demo page was already visited —
-      if ( localStorage.getItem('visitedDemoPage') ) {
-        return;
-      }
-
-      const key      = localStorage.getItem('accessKey');
-      const expiry   = parseInt(localStorage.getItem('keyExpiry')||'0',10);
-      const startTs  = parseInt(localStorage.getItem('keyStart')||'0',10);
-      const now      = Date.now();
-
-      // 1) if valid key → nothing
-      if (key && now < expiry) return;
-
-      // 2) if timer in progress (<2 min since keyStart) → do nothing (no modal)
-      if (startTs && (now - startTs) < TWO_MIN) return;
-
-      // 3) else → show modal
-      showKeyModal();
+    // Modal button → redirect to check.html
+    document.getElementById('continueBtn').addEventListener('click', () => {
+      window.location.href = 'check.html';
     });
 
-    function showKeyModal() {
-      const modal = document.getElementById('keyModal');
-      const btn   = document.getElementById('generateKeyBtn');
-      modal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-
-      // block Esc
-      window.addEventListener('keydown', e => { if (e.key==='Escape') e.preventDefault(); });
-
-      btn.addEventListener('click', () => {
-        // immediately redirect to check.html
-        window.location.href = 'check.html';
-      });
-    }
-
     // flash-card navigation
-    document.querySelectorAll('.flash-card').forEach(card=>{
-      card.addEventListener('click', ()=>{
+    document.querySelectorAll('.flash-card').forEach(card => {
+      card.addEventListener('click', () => {
         const url = {
           arjuna:  'Arjunajeetests.html',
           lakshya: 'Lakshyajeetests.html',

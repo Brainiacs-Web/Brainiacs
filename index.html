@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BRAINIACS</title>
+  <title>BRAINIACS Flash Cards</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* — your existing styles — */
     :root {
       --primary-color: #009688;
       --secondary-color: #00796b;
-      --accent-color: #ff5722;
       --light-bg: #e0f2f1;
       --white: #ffffff;
       --text-color: #333333;
@@ -18,68 +18,60 @@
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
-      margin: 0;
-      padding: 40px 20px;
+      margin: 0; padding: 40px 20px;
       font-family: "Poppins", sans-serif;
       background: linear-gradient(135deg, var(--light-bg), var(--white));
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       color: var(--text-color);
     }
-    h1 {
-      font-size: 3.5rem;
-      margin-bottom: 0.2em;
-      color: var(--primary-color);
-      text-shadow: 1px 1px 2px var(--card-shadow);
-    }
-    .subtitle {
-      font-weight: 300;
-      margin-bottom: 30px;
-      color: var(--secondary-color);
-      opacity: 0.85;
-    }
-    .flash-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 24px;
-      width: 100%;
-      max-width: 800px;
-    }
+    h1 { font-size: 3.5rem; color: var(--primary-color); text-shadow:1px 1px 2px var(--card-shadow); }
+    .subtitle { font-weight:300; color:var(--secondary-color); margin-bottom:30px; opacity:.85; }
+    .flash-container { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:24px; width:100%; max-width:800px; }
     .flash-card {
-      background: var(--white);
-      border-radius: 20px;
-      padding: 30px 20px;
-      text-align: center;
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: var(--primary-color);
-      box-shadow: 0 4px 12px var(--card-shadow);
-      cursor: pointer;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: bounceIn 0.6s ease forwards;
-      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+      background:var(--white); border-radius:20px; padding:30px 20px;
+      text-align:center; font-size:1.3rem; font-weight:600; color:var(--primary-color);
+      box-shadow:0 4px 12px var(--card-shadow); cursor:pointer;
+      opacity:0; transform:translateY(20px);
+      animation:bounceIn 0.6s ease forwards; transition:transform .3s,box-shadow .3s,background .3s,color .3s;
     }
-    .flash-card:nth-child(2) { animation-delay: 0.15s; }
-    .flash-card:nth-child(3) { animation-delay: 0.3s; }
+    .flash-card:nth-child(2){animation-delay:.15s;}
+    .flash-card:nth-child(3){animation-delay:.3s;}
     .flash-card:hover {
-      transform: translateY(-6px) scale(1.03);
-      box-shadow: 0 8px 20px var(--card-shadow);
-      background: var(--hover-bg);
-      color: var(--white);
+      transform:translateY(-6px) scale(1.03);
+      box-shadow:0 8px 20px var(--card-shadow);
+      background:var(--hover-bg); color:var(--white);
     }
     @keyframes bounceIn {
-      0%   { opacity: 0; transform: translateY(40px) scale(0.95); }
-      60%  { opacity: 1; transform: translateY(-10px) scale(1.02); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+      0%   { opacity:0; transform:translateY(40px) scale(.95); }
+      60%  { opacity:1; transform:translateY(-10px) scale(1.02); }
+      100% { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    /* Modal */
+    #keyModal {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.6); display:none;
+      align-items:center; justify-content:center; z-index:9999;
+    }
+    #keyModal .modal-content {
+      background:var(--white); padding:2em; border-radius:8px;
+      text-align:center; box-shadow:0 4px 12px var(--card-shadow);
+    }
+    #keyModal button {
+      margin-top:1em; padding:.6em 1.2em; font-size:1rem; font-weight:600;
+      background:var(--primary-color); color:var(--white);
+      border:none; border-radius:4px; cursor:pointer;
+    }
+    #keyModal button:disabled {
+      opacity:.6; cursor:default;
     }
   </style>
 </head>
 <body>
 
   <h1>BRAINIACS</h1>
+  <div class="subtitle">Your memory, upgraded.</div>
 
   <div class="flash-container">
     <div class="flash-card" data-name="arjuna">Arjuna Jee</div>
@@ -87,12 +79,56 @@
     <div class="flash-card" data-name="prayas">Prayas Jee</div>
   </div>
 
+  <!-- Blocking modal -->
+  <div id="keyModal">
+    <div class="modal-content">
+      <h2>Access Key Required</h2>
+      <p>You must generate a 12-digit access key to continue.</p>
+      <button id="generateKeyBtn">Generate Key</button>
+    </div>
+  </div>
+
   <script>
-    document.querySelectorAll('.flash-card').forEach(card => {
-      card.addEventListener('click', () => {
+    const TWO_MIN = 2*60*1000;
+    const ONE_DAY = 24*60*60*1000;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const key      = localStorage.getItem('accessKey');
+      const expiry   = parseInt(localStorage.getItem('keyExpiry')||'0',10);
+      const startTs  = parseInt(localStorage.getItem('keyStart')||'0',10);
+      const now      = Date.now();
+
+      // 1) if valid key → nothing
+      if (key && now < expiry) return;
+
+      // 2) if timer in progress (<2 min since keyStart) → do nothing (no modal)
+      if (startTs && (now - startTs) < TWO_MIN) return;
+
+      // 3) else → show modal
+      showKeyModal();
+    });
+
+    function showKeyModal() {
+      const modal = document.getElementById('keyModal');
+      const btn   = document.getElementById('generateKeyBtn');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+
+      // block Esc
+      window.addEventListener('keydown', e => { if (e.key==='Escape') e.preventDefault(); });
+
+      btn.addEventListener('click', () => {
+        // immediately redirect to check.html
+        window.location.href = 'check.html';
+      });
+    }
+
+    // flash-card navigation
+    document.querySelectorAll('.flash-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
         const url = {
           arjuna:  'Arjunajeetests.html',
-          lakshya: 'lakshyajeetests.html',
+          lakshya: 'Lakshyajeetests.html',
           prayas:  'prayasjeetests.html'
         }[card.dataset.name];
         if (url) window.location.href = url;

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generating Key...</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0f2f1, #ffffff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #009688;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generating your access key. Please wait...</h1>
+
+  <script>
+    // Generate 12-digit key
+    function generateKey(length = 12) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+    }
+
+    const key = generateKey();
+    localStorage.setItem('keyID', key);
+    localStorage.setItem('keyTimestamp', Date.now());
+
+    // Redirect after short delay (or immediately)
+    setTimeout(() => {
+      window.location.href = 'https://bharatlinks.com/Hjn2usE4';
+    }, 1000); // 1 second delay for UX, optional
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BRAINIACS – Access Required</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary:   #009688;
+      --secondary: #00796b;
+      --light:     #e0f2f1;
+      --text:      #333;
+      --shadow:    rgba(0,0,0,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, var(--light), #fff);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5em;
+      color: var(--primary);
+    }
+    .btn {
+      font-size: 1.1rem;
+      padding: 0.8em 1.6em;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      transition: background 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover {
+      background: var(--secondary);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Kindly generate your key before moving forward</h2>
+  <button class="btn" onclick="window.location.href='key.html'">
+    Generate key
+  </button>
+
+</body>
+</html>

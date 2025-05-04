@@ -76,6 +76,7 @@
       margin-bottom:3em;
     }
     .flash-card {
+      position:relative;
       background:#fff;border-radius:20px;padding:30px 20px;
       text-align:center;font-size:1.3rem;font-weight:600;
       color:var(--primary);box-shadow:0 4px 12px var(--shadow);
@@ -92,6 +93,18 @@
       0%   {opacity:0;transform:translateY(40px) scale(.95);}
       60%  {opacity:1;transform:translateY(-10px) scale(1.02);}
       100% {opacity:1;transform:translateY(0) scale(1);}
+    }
+
+    /* static "Ad Free" label */
+    .ad-free {
+      position:absolute;
+      top:10px; right:10px;
+      background: var(--toast-accent);
+      color: #333;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -158,7 +171,7 @@
       }
     });
 
-    // Helper: redirect to target if key exists, else to visit.html
+    // Guard function
     function redirectOrVisit(targetUrl) {
       if (localStorage.getItem('keyID')) {
         window.location.href = targetUrl;
@@ -170,13 +183,13 @@
     // Batch data
     const batches = {
       jee: [
-        { label: 'Arjuna Jee', url: 'Arjunajeetests.html' },
-        { label: 'Lakshya Jee', url: 'Lakshyajeetests.html' },
-        { label: 'Prayas Jee', url: 'prayasjeetests.html' }
+        { label: 'Arjuna Jee',      url: 'Arjunajeetests.html',   adFree: true },
+        { label: 'Lakshya Jee',     url: 'Lakshyajeetests.html' },
+        { label: 'Prayas Jee',      url: 'prayasjeetests.html' }
       ],
       neet: [
-        { label: 'Arjuna Neet', url: 'Arjunaneettests.html' },
-        { label: 'Lakshya Neet', url: 'Lakshyaneettests.html' }
+        { label: 'Arjuna Neet',     url: 'Arjunaneettests.html' },
+        { label: 'Lakshya Neet',    url: 'Lakshyaneettests.html' }
       ]
     };
 
@@ -189,7 +202,19 @@
         card.className = 'flash-card';
         card.textContent = b.label;
         card.style.animationDelay = (i * 0.15) + 's';
-        card.onclick = () => redirectOrVisit(b.url);
+
+        if (b.adFree) {
+          const badge = document.createElement('div');
+          badge.className = 'ad-free';
+          badge.textContent = 'Ad Free';
+          card.appendChild(badge);
+          // direct link for Arjuna Jee
+          card.onclick = () => window.location.href = b.url;
+        } else {
+          // guarded link for others
+          card.onclick = () => redirectOrVisit(b.url);
+        }
+
         fc.appendChild(card);
       });
     }
@@ -198,7 +223,7 @@
     document.getElementById('jeeBtn').addEventListener('click', () => render('jee'));
     document.getElementById('neetBtn').addEventListener('click', () => render('neet'));
 
-    // Initial load: show JEE
+    // Initial load: show JEE batches
     render('jee');
   </script>
 

@@ -94,18 +94,6 @@
       60%  {opacity:1;transform:translateY(-10px) scale(1.02);}
       100% {opacity:1;transform:translateY(0) scale(1);}
     }
-
-    /* static "Ad Free" label */
-    .ad-free {
-      position:absolute;
-      top:10px; right:10px;
-      background: var(--toast-accent);
-      color: #333;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
   </style>
 </head>
 <body>
@@ -159,7 +147,7 @@
       toast.querySelector('.progress').addEventListener('animationend', hideToast);
     });
 
-    // Lock-icon logic
+    // Lock‐icon logic
     const lockIcon = document.getElementById('lockIcon');
     if (localStorage.getItem('keyID')) {
       lockIcon.src = 'https://i.postimg.cc/0QwTrb6k/padlock-unlock.png';
@@ -180,16 +168,16 @@
       }
     }
 
-    // Batch data
+    // Batch data (no adFree flag on Arjuna Jee)
     const batches = {
       jee: [
-        { label: 'Arjuna Jee',      url: 'Arjunajeetests.html',   adFree: true },
-        { label: 'Lakshya Jee',     url: 'Lakshyajeetests.html' },
-        { label: 'Prayas Jee',      url: 'prayasjeetests.html' }
+        { label: 'Arjuna Jee',    url: 'Arjunajeetests.html'   },
+        { label: 'Lakshya Jee',   url: 'Lakshyajeetests.html'   },
+        { label: 'Prayas Jee',    url: 'prayasjeetests.html'    }
       ],
       neet: [
-        { label: 'Arjuna Neet',     url: 'Arjunaneettests.html' },
-        { label: 'Lakshya Neet',    url: 'Lakshyaneettests.html' }
+        { label: 'Arjuna Neet',   url: 'Arjunaneettests.html'   },
+        { label: 'Lakshya Neet',  url: 'Lakshyaneettests.html'  }
       ]
     };
 
@@ -203,23 +191,13 @@
         card.textContent = b.label;
         card.style.animationDelay = (i * 0.15) + 's';
 
-        if (b.adFree) {
-          const badge = document.createElement('div');
-          badge.className = 'ad-free';
-          badge.textContent = 'Ad Free';
-          card.appendChild(badge);
-          // direct link for Arjuna Jee
-          card.onclick = () => window.location.href = b.url;
-        } else {
-          // guarded link for others
-          card.onclick = () => redirectOrVisit(b.url);
-        }
+        // All cards now use the guarded redirect
+        card.onclick = () => redirectOrVisit(b.url);
 
         fc.appendChild(card);
       });
     }
 
-    // Wire up exam selectors
     document.getElementById('jeeBtn').addEventListener('click', () => render('jee'));
     document.getElementById('neetBtn').addEventListener('click', () => render('neet'));
 

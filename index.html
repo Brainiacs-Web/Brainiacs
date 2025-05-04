@@ -57,9 +57,7 @@
     }
     #toast.hide { animation:slideUp .5s forwards; }
     #toast .icon { font-size:1.4em; color:var(--toast-accent); }
-    #toast .close {
-      margin-left:auto;cursor:pointer;font-size:1.2em;line-height:1;
-    }
+    #toast .close { margin-left:auto;cursor:pointer;font-size:1.2em;line-height:1; }
     #toast .progress {
       position:absolute;bottom:0;left:0;height:4px;
       background:var(--toast-accent);width:100%;
@@ -120,28 +118,27 @@
   <div class="flash-container" id="flashContainer"></div>
 
   <script>
-    const EXP_MS = 12*60*60*1000;
+    const EXP_MS = 12 * 60 * 60 * 1000;
 
-    // expire old key
+    // Expire old key
     const ts = localStorage.getItem('keyTimestamp');
-    if (ts && Date.now() - +ts > EXP_MS) {
+    if (ts && (Date.now() - +ts > EXP_MS)) {
       localStorage.removeItem('keyID');
       localStorage.removeItem('keyTimestamp');
     }
 
-    // toast setup
+    // Toast logic
     const toast = document.getElementById('toast');
     const toastText = document.getElementById('toastText');
     function hideToast(){ toast.classList.add('hide'); }
 
-    window.addEventListener('load', ()=>{
+    window.addEventListener('load', () => {
       const key = localStorage.getItem('keyID');
       if (key) {
-        // remaining time
-        const rem = Math.max(EXP_MS - (Date.now() - +localStorage.getItem('keyTimestamp')),0);
-        const hrs = Math.floor(rem/3600000);
-        const mins = Math.floor((rem%3600000)/60000);
-        toastText.textContent = `Welcome to Brainiacs! Your key is valid for ${hrs} hrs ${mins} min.`;
+        const rem = Math.max(EXP_MS - (Date.now() - +localStorage.getItem('keyTimestamp')), 0);
+        const hrs = Math.floor(rem / 3600000);
+        const mins = Math.floor((rem % 3600000) / 60000);
+        toastText.textContent = `Welcome! Your key is valid for ${hrs} hrs ${mins} min.`;
       } else {
         toastText.textContent = 'Please generate your access key to unlock all tests.';
       }
@@ -149,7 +146,7 @@
       toast.querySelector('.progress').addEventListener('animationend', hideToast);
     });
 
-    // lock‑icon logic
+    // Lock-icon logic
     const lockIcon = document.getElementById('lockIcon');
     if (localStorage.getItem('keyID')) {
       lockIcon.src = 'https://i.postimg.cc/0QwTrb6k/padlock-unlock.png';
@@ -161,32 +158,47 @@
       }
     });
 
-    // render batches
+    // Helper: redirect to target if key exists, else to visit.html
+    function redirectOrVisit(targetUrl) {
+      if (localStorage.getItem('keyID')) {
+        window.location.href = targetUrl;
+      } else {
+        window.location.href = 'visit.html';
+      }
+    }
+
+    // Batch data
     const batches = {
-      jee:[
-        {label:'Arjuna Jee',url:'Arjunajeetests.html'},
-        {label:'Lakshya Jee',url:'Lakshyajeetests.html'},
-        {label:'Prayas Jee',url:'prayasjeetests.html'}
+      jee: [
+        { label: 'Arjuna Jee', url: 'Arjunajeetests.html' },
+        { label: 'Lakshya Jee', url: 'Lakshyajeetests.html' },
+        { label: 'Prayas Jee', url: 'prayasjeetests.html' }
       ],
-      neet:[
-        {label:'Arjuna Neet',url:'Arjunaneettests.html'},
-        {label:'Lakshya Neet',url:'Lakshyaneettests.html'}
+      neet: [
+        { label: 'Arjuna Neet', url: 'Arjunaneettests.html' },
+        { label: 'Lakshya Neet', url: 'Lakshyaneettests.html' }
       ]
     };
+
+    // Render function
     const fc = document.getElementById('flashContainer');
-    function render(exam){
-      fc.innerHTML='';
-      batches[exam].forEach((b,i)=>{
-        const d=document.createElement('div');
-        d.className='flash-card';
-        d.textContent=b.label;
-        d.style.animationDelay=(i*0.15)+'s';
-        d.onclick=()=>location.href=b.url;
-        fc.appendChild(d);
+    function render(exam) {
+      fc.innerHTML = '';
+      batches[exam].forEach((b, i) => {
+        const card = document.createElement('div');
+        card.className = 'flash-card';
+        card.textContent = b.label;
+        card.style.animationDelay = (i * 0.15) + 's';
+        card.onclick = () => redirectOrVisit(b.url);
+        fc.appendChild(card);
       });
     }
-    document.getElementById('jeeBtn').onclick=()=>render('jee');
-    document.getElementById('neetBtn').onclick=()=>render('neet');
+
+    // Wire up exam selectors
+    document.getElementById('jeeBtn').addEventListener('click', () => render('jee'));
+    document.getElementById('neetBtn').addEventListener('click', () => render('neet'));
+
+    // Initial load: show JEE
     render('jee');
   </script>
 

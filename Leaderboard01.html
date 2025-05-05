@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Results Dashboard</title>
+  <!-- Poppins font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF + AutoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; font-family:"Poppins",sans-serif; }
+    body { background:#f0f4f8; color:#333; }
+    .container { max-width:1000px; margin:2rem auto; padding:0 1rem; }
+    h1 { text-align:center; margin-bottom:1rem; color:#007adf; }
+    button {
+      display:block;
+      margin:0 auto 1rem;
+      padding:0.6rem 1.2rem;
+      font-size:1rem;
+      background:#007adf;
+      color:white;
+      border:none;
+      border-radius:4px;
+      cursor:pointer;
+    }
+    button:hover { background:#005bb5; }
+
+    /* Summary cards */
+    .summary-cards {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:1rem;
+      margin-bottom:2rem;
+    }
+    .card {
+      background:white;
+      border-radius:8px;
+      padding:1rem;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      text-align:center;
+    }
+    .card h3 { font-size:1.2rem; margin-bottom:0.5rem; color:#007adf; }
+    .card p { font-size:1.5rem; font-weight:600; }
+
+    /* Chart */
+    #chart-container {
+      background:white;
+      padding:1rem;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom:2rem;
+    }
+    #scoreChart { max-height:400px; }
+
+    /* Leaderboard table */
+    .leaderboard {
+      overflow-x:auto;
+      background:white;
+      border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom:2rem;
+    }
+    table {
+      width:100%;
+      border-collapse:collapse;
+    }
+    th, td {
+      padding:0.75rem;
+      border-bottom:1px solid #eee;
+      text-align:center;
+    }
+    th {
+      background:#e9f3ff;
+      font-weight:600;
+      color:#007adf;
+    }
+    @media (max-width:600px) {
+      .card p { font-size:1.2rem; }
+      th, td { padding:0.5rem; font-size:0.9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Test Results Dashboard</h1>
+    <button id="loadBtn">Load Results</button>
+    <button id="downloadPdfBtn" style="display:none;">Download PDF</button>
+
+    <!-- Summary -->
+    <div id="summary" class="summary-cards" style="display:none;">
+      <div class="card"><h3>Total Participants</h3><p id="totalCount">0</p></div>
+      <div class="card"><h3>Average Score</h3><p id="avgScore">0</p></div>
+      <div class="card"><h3>Highest Score</h3><p id="highScore">0</p></div>
+      <div class="card"><h3>Lowest Score</h3><p id="lowScore">0</p></div>
+    </div>
+
+    <!-- Chart -->
+    <div id="chart-container" style="display:none;">
+      <canvas id="scoreChart"></canvas>
+    </div>
+
+    <!-- Leaderboard -->
+    <div id="leaderboard" class="leaderboard" style="display:none;"></div>
+  </div>
+
+ <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    getDocs,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+  // --- CONFIG + INIT ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
+    authDomain: "brainiacs-13a3f.firebaseapp.com",
+    projectId: "brainiacs-13a3f",
+    storageBucket: "brainiacs-13a3f.appspot.com",
+    messagingSenderId: "530382354851",
+    appId: "1:530382354851:web:f65bde4a1b3f86d75d8216"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // --- PARAMETERS ---
+  const testID    = "Short Practice Test-01";
+  const batchName = "Arjuna NEET";
+  const subjects  = ["Physics", "Chemistry", "Biology"];
+      // adjust this array if you have more/less subjects
+  const loadBtn   = document.getElementById("loadBtn");
+  const pdfBtn    = document.getElementById("downloadPdfBtn");
+
+  loadBtn.onclick = async () => {
+    loadBtn.textContent = "Loading…";
+    loadBtn.disabled    = true;
+    pdfBtn.style.display = "none";
+
+    try {
+      // 1) BUILD ANSWER-KEY FOR EACH SUBJECT
+      // ---------------------------------------------------
+      // We'll fetch all questions under /Questions/{testID}/{subject}
+      const questionMap = {};
+      for (let subj of subjects) {
+        questionMap[subj] = [];
+
+        // grab every question doc in that subject‐collection
+        const qSnap = await getDocs(
+          collection(db, "Questions", testID, subj)
+        );
+        if (qSnap.empty) {
+          console.warn(`No questions found for ${subj}`);
+        }
+        qSnap.forEach(docSnap => {
+          const data = docSnap.data() || {};
+          questionMap[subj].push({
+            id: docSnap.id,
+            // assume each question doc has a field `correctAnswer`
+            correct: (data.correctAnswer || "").trim().toUpperCase()
+          });
+        });
+      }
+
+      // 2) FETCH ALL USER RESPONSES
+      // ---------------------------------------------------
+      // Under /Tests/{testID}/Batches/{batchName}/Users
+      const usersSnap = await getDocs(
+        collection(db, "Tests", testID, "Batches", batchName, "Users")
+      );
+      if (usersSnap.empty) {
+        throw new Error("No users found in that batch");
+      }
+
+      // 3) SCORE EACH USER
+      // ---------------------------------------------------
+      const results = [];
+      usersSnap.forEach(uDoc => {
+        const resp = uDoc.data().subjects || {};
+        let totalScore = 0, correct = 0, wrong = 0, blank = 0;
+
+        for (let subj of subjects) {
+          const answers = questionMap[subj] || [];
+          answers.forEach(q => {
+            // user responses are stored under resp[subj][questionId].selectedAnswer
+            const sel = (
+              resp[subj]?.[q.id]?.selectedAnswer || ""
+            ).trim().toUpperCase();
+
+            if (!sel) {
+              blank++;
+            } else if (sel === q.correct) {
+              correct++;
+              totalScore += 4;
+            } else {
+              wrong++;
+              totalScore -= 1;
+            }
+          });
+        }
+
+        results.push({
+          user:    uDoc.id,
+          score:   totalScore,
+          correct,
+          wrong,
+          blank
+        });
+      });
+
+      // sort descending by score
+      results.sort((a, b) => b.score - a.score);
+
+      // 4) UPDATE THE DASHBOARD
+      // ---------------------------------------------------
+      // Summary cards
+      const total = results.length;
+      const avg   = (results.reduce((sum, r) => sum + r.score, 0)/total).toFixed(2);
+      const high  = results[0].score;
+      const low   = results[results.length-1].score;
+
+      document.getElementById("totalCount").textContent = total;
+      document.getElementById("avgScore").textContent   = avg;
+      document.getElementById("highScore").textContent  = high;
+      document.getElementById("lowScore").textContent   = low;
+      document.getElementById("summary").style.display  = "grid";
+
+      // Top-10 bar chart
+      const top10   = results.slice(0, 10);
+      const labels  = top10.map(r => r.user);
+      const data    = top10.map(r => r.score);
+      const ctx     = document.getElementById("scoreChart").getContext("2d");
+
+      // destroy previous chart if it exists
+      if (window._scoreChart) { window._scoreChart.destroy(); }
+
+      window._scoreChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{ label: 'Score', data }]
+        },
+        options: {
+          plugins: {
+            legend:{ display:false },
+            title:{ display:true, text:'Top 10 Scores' }
+          },
+          scales: { y:{ beginAtZero:true } }
+        }
+      });
+      document.getElementById("chart-container").style.display = "block";
+
+      // Full leaderboard
+      let html = `<table>
+        <thead><tr>
+          <th>Rank</th><th>User</th><th>Score</th>
+          <th>✔️</th><th>❌</th><th>–</th>
+        </tr></thead><tbody>`;
+
+      results.forEach((r, i) => {
+        html += `<tr>
+          <td>${i+1}</td>
+          <td>${r.user}</td>
+          <td>${r.score}</td>
+          <td>${r.correct}</td>
+          <td>${r.wrong}</td>
+          <td>${r.blank}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table>`;
+      const lb = document.getElementById("leaderboard");
+      lb.innerHTML     = html;
+      lb.style.display = "block";
+
+      // 5) ACTIVATE PDF DOWNLOAD
+      // ---------------------------------------------------
+      pdfBtn.style.display = "block";
+      pdfBtn.onclick = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(16);
+        doc.text(`Leaderboard: ${testID}`, 14, 20);
+        doc.setFontSize(12);
+        doc.text(`Batch: ${batchName}`, 14, 28);
+
+        const head = [['Rank','User','Score','Correct','Wrong','Blank']];
+        const body = results.map((r, i) => [
+          i+1, r.user, r.score, r.correct, r.wrong, r.blank
+        ]);
+
+        doc.autoTable({
+          startY: 36,
+          head: head,
+          body: body,
+          styles: { fontSize: 10, cellPadding: 2 },
+          headStyles: { fillColor: [0, 122, 223] }
+        });
+
+        doc.save(`${testID.replace(/\s+/g,'_')}_${batchName}_leaderboard.pdf`);
+      };
+
+    } catch (err) {
+      alert("Error: " + err.message);
+      console.error(err);
+    } finally {
+      loadBtn.disabled    = false;
+      loadBtn.textContent = "Load Results";
+    }
+  };
+</script>
+
+</body>
+  </html>
+  

@@ -722,15 +722,34 @@
       updateProgress();
     };
 
-    function goToPrevious() {
+   window.goToPrevious = function () {
       if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
         displayQuestion();
-        updateNavInfo();
         updateProgress();
+      } else {
+        let currentSubjectIndex = subjects.indexOf(currentSubject);
+        if (currentSubjectIndex > 0) {
+          currentSubject = subjects[currentSubjectIndex - 1];
+          const prevCount = parseInt(localStorage.getItem(`questionCount_${currentSubject}`)) || 0;
+          if (!questionsBySubject[currentSubject]) {
+            fetchQuestions(currentSubject).then(() => {
+              currentQuestionIndex = (parseInt(localStorage.getItem(`questionCount_${currentSubject}`)) || 0) - 1;
+              displayQuestion();
+              updateProgress();
+            });
+            return;
+          } else {
+            currentQuestionIndex = (questionsBySubject[currentSubject].length) - 1;
+          }
+          displayQuestion();
+          updateProgress();
+          updateSubjectButtons();
+        } else {
+          alert("This is the first question!");
+        }
       }
-    }
-
+    }; 
     function updateNavInfo() {
       document.getElementById("current-subject").textContent = currentSubject;
       document.getElementById("current-chapter").textContent = currentChapter || "--";

@@ -8,6 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF + AutoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <style>
     * { box-sizing:border-box; margin:0; padding:0; font-family:"Poppins",sans-serif; }
     body { background:#f0f4f8; color:#333; }
@@ -15,7 +18,7 @@
     h1 { text-align:center; margin-bottom:1rem; color:#007adf; }
     button {
       display:block;
-      margin:0 auto 2rem;
+      margin:0 auto 1rem;
       padding:0.6rem 1.2rem;
       font-size:1rem;
       background:#007adf;
@@ -40,15 +43,8 @@
       box-shadow:0 2px 6px rgba(0,0,0,0.1);
       text-align:center;
     }
-    .card h3 {
-      font-size:1.2rem;
-      margin-bottom:0.5rem;
-      color:#007adf;
-    }
-    .card p {
-      font-size:1.5rem;
-      font-weight:600;
-    }
+    .card h3 { font-size:1.2rem; margin-bottom:0.5rem; color:#007adf; }
+    .card p { font-size:1.5rem; font-weight:600; }
 
     /* Chart */
     #chart-container {
@@ -66,6 +62,7 @@
       background:white;
       border-radius:8px;
       box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom:2rem;
     }
     table {
       width:100%;
@@ -91,25 +88,14 @@
   <div class="container">
     <h1>Test Results Dashboard</h1>
     <button id="loadBtn">Load Results</button>
+    <button id="downloadPdfBtn" style="display:none;">Download PDF</button>
 
     <!-- Summary -->
     <div id="summary" class="summary-cards" style="display:none;">
-      <div class="card">
-        <h3>Total Participants</h3>
-        <p id="totalCount">0</p>
-      </div>
-      <div class="card">
-        <h3>Average Score</h3>
-        <p id="avgScore">0</p>
-      </div>
-      <div class="card">
-        <h3>Highest Score</h3>
-        <p id="highScore">0</p>
-      </div>
-      <div class="card">
-        <h3>Lowest Score</h3>
-        <p id="lowScore">0</p>
-      </div>
+      <div class="card"><h3>Total Participants</h3><p id="totalCount">0</p></div>
+      <div class="card"><h3>Average Score</h3><p id="avgScore">0</p></div>
+      <div class="card"><h3>Highest Score</h3><p id="highScore">0</p></div>
+      <div class="card"><h3>Lowest Score</h3><p id="lowScore">0</p></div>
     </div>
 
     <!-- Chart -->
@@ -118,9 +104,7 @@
     </div>
 
     <!-- Leaderboard -->
-    <div id="leaderboard" class="leaderboard" style="display:none; margin-bottom:2rem;">
-      <!-- injected table -->
-    </div>
+    <div id="leaderboard" class="leaderboard" style="display:none;"></div>
   </div>
 
   <script type="module">
@@ -128,7 +112,6 @@
     import { getFirestore, collection, getDocs, getDoc, doc }
       from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // — your Firebase config —
     const firebaseConfig = {
       apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
       authDomain: "brainiacs-13a3f.firebaseapp.com",
@@ -140,22 +123,21 @@
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    // Hard‑coded path
     const testID    = "Short Practice test - 01";
     const batchName = "Arjuna JEE";
+    const loadBtn   = document.getElementById("loadBtn");
+    const pdfBtn    = document.getElementById("downloadPdfBtn");
 
-    document.getElementById("loadBtn").onclick = async () => {
-      const outBtn = document.getElementById("loadBtn");
-      outBtn.textContent = "Loading…";
-      outBtn.disabled = true;
+    loadBtn.onclick = async () => {
+      loadBtn.textContent = "Loading…";
+      loadBtn.disabled    = true;
+      pdfBtn.style.display = "none";
 
       try {
-        // 1) Load question bank → get correct answers
+        // 1) Fetch question key
         const qSnap = await getDoc(doc(db, "Questions", testID));
         if (!qSnap.exists()) throw new Error(`Questions/${testID} not found`);
         const { subjects = [], chapters = {} } = qSnap.data();
-
-        // build map: subject → [ { id, correct } ]
         const questionMap = {};
         for (let subj of subjects) {
           questionMap[subj] = [];
@@ -165,90 +147,73 @@
               ? ["Questions", testID, subj, chap]
               : ["Questions", testID, subj];
             const snap = await getDocs(collection(db, ...path));
-            snap.forEach(d=>{
+            snap.forEach(d => {
               questionMap[subj].push({
                 id: d.id,
-                correct: (d.data().correctAnswer||"").trim().toUpperCase()
+                correct: (d.data().correctAnswer || "").trim().toUpperCase()
               });
             });
           }
         }
 
-        // 2) Load all users
+        // 2) Fetch users
         const usersSnap = await getDocs(
           collection(db, "Tests", testID, "Batches", batchName, "Users")
         );
         if (usersSnap.empty) throw new Error("No users found in that batch");
 
-        // 3) Score each user (+4/–1/0)
+        // 3) Score them
         const results = [];
         usersSnap.forEach(uDoc => {
           const resp = uDoc.data().subjects || {};
           let score=0, c=0, w=0, u=0;
           subjects.forEach(subj => {
             questionMap[subj].forEach(q => {
-              const key    = q.chapter ? `${subj}_${q.chapter}` : subj;
-              const sel    = (resp[key]?.[q.id]?.selectedAnswer||"")
-                               .trim().toUpperCase();
-              if (!sel)       u++;
+              const key = q.chapter ? `${subj}_${q.chapter}` : subj;
+              const sel = (resp[key]?.[q.id]?.selectedAnswer || "")
+                            .trim().toUpperCase();
+              if (!sel)           u++;
               else if (sel===q.correct) { c++; score+=4; }
-              else             { w++; score-=1; }
+              else                 { w++; score-=1; }
             });
           });
           results.push({ user:uDoc.id, score, correct:c, wrong:w, blank:u });
         });
+        results.sort((a,b) => b.score - a.score);
 
-        // sort descending
-        results.sort((a,b)=> b.score - a.score);
-
-        // === Summary stats ===
+        // Summary
         const total = results.length;
         const avg   = (results.reduce((s,r)=>s+r.score,0)/total).toFixed(2);
         const high  = results[0].score;
         const low   = results[results.length-1].score;
-
         document.getElementById("totalCount").textContent = total;
         document.getElementById("avgScore").textContent   = avg;
         document.getElementById("highScore").textContent  = high;
         document.getElementById("lowScore").textContent   = low;
         document.getElementById("summary").style.display  = "grid";
 
-        // === Chart (top 10) ===
-        const top = results.slice(0,10);
+        // Chart
+        const top    = results.slice(0,10);
         const labels = top.map(r=>r.user);
         const data   = top.map(r=>r.score);
         const ctx    = document.getElementById("scoreChart").getContext("2d");
         new Chart(ctx, {
           type: 'bar',
-          data: {
-            labels,
-            datasets: [{
-              label: 'Score',
-              data,
-              backgroundColor: '#56b4ef'
-            }]
-          },
+          data: { labels, datasets:[{ label:'Score', data, backgroundColor:'#56b4ef' }] },
           options: {
-            plugins: {
-              legend: { display: false },
-              title: { display: true, text: 'Top 10 Scores' }
-            },
-            scales: {
-              y: { beginAtZero: true }
-            }
+            plugins: { legend:{display:false}, title:{display:true,text:'Top 10 Scores'} },
+            scales: { y:{beginAtZero:true} }
           }
         });
         document.getElementById("chart-container").style.display = "block";
 
-        // === Leaderboard table ===
+        // Leaderboard HTML
         let html = `<table>
-          <thead>
-            <tr>
-              <th>Rank</th><th>User</th><th>Score</th>
-              <th>✔️</th><th>❌</th><th>–</th>
-            </tr>
-          </thead><tbody>`;
-        results.forEach((r,i)=>{
+          <thead><tr>
+            <th>Rank</th><th>User</th><th>Score</th>
+            <th>✔️</th><th>❌</th><th>–</th>
+          </tr></thead><tbody>`;
+        results.forEach((r,i) => {
           html += `<tr>
             <td>${i+1}</td>
             <td>${r.user}</td>
@@ -262,12 +227,38 @@
         document.getElementById("leaderboard").innerHTML = html;
         document.getElementById("leaderboard").style.display = "block";
 
+        // PDF button setup
+        pdfBtn.style.display = "block";
+        pdfBtn.onclick = () => {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          doc.setFontSize(16);
+          doc.text(`Leaderboard: ${testID}`, 14, 20);
+          doc.setFontSize(12);
+          doc.text(`Batch: ${batchName}`, 14, 28);
+
+          const head = [['Rank','User','Score','Correct','Wrong','Blank']];
+          const body = results.map((r,i)=>
+            [i+1, r.user, r.score, r.correct, r.wrong, r.blank]
+          );
+
+          doc.autoTable({
+            startY: 36,
+            head: head,
+            body: body,
+            styles: { fontSize: 10, cellPadding: 2 },
+            headStyles: { fillColor: [0, 122, 223] }
+          });
+
+          doc.save(`${testID.replace(/\s+/g,'_')}_${batchName}_leaderboard.pdf`);
+        };
+
       } catch(err) {
         alert("Error: " + err.message);
         console.error(err);
       } finally {
-        outBtn.disabled = false;
-        outBtn.textContent = "Load Results";
+        loadBtn.disabled = false;
+        loadBtn.textContent = "Load Results";
       }
     };
   </script>

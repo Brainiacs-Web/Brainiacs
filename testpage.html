@@ -390,6 +390,33 @@
   font-size: 1rem;
 }
 
+#subject-buttons {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  gap: 8px;
+  padding: 10px 12px;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+#subject-buttons button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+#content {
+  overflow: visible;
+}
+
+#subject-buttons::-webkit-scrollbar {
+  height: 6px;
+}
+
+
+
 </style>
 </head>
 <body>
@@ -525,6 +552,7 @@
         btn.onclick = () => loadSubject(sub);
         sCont.appendChild(btn);
       });
+      sCont.scrollLeft = 0;
       currentSubject = subjectsArray[0] || "";
       updateSubjectButtons();
 

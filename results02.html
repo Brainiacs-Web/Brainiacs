@@ -27,112 +27,110 @@
       color: #333;
       overflow-x: hidden;
     }
-    /* Top Header Container */
+    /* Top Header */
     .top-container {
       width: 100%;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      padding: 20px 30px;
-      margin-top: 10px;
+      padding: 25px 30px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       display: flex;
       justify-content: center;
       align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     .top-container h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       color: #007adf;
+      font-weight: 600;
     }
     /* Main Container */
     .container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 25px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
     }
     /* Total Result Summary */
     #totalResult {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
     #totalResult h2 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       color: #007adf;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .stats {
-      font-size: 1.1rem;
-      margin: 5px 0;
+      font-size: 1.15rem;
+      margin: 4px 0;
       color: #444;
     }
-    /* Overall Analysis Chart */
-    #overallChart {
+    /* Charts */
+    canvas {
       max-width: 400px;
-      margin: 20px auto;
+      margin: 25px auto;
+      display: block;
     }
-    /* Horizontal Section Buttons (Subject Selector) */
+    /* Subject Buttons */
     #buttonsContainer {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 12px;
+      margin: 30px 0 20px;
     }
     #buttonsContainer button {
-      padding: 10px 20px;
+      padding: 10px 22px;
       font-size: 1rem;
+      font-weight: 500;
       border: 2px solid #56b4ef;
-      background: white;
+      background: #fff;
       color: #56b4ef;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
     }
     #buttonsContainer button.active-button {
       background: #56b4ef;
-      color: white;
+      color: #fff;
     }
     #buttonsContainer button:hover {
-      opacity: 0.9;
+      opacity: 0.92;
     }
-    /* Section Result Details */
+    /* Section Result */
     #sectionResult {
       margin-top: 20px;
     }
-    /* Subject Analysis Chart */
-    #subjectChart {
-      max-width: 400px;
-      margin: 20px auto;
-    }
     /* Question Box */
     .question-box {
-      text-align: left;
-      margin: 20px 0;
-      padding: 15px;
+      background: #f9fbfe;
       border-radius: 10px;
-      background: #f7faff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      padding: 18px;
+      margin-bottom: 25px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
     }
     .question-box p {
+      font-size: 1.05rem;
       margin-bottom: 10px;
-      font-size: 1.1rem;
     }
     .options {
       list-style: none;
       padding: 0;
     }
     .option-box {
-      padding: 12px;
+      padding: 12px 16px;
       margin: 6px 0;
       border-radius: 6px;
       border: 2px solid #ccc;
       font-size: 1rem;
-      font-weight: bold;
-      background: white;
-      transition: 0.3s ease;
-      cursor: default;
+      font-weight: 500;
+      background: #fff;
+      transition: all 0.3s ease;
     }
     .option-box.correct {
       background: #d4edda !important;
@@ -140,50 +138,55 @@
       color: #155724;
     }
     .option-box:hover {
-      background: #e9ecef;
+      background: #f1f1f1;
     }
-    .selected-answer {
+    .selected-answer,
+    .correct-answer {
       display: inline-block;
-      margin-top: 5px;
-      padding: 6px 10px;
-      border-radius: 5px;
-      font-weight: bold;
-      color: #fff;
+      margin-top: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
     }
     .selected-correct {
       background: #28a745;
+      color: #fff;
     }
     .selected-wrong {
       background: #dc3545;
+      color: #fff;
     }
     .correct-answer {
-      display: inline-block;
-      margin-top: 5px;
-      padding: 6px 10px;
-      border-radius: 5px;
-      font-weight: bold;
-      color: #155724;
       background: #d4edda;
+      color: #155724;
     }
     .solution {
-      margin-top: 10px;
-      font-style: italic;
+      margin-top: 12px;
+      padding: 12px;
       background: #f1f1f1;
-      padding: 10px;
-      border-left: 3px solid #007adf;
+      border-left: 4px solid #007adf;
+      font-style: italic;
     }
     /* Responsive */
     @media (max-width: 600px) {
       .container {
-        width: 95%;
-        padding: 15px;
+        width: 94%;
+        padding: 18px;
       }
-      #buttonsContainer button {
-        font-size: 0.9rem;
-        padding: 8px 16px;
+      .top-container h1 {
+        font-size: 1.7rem;
       }
       #totalResult h2 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+      }
+      #buttonsContainer {
+        flex-direction: column;
+        align-items: center;
+      }
+      #buttonsContainer button {
+        width: 100%;
+        font-size: 0.95rem;
       }
     }
   </style>
@@ -200,222 +203,200 @@
     <div id="totalResult">Loading results…</div>
     <canvas id="overallChart"></canvas>
     
-    <!-- Horizontal buttons for each subject -->
+    <!-- Subject selector buttons -->
     <div id="buttonsContainer"></div>
     
-    <!-- Subject-specific detailed results and analysis chart -->
+    <!-- Subject-specific details -->
     <div id="sectionResult">
       <p>Select a subject to view details.</p>
       <canvas id="subjectChart"></canvas>
     </div>
   </div>
   
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import {
-    getFirestore,
-    doc,
-    getDoc,
-    setDoc,
-    collection
-  } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-  // ——— Your Firebase config ———
-  const firebaseConfig = {
-    apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
-    authDomain: "brainiacs-13a3f.firebaseapp.com",
-    projectId: "brainiacs-13a3f",
-    storageBucket: "brainiacs-13a3f.firebasestorage.app",
-    messagingSenderId: "530382354851",
-    appId: "1:530382354851:web:f65bde4a1b3f86d75d8216"
-  };
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-
-  // Pull URL params
-  const params    = new URLSearchParams(window.location.search);
-  const testID    = params.get("test")    || alert("Test ID missing!");
-  const batchName = params.get("batch")   || alert("Batch missing!");
-  const username  = params.get("username")|| alert("Username missing!");
-
-  // Helper to embed any URLs in text as <img>
-  function formatTextWithImages(text) {
-    if (!text) return "–";
-    return text.replace(
-      /(https?:\/\/[^\s]+)/g,
-      url => `<img src="${url}" style="max-width:100%;border-radius:4px;">`
-    );
-  }
-
-  // Draw / update a doughnut chart
-  function drawDoughnut(chartRef, canvasId, data, title) {
-    const ctx = document.getElementById(canvasId).getContext("2d");
-    const cfg = {
-      type: "doughnut",
-      data: {
-        labels: ["Correct","Wrong","Unanswered"],
-        datasets: [{ data, backgroundColor: ["#28a745","#dc3545","#ffc107"] }]
-      },
-      options: {
-        plugins: { title: { display: true, text: title } }
-      }
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
+      authDomain: "brainiacs-13a3f.firebaseapp.com",
+      projectId: "brainiacs-13a3f",
+      storageBucket: "brainiacs-13a3f.firebasestorage.app",
+      messagingSenderId: "530382354851",
+      appId: "1:530382354851:web:f65bde4a1b3f86d75d8216"
     };
-    if (chartRef) {
-      chartRef.data = cfg.data;
-      chartRef.options.plugins.title.text = title;
-      chartRef.update();
-      return chartRef;
-    } else {
-      return new Chart(ctx, cfg);
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    const params    = new URLSearchParams(window.location.search);
+    const testID    = params.get("test")    || alert("Test ID missing!");
+    const batchName = params.get("batch")   || alert("Batch missing!");
+    const username  = params.get("username")|| alert("Username missing!");
+
+    function formatTextWithImages(text) {
+      if (!text) return "–";
+      return text.replace(
+        /(https?:\/\/[^\s]+)/g,
+        url => `<img src="${url}" style="max-width:100%;border-radius:4px;">`
+      );
     }
-  }
 
-  // 1) Load test metadata (subjects & chapters)
-  async function loadTestStructure() {
-    const snap = await getDoc(doc(db, "Questions", testID));
-    if (!snap.exists()) throw new Error("Test structure not found");
-    const data = snap.data();
-    return {
-      subjects: data.subjects || [],
-      chapters: data.chapters || {}
-    };
-  }
-
-  // 2) Load the user’s saved responses
-  async function loadUserResponses() {
-    const uSnap = await getDoc(doc(
-      db,
-      "Tests", testID,
-      "Batches", batchName,
-      "Users", username
-    ));
-    if (!uSnap.exists()) throw new Error("No submission for this user");
-    return uSnap.data().subjects || {};
-  }
-
-  // 3) For one subject, load its questions, compare answers with new scoring
-  async function fetchSubjectResult(subject, userResponses) {
-    const subjSnap = await getDoc(
-      doc(db, "Questions", testID, "Subjects", subject)
-    );
-    const qMap = subjSnap.exists() ? subjSnap.data().questions || {} : {};
-    const allQ = Object.values(qMap);
-
-    let html = "", score = 0, correct = 0, wrong = 0, unans = 0;
-    for (const q of allQ) {
-      const sel = (userResponses[subject]?.[q.questionId]?.selectedAnswer || "")
-                    .trim().toUpperCase();
-      const corr = (q.correctAnswer || "").trim().toUpperCase();
-
-      if (!sel) {
-        unans++;
+    function drawDoughnut(chartRef, canvasId, data, title) {
+      const ctx = document.getElementById(canvasId).getContext("2d");
+      const cfg = {
+        type: "doughnut",
+        data: {
+          labels: ["Correct","Wrong","Unanswered"],
+          datasets: [{ data, backgroundColor: ["#28a745","#dc3545","#ffc107"] }]
+        },
+        options: {
+          plugins: { title: { display: true, text: title } }
+        }
+      };
+      if (chartRef) {
+        chartRef.data = cfg.data;
+        chartRef.options.plugins.title.text = title;
+        chartRef.update();
+        return chartRef;
+      } else {
+        return new Chart(ctx, cfg);
       }
-      else if (sel === corr) {
-        correct++;
-        score += 1;        // +1 for correct
-      }
-      else {
-        wrong++;
-        // no change to score for wrong
+    }
+
+    async function loadTestStructure() {
+      const snap = await getDoc(doc(db, "Questions", testID));
+      if (!snap.exists()) throw new Error("Test structure not found");
+      const data = snap.data();
+      return {
+        subjects: data.subjects || [],
+        chapters: data.chapters || {}
+      };
+    }
+
+    async function loadUserResponses() {
+      const uSnap = await getDoc(doc(
+        db,
+        "Tests", testID,
+        "Batches", batchName,
+        "Users", username
+      ));
+      if (!uSnap.exists()) throw new Error("No submission for this user");
+      return uSnap.data().subjects || {};
+    }
+
+    async function fetchSubjectResult(subject, userResponses) {
+      const subjSnap = await getDoc(
+        doc(db, "Questions", testID, "Subjects", subject)
+      );
+      const qMap = subjSnap.exists() ? subjSnap.data().questions || {} : {};
+      const allQ = Object.values(qMap);
+
+      let html = "", score = 0, correct = 0, wrong = 0, unans = 0;
+      for (const q of allQ) {
+        const sel = (userResponses[subject]?.[q.questionId]?.selectedAnswer || "")
+                      .trim().toUpperCase();
+        const corr = (q.correctAnswer || "").trim().toUpperCase();
+
+        if (!sel) unans++;
+        else if (sel === corr) { correct++; score += 1; }
+        else wrong++;
+
+        html += `
+          <div class="question-box">
+            <p><strong>Q:</strong> ${formatTextWithImages(q.question)}</p>
+            <ul class="options">
+              ${(q.options || []).map(o => {
+                const cls = o.trim().toUpperCase() === corr ? "correct" : "";
+                return `<li class="option-box ${cls}">
+                          ${formatTextWithImages(o)}
+                        </li>`;
+              }).join("")}
+            </ul>
+            <p class="selected-answer ${
+              !sel ? "" :
+              sel === corr ? "selected-correct" : "selected-wrong"
+            }">
+              Your Answer: ${sel || "–"}
+            </p>
+            ${ sel === corr ? "" : `<p class="correct-answer">Correct: ${corr}</p>` }
+            <p class="solution">
+              <strong>Solution:</strong>
+              ${formatTextWithImages(q.solution)}
+            </p>
+          </div>`;
       }
 
-      html += `
-        <div class="question-box">
-          <p><strong>Q:</strong> ${formatTextWithImages(q.question)}</p>
-          <ul class="options">
-            ${(q.options || []).map(o => {
-              const cls = o.trim().toUpperCase() === corr ? "correct" : "";
-              return `<li class="option-box ${cls}">
-                        ${formatTextWithImages(o)}
-                      </li>`;
-            }).join("")}
-          </ul>
-          <p class="selected-answer ${
-            !sel ? "unanswered" :
-            sel === corr ? "selected-correct" : "selected-wrong"
-          }">
-            Your Answer: ${sel || "–"}
-          </p>
-          ${ sel === corr ? "" : `<p class="correct-answer">Correct: ${corr}</p>` }
-          <p class="solution">
-            <strong>Solution:</strong>
-            ${formatTextWithImages(q.solution)}
-          </p>
-        </div>
+      return { html, score, correct, wrong, unans };
+    }
+
+    async function displayResults() {
+      const { subjects } = await loadTestStructure();
+      const userResponses = await loadUserResponses();
+
+      let totScore = 0, totC = 0, totW = 0, totU = 0;
+      const perSub = {};
+
+      for (const subj of subjects) {
+        const res = await fetchSubjectResult(subj, userResponses);
+        perSub[subj] = res;
+        totScore += res.score;
+        totC += res.correct;
+        totW += res.wrong;
+        totU += res.unans;
+      }
+
+      document.getElementById("totalResult").innerHTML = `
+        <h2>Total Marks: ${totScore}</h2>
+        <p class="stats">Correct: ${totC}</p>
+        <p class="stats">Wrong:   ${totW}</p>
+        <p class="stats">Unanswered: ${totU}</p>
       `;
-    }
+      drawDoughnut(null, "overallChart", [totC,totW,totU], "Overall Analysis");
 
-    return { html, score, correct, wrong, unans };
-  }
+      const btns = document.getElementById("buttonsContainer");
+      btns.innerHTML = "";
 
-  // 4) Render overall + per-subject results
-  async function displayResults() {
-    const { subjects, chapters } = await loadTestStructure();
-    const userResponses = await loadUserResponses();
-
-    let totScore = 0, totC = 0, totW = 0, totU = 0;
-    const perSub = {};
-    for (const subj of subjects) {
-      const res = await fetchSubjectResult(subj, userResponses);
-      perSub[subj] = res;
-      totScore += res.score;
-      totC     += res.correct;
-      totW     += res.wrong;
-      totU     += res.unans;
-    }
-
-    // overall summary
-    document.getElementById("totalResult").innerHTML = `
-      <h2>Total Marks: ${totScore}</h2>
-      <p class="stats">Correct: ${totC}</p>
-      <p class="stats">Wrong:   ${totW}</p>
-      <p class="stats">Unanswered: ${totU}</p>
-    `;
-    drawDoughnut(null, "overallChart", [totC,totW,totU], "Overall Analysis");
-
-    // subject buttons & per‐subject display
-    const btns = document.getElementById("buttonsContainer");
-    btns.innerHTML = "";
-    subjects.forEach((subj, i) => {
-      const b = document.createElement("button");
-      b.textContent = subj;
-      b.addEventListener("click", () => {
-        btns.querySelectorAll("button").forEach(x => x.classList.remove("active-button"));
-        b.classList.add("active-button");
-        const d = perSub[subj];
-        document.getElementById("sectionResult").innerHTML = `
-          <h3>${subj} (Marks: ${d.score})</h3>
-          <p class="stats">
-            Correct: ${d.correct}&nbsp;&nbsp;
-            Wrong: ${d.wrong}&nbsp;&nbsp;
-            Unanswered: ${d.unans}
-          </p>
-          ${d.html}
-          <canvas id="subjectChart"></canvas>
-        `;
-        setTimeout(() => {
-          drawDoughnut(null, "subjectChart",
-                      [d.correct,d.wrong,d.unans],
-                      `${subj} Analysis`);
-        }, 50);
+      subjects.forEach((subj, i) => {
+        const b = document.createElement("button");
+        b.textContent = subj;
+        b.addEventListener("click", () => {
+          btns.querySelectorAll("button").forEach(x => x.classList.remove("active-button"));
+          b.classList.add("active-button");
+          const d = perSub[subj];
+          document.getElementById("sectionResult").innerHTML = `
+            <h3>${subj} (Marks: ${d.score})</h3>
+            <p class="stats">
+              Correct: ${d.correct}&nbsp;&nbsp;
+              Wrong: ${d.wrong}&nbsp;&nbsp;
+              Unanswered: ${d.unans}
+            </p>
+            ${d.html}
+            <canvas id="subjectChart"></canvas>
+          `;
+          setTimeout(() => {
+            drawDoughnut(null, "subjectChart",
+                        [d.correct,d.wrong,d.unans],
+                        `${subj} Analysis`);
+          }, 50);
+        });
+        btns.append(b);
+        if (i === 0) {
+          b.classList.add("active-button");
+          b.click();
+        }
       });
-      btns.append(b);
-      if (i === 0) {
-        b.classList.add("active-button");
-        b.click();
-      }
-    });
-  }
+    }
 
-  // 5) Kick off on load
-  window.onload = () => {
-    displayResults().catch(err => {
-      document.getElementById("totalResult").textContent = err.message;
-      console.error(err);
-    });
-  };
-</script>
-
-
+    window.onload = () => {
+      displayResults().catch(err => {
+        document.getElementById("totalResult").textContent = err.message;
+        console.error(err);
+      });
+    };
+  </script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Test Results</title>
 
   <!-- Poppins -->
@@ -56,10 +56,12 @@
     .metric-card h2 { font-size:1.6rem; margin:6px 0 4px; color:var(--blue); }
     .metric-card p  { font-size:0.9rem; color:#555; }
 
-    /* info card: legend + title + small chart */
+    /* info card: legend + small chart */
     .info-card {
       background:#fff; border-radius:var(--card-radius);
-      padding:16px; display:flex; align-items:center;
+      padding:16px; display:flex;
+      /* align the chart to the top of this card */
+      align-items:flex-start;
       justify-content:space-between;
       box-shadow:0 2px 8px rgba(0,0,0,0.04);
       margin-bottom:30px;
@@ -86,6 +88,9 @@
 
     .info-right {
       width:100px; height:100px;
+      /* push it slightly up if needed */
+      margin-top:4px;
+      margin-left:16px;
     }
     .info-right canvas {
       max-width:100%; max-height:100%;
@@ -170,7 +175,7 @@
       .question-header { padding:8px 10px; }
       .question-body { padding:12px; }
       .info-card { flex-direction:column; align-items:flex-start; gap:16px; }
-      .info-right { margin:0 auto; }
+      .info-right { margin:0 auto 0 0; }
     }
   </style>
 </head>
@@ -222,115 +227,104 @@
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    const params   = new URLSearchParams(window.location.search);
-    const testID   = params.get("test")    || alert("Test ID missing!");
-    const batchName= params.get("batch")   || alert("Batch missing!");
-    const username = params.get("username")|| alert("Username missing!");
+    const params    = new URLSearchParams(window.location.search);
+    const testID    = params.get("test")    || alert("Test ID missing!");
+    const batchName = params.get("batch")   || alert("Batch missing!");
+    const username  = params.get("username")|| alert("Username missing!");
 
     function formatTextWithImages(text) {
       return text?.replace(
         /(https?:\/\/[^\s]+)/g,
         url => `<img src="${url}" style="max-width:100%;border-radius:4px;margin-top:4px;">`
-      ) || "–";
+      )||"–";
     }
 
     async function loadTestStructure() {
       const snap = await getDoc(doc(db,"Questions",testID));
       if (!snap.exists()) throw new Error("Test structure not found");
-      return snap.data().subjects || [];
+      return snap.data().subjects||[];
     }
 
     async function loadUserResponses() {
       const u = await getDoc(doc(db,"Tests",testID,"Batches",batchName,"Users",username));
       if (!u.exists()) throw new Error("No submission for this user");
-      return u.data().subjects || {};
+      return u.data().subjects||{};
     }
 
-    async function fetchSubjectQuestions(subj) {
+    async function fetchSubjectQuestions(subj){
       const s = await getDoc(doc(db,"Questions",testID,"Subjects",subj));
-      return s.exists() ? Object.values(s.data().questions || {}) : [];
+      return s.exists()?Object.values(s.data().questions||{}):[];
     }
 
-    function drawDoughnut(id,data) {
-      const ctx = document.getElementById(id).getContext("2d");
+    function drawDoughnut(id,data){
+      const ctx=document.getElementById(id).getContext("2d");
       new Chart(ctx,{
         type:"doughnut",
         data:{
           labels:["Correct","Wrong","Unanswered"],
-          datasets:[{ data, backgroundColor:["#28a745","#dc3545","#ffc107"] }]
+          datasets:[{data,backgroundColor:["#28a745","#dc3545","#ffc107"]}]
         },
-        options:{
-          plugins:{ legend:{ display:false }, title:{ display:false } },
-          cutout:"60%"
-        }
+        options:{plugins:{legend:{display:false},title:{display:false}},cutout:"60%"}
       });
     }
 
-    async function displayResults() {
-      const subjects = await loadTestStructure();
-      const userResp = await loadUserResponses();
+    async function displayResults(){
+      const subjects=await loadTestStructure();
+      const userResp=await loadUserResponses();
+      let totalC=0,totalW=0,totalU=0;
+      const perSub={};
 
-      let totalC=0, totalW=0, totalU=0;
-      const perSub = {};
-
-      for (let subj of subjects) {
-        const qs = await fetchSubjectQuestions(subj);
+      for(let subj of subjects){
+        const qs=await fetchSubjectQuestions(subj);
         let c=0,w=0,u=0;
-        const details = qs.map(q => {
-          const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
-          const corr= (q.correctAnswer||"").trim().toUpperCase();
-          if (!sel) u++;
-          else if (sel===corr) c++;
-          else w++;
-          return { q, sel, corr };
+        const details=qs.map(q=>{
+          const sel=(userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
+          const corr=(q.correctAnswer||"").trim().toUpperCase();
+          if(!sel)u++;else if(sel===corr)c++;else w++;
+          return {q,sel,corr};
         });
         totalC+=c; totalW+=w; totalU+=u;
-        perSub[subj] = { details };
+        perSub[subj]={details};
       }
 
-      // metric cards
-      document.getElementById("totalResult").innerHTML = `
+      document.getElementById("totalResult").innerHTML=`
         <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
         <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
         <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
       `;
-
-      // small doughnut
       drawDoughnut("overallChart",[totalC,totalW,totalU]);
 
-      // subject tabs
-      const bc = document.getElementById("buttonsContainer");
-      bc.innerHTML = "";
-      subjects.forEach(subj => {
-        const btn = document.createElement("button");
-        btn.textContent = subj;
-        btn.onclick = ()=>showSubject(subj,btn);
+      const bc=document.getElementById("buttonsContainer");
+      bc.innerHTML="";
+      subjects.forEach(subj=>{
+        const btn=document.createElement("button");
+        btn.textContent=subj;
+        btn.onclick=()=>showSubject(subj,btn);
         bc.append(btn);
       });
       bc.firstChild.click();
 
-      function showSubject(subj,btn) {
+      function showSubject(subj,btn){
         bc.querySelectorAll("button").forEach(b=>b.classList.remove("active-button"));
         btn.classList.add("active-button");
 
-        const details = perSub[subj].details;
+        const details=perSub[subj].details;
         let idx=0;
-
-        document.getElementById("sectionResult").innerHTML = `
+        document.getElementById("sectionResult").innerHTML=`
           <div id="questionContainer"></div>
           <div class="pager">
             <button id="prevBtn">Previous</button>
             <button id="nextBtn">Next</button>
           </div>
         `;
-        const qCont = document.getElementById("questionContainer");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
+        const qCont=document.getElementById("questionContainer");
+        const prevBtn=document.getElementById("prevBtn");
+        const nextBtn=document.getElementById("nextBtn");
 
-        function render(i) {
-          const { q, sel, corr } = details[i];
-          const pct = Math.round(((i+1)/details.length)*100);
-          qCont.innerHTML = `
+        function render(i){
+          const {q,sel,corr}=details[i];
+          const pct=Math.round((i+1)/details.length*100);
+          qCont.innerHTML=`
             <div class="question-box">
               <div class="question-header" style="--progress:${pct}%">
                 Q ${i+1} of ${details.length}: ${formatTextWithImages(q.question)}
@@ -352,21 +346,18 @@
                   <strong>Solution:</strong> ${formatTextWithImages(q.solution)}
                 </div>
               </div>
-            </div>
-          `;
-          prevBtn.disabled = (i===0);
-          nextBtn.disabled = (i===details.length-1);
+            </div>`;
+          prevBtn.disabled=(i===0);
+          nextBtn.disabled=(i===details.length-1);
         }
-
-        prevBtn.onclick = ()=>{ if(idx>0) render(--idx); };
-        nextBtn.onclick = ()=>{ if(idx<details.length-1) render(++idx); };
-
+        prevBtn.onclick=()=>{ if(idx>0) render(--idx); };
+        nextBtn.onclick=()=>{ if(idx<details.length-1) render(++idx); };
         render(idx);
       }
     }
 
-    window.onload = ()=>displayResults().catch(e=>{
-      document.getElementById("sectionResult").innerHTML = 
+    window.onload=()=>displayResults().catch(e=>{
+      document.getElementById("sectionResult").innerHTML=
         `<p style="color:#c00;text-align:center;">${e.message}</p>`;
       console.error(e);
     });

@@ -80,25 +80,32 @@
     }
 
     /* Info card with legend on the left, chart on the right */
-    .info-card {
-      display: flex;
-      align-items: center;           /* center content vertically */
-      justify-content: space-between;/* push legend to left, chart to right */
-      background: #fff;
-      border-radius: var(--card-radius);
-      padding: 16px 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      margin-bottom: 30px;
-    }
-    .info-left {
-      flex: 1;
-    }
-    .info-left h3 {
-      margin-bottom: 12px;
-      font-size: 1rem;
-      color: #555;
-    }
-    .legend {
+    /* INFO CARD: legend on left, chart flush top-right */
+.info-card {
+  display: flex;
+  align-items: flex-start;   /* align both legend & chart at top */
+  justify-content: space-between; /* legend to left, chart to right */
+  background: #fff;
+  border-radius: var(--card-radius);
+  padding: 16px 24px 16px;   /* same padding top/bottom */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 24px;
+}
+
+.info-left {
+  /* keep legend tightly packed */
+  flex: 0 1 auto;
+}
+
+.info-right {
+  /* push chart to extreme right, flush with top of card */
+  flex: 0 0 auto;
+  margin: 0;                  /* no extra offset */
+  width: 100px;
+  height: 100px;
+}
+    
+    legend {
       display: flex;
       flex-direction: column;
       gap: 8px;

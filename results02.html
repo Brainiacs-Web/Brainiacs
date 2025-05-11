@@ -74,6 +74,9 @@
     .metric-card:hover {
       transform: translateY(-2px);
     }
+    .metric-card.correct { border-top: 4px solid var(--green); }
+    .metric-card.wrong   { border-top: 4px solid var(--red); }
+    .metric-card.unans   { border-top: 4px solid var(--yellow); }
     .metric-card h2 {
       font-size: 1.6rem;
       margin: 6px 0 4px;
@@ -239,7 +242,7 @@
   <div class="container">
     <!-- SUMMARY + CHART -->
     <div id="totalResult">
-      <!-- metric-cards injected here -->
+      <!-- metrics injected here -->
       <div class="chart-card">
         <canvas id="overallChart"></canvas>
       </div>
@@ -332,12 +335,12 @@
         perSub[subj] = { details };
       }
 
-      // render summary cards + leave chart-card in place
+      // render summary cards
       const totalEl = document.getElementById("totalResult");
       totalEl.innerHTML = `
-        <div class="metric-card"><h2>${totalC}</h2><p>Correct</p></div>
-        <div class="metric-card"><h2>${totalW}</h2><p>Wrong</p></div>
-        <div class="metric-card"><h2>${totalU}</h2><p>Unanswered</p></div>
+        <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
+        <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
+        <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
       ` + totalEl.innerHTML;
       drawDoughnut("overallChart", [totalC, totalW, totalU], "Overall Analysis");
 

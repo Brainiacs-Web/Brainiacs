@@ -23,170 +23,86 @@
       --bg-start: #e0f2ff;
       --bg-end: #f7faff;
     }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
-    body {
-      background: linear-gradient(to bottom, var(--bg-start), var(--bg-end));
-      color: #333;
-      line-height: 1.5;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif }
+    body { background: linear-gradient(to bottom, var(--bg-start), var(--bg-end)); color:#333 }
     .top-container {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(6px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      padding: 20px;
-      text-align: center;
+      position:sticky; top:0; z-index:10;
+      background:rgba(255,255,255,0.95); backdrop-filter:blur(6px);
+      box-shadow:0 2px 8px rgba(0,0,0,0.08); padding:20px; text-align:center;
     }
-    .top-container h1 {
-      font-weight: 600;
-      font-size: 2rem;
-      color: var(--blue);
-    }
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 0 20px 40px;
-    }
-
-    /* Total Summary Cards */
-    #totalResult {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 40px;
-    }
+    .top-container h1 { font-weight:600; font-size:2rem; color:var(--blue) }
+    .container { max-width:1000px; margin:30px auto; padding:0 20px 40px }
+    /* Summary cards */
+    #totalResult { display:flex; justify-content:space-around; flex-wrap:wrap; gap:16px; margin-bottom:40px }
     .metric-card {
-      flex: 1 1 28%;
-      min-width: 160px;
-      background: #fff;
-      border-left: 6px solid;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      padding: 20px;
-      text-align: center;
+      flex:1 1 28%; min-width:160px; background:#fff;
+      border-left:6px solid; border-radius:8px;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05); padding:20px; text-align:center;
     }
-    .metric-card h2 {
-      font-size: 1.8rem;
-      margin-bottom: 8px;
-      color: var(--blue);
-    }
-    .metric-card p {
-      font-size: 1rem;
-      color: #555;
-    }
-    .metric-correct { border-color: var(--green); }
-    .metric-wrong   { border-color: var(--red); }
-    .metric-unans   { border-color: var(--yellow); }
-
-    /* Charts */
-    .chart-wrapper {
-      max-width: 400px;
-      margin: 0 auto 40px;
-    }
-
-    /* Subject Selector */
-    #buttonsContainer {
-      text-align: center;
-      margin-bottom: 40px;
-    }
+    .metric-card h2 { font-size:1.8rem; margin-bottom:8px; color:var(--blue) }
+    .metric-card p { font-size:1rem; color:#555 }
+    .metric-correct { border-color:var(--green) }
+    .metric-wrong   { border-color:var(--red) }
+    .metric-unans   { border-color:var(--yellow) }
+    .chart-wrapper { max-width:400px; margin:0 auto 40px }
+    /* Subject selector */
+    #buttonsContainer { text-align:center; margin-bottom:40px }
     #buttonsContainer button {
-      margin: 0 6px 8px;
-      padding: 10px 18px;
-      font-size: 1rem;
-      font-weight: 500;
-      border: none;
-      border-bottom: 3px solid transparent;
-      background: none;
-      color: var(--light-blue);
-      cursor: pointer;
-      transition: border-color 0.2s;
+      margin:0 6px 8px; padding:10px 18px;
+      font-size:1rem; font-weight:500;
+      border:none; border-bottom:3px solid transparent;
+      background:none; color:var(--light-blue); cursor:pointer;
+      transition:border-color 0.2s, color 0.2s;
     }
     #buttonsContainer button.active-button {
-      border-bottom-color: var(--light-blue);
-      color: var(--blue);
+      border-bottom-color:var(--light-blue); color:var(--blue);
     }
-    #buttonsContainer button:hover {
-      color: var(--blue);
-    }
-
-    /* Question Cards */
-    #sectionResult h3 {
-      margin-bottom: 16px;
-      font-weight: 600;
-      color: var(--blue);
-    }
+    #buttonsContainer button:hover { color:var(--blue) }
+    /* Section */
+    #sectionResult { position:relative }
+    #sectionResult h3 { margin-bottom:16px; font-weight:600; color:var(--blue) }
     .question-box {
-      background: #fff;
-      border-radius: 8px;
-      margin-bottom: 24px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-      overflow: hidden;
+      background:#fff; border-radius:8px; margin-bottom:24px;
+      box-shadow:0 3px 10px rgba(0,0,0,0.04); overflow:hidden;
     }
     .question-header {
-      background: var(--light-blue);
-      color: #fff;
-      padding: 12px 16px;
-      font-weight: 500;
+      background:var(--light-blue); color:#fff; padding:12px 16px; font-weight:500;
     }
-    .question-body {
-      padding: 16px;
-    }
-    .question-body p {
-      margin-bottom: 12px;
-      font-size: 1rem;
-    }
-    .options {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 12px;
-    }
+    .question-body { padding:16px }
+    .question-body p { margin-bottom:12px; font-size:1rem }
+    .options { list-style:none; padding:0; margin-bottom:12px }
     .option-box {
-      padding: 10px 14px;
-      margin: 6px 0;
-      border: 2px solid #ddd;
-      border-radius: 6px;
-      background: #f9f9f9;
-      font-weight: 500;
+      padding:10px 14px; margin:6px 0;
+      border:2px solid #ddd; border-radius:6px;
+      background:#f9f9f9; font-weight:500;
     }
     .option-box.correct {
-      background: #d4edda !important;
-      border-color: var(--green) !important;
-      color: #155724;
+      background:#d4edda !important; border-color:var(--green) !important; color:#155724;
     }
-    .feedback {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 12px;
-    }
+    .feedback { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px }
     .feedback span {
-      flex: 1 1 45%;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-weight: 500;
+      flex:1 1 45%; padding:8px 12px; border-radius:6px; font-weight:500;
     }
-    .selected-correct { background: var(--green); color: #fff; }
-    .selected-wrong   { background: var(--red);   color: #fff; }
-    .correct-answer   { background: #d4edda; color: #155724; }
-
+    .selected-correct { background:var(--green); color:#fff }
+    .selected-wrong   { background:var(--red);   color:#fff }
+    .correct-answer   { background:#d4edda; color:#155724 }
     .solution {
-      margin-top: 16px;
-      padding: 14px;
-      background: #f1f1f1;
-      border-left: 4px solid var(--blue);
-      font-style: italic;
+      margin-top:16px; padding:14px; background:#f1f1f1;
+      border-left:4px solid var(--blue); font-style:italic;
     }
-
-    @media (max-width: 600px) {
-      .metric-card { flex: 1 1 48%; }
+    /* Pagination */
+    .pager {
+      display:flex; justify-content:space-between; margin-top:16px;
+    }
+    .pager button {
+      padding:8px 16px; font-size:0.95rem; font-weight:500;
+      border:none; border-radius:6px; cursor:pointer;
+      background:var(--light-blue); color:#fff;
+      transition:opacity 0.2s;
+    }
+    .pager button:disabled { opacity:0.5; cursor:default }
+    @media (max-width:600px){
+      .metric-card{flex:1 1 48%}
     }
   </style>
 </head>
@@ -197,19 +113,15 @@
 
   <div class="container">
     <!-- Summary -->
-    <div id="totalResult">
-      <!-- injected: three .metric-card elements -->
-    </div>
+    <div id="totalResult"></div>
 
     <!-- Overall Chart -->
-    <div class="chart-wrapper">
-      <canvas id="overallChart"></canvas>
-    </div>
+    <div class="chart-wrapper"><canvas id="overallChart"></canvas></div>
 
-    <!-- Subjects -->
+    <!-- Subject Buttons -->
     <div id="buttonsContainer"></div>
 
-    <!-- Section Details -->
+    <!-- Question & Pagination -->
     <div id="sectionResult">
       <p>Select a subject to view details.</p>
     </div>
@@ -218,6 +130,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
       authDomain: "brainiacs-13a3f.firebaseapp.com",
@@ -227,16 +140,35 @@
       appId: "1:530382354851:web:f65bde4a1b3f86d75d8216"
     };
     const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
+    const db = getFirestore(app);
     const params = new URLSearchParams(window.location.search);
-    const testID    = params.get("test")    || alert("Test ID missing!");
+    const testID = params.get("test")    || alert("Test ID missing!");
     const batchName = params.get("batch")   || alert("Batch missing!");
-    const username  = params.get("username")|| alert("Username missing!");
+    const username = params.get("username")|| alert("Username missing!");
 
     function formatTextWithImages(text) {
-      return text?.replace(/(https?:\/\/[^\s]+)/g,
+      return text?.replace(
+        /(https?:\/\/[^\s]+)/g,
         url => `<img src="${url}" style="max-width:100%;border-radius:4px;">`
       )|| "–";
+    }
+
+    async function loadTestStructure() {
+      const snap = await getDoc(doc(db, "Questions", testID));
+      if (!snap.exists()) throw new Error("Test structure not found");
+      const d = snap.data();
+      return { subjects: d.subjects||[] };
+    }
+
+    async function loadUserResponses() {
+      const u = await getDoc(doc(db, "Tests", testID, "Batches", batchName, "Users", username));
+      if (!u.exists()) throw new Error("No submission for this user");
+      return u.data().subjects||{};
+    }
+
+    async function fetchSubjectQuestions(subj) {
+      const s = await getDoc(doc(db, "Questions", testID, "Subjects", subj));
+      return s.exists() ? Object.values(s.data().questions||{}) : [];
     }
 
     function drawDoughnut(canvasId, data, title) {
@@ -244,108 +176,124 @@
       return new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels: ["Correct","Wrong","Unanswered"],
-          datasets:[{ data, backgroundColor:[ "var(--green)","var(--red)","var(--yellow)" ]}]
+          labels: ["Correct", "Wrong", "Unanswered"],
+          datasets: [{ data, backgroundColor: ["#28a745","#dc3545","#ffc107"] }]
         },
-        options:{ plugins:{ title:{ display:true, text:title } } }
+        options: { plugins: { title: { display: true, text: title } } }
       });
-    }
-
-    async function loadTestStructure() {
-      const snap = await getDoc(doc(db, "Questions", testID));
-      if(!snap.exists()) throw new Error("Test structure not found");
-      const d = snap.data();
-      return { subjects:d.subjects||[], chapters:d.chapters||{} };
-    }
-    async function loadUserResponses() {
-      const u = await getDoc(doc(db,"Tests",testID,"Batches",batchName,"Users",username));
-      if(!u.exists()) throw new Error("No submission for this user");
-      return u.data().subjects||{};
-    }
-    async function fetchSubjectResult(subj, userResp) {
-      const s = await getDoc(doc(db,"Questions",testID,"Subjects",subj));
-      const qs = s.exists()? Object.values(s.data().questions||{}) : [];
-      let html="", score=0,c=0,w=0,u=0;
-      qs.forEach(q=>{
-        const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
-        const corr= (q.correctAnswer||"").trim().toUpperCase();
-        if(!sel) u++;
-        else if(sel===corr){ c++; score++; }
-        else w++;
-        html += `
-          <div class="question-box">
-            <div class="question-header">Q: ${formatTextWithImages(q.question)}</div>
-            <div class="question-body">
-              <ul class="options">
-                ${(q.options||[]).map(o=>
-                  `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
-                     ${formatTextWithImages(o)}
-                   </li>`).join("")}
-              </ul>
-              <div class="feedback">
-                <span class="${sel===corr?"selected-correct":"selected-wrong"}">
-                  Your Answer: ${sel||"–"}
-                </span>
-                ${sel===corr?"":
-                  `<span class="correct-answer">Correct: ${corr}</span>`}
-              </div>
-              <div class="solution">
-                <strong>Solution:</strong> ${formatTextWithImages(q.solution)}
-              </div>
-            </div>
-          </div>`;
-      });
-      return { html, score, correct:c, wrong:w, unans:u };
     }
 
     async function displayResults() {
       const { subjects } = await loadTestStructure();
-      const ur = await loadUserResponses();
-      let tScore=0,tC=0,tW=0,tU=0;
-      const perSub={};
-      for (const s of subjects) {
-        const r = await fetchSubjectResult(s,ur);
-        perSub[s]=r; tScore+=r.score; tC+=r.correct; tW+=r.wrong; tU+=r.unans;
+      const userResp = await loadUserResponses();
+
+      let tC=0, tW=0, tU=0;
+      const perSub = {};
+
+      // Preload per-subject stats & question arrays
+      for (let subj of subjects) {
+        const qs = await fetchSubjectQuestions(subj);
+        let c=0, w=0, u=0;
+        const details = qs.map(q => {
+          const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer||"")
+                        .trim().toUpperCase();
+          const corr = (q.correctAnswer||"").trim().toUpperCase();
+          if (!sel) u++;
+          else if (sel===corr) { c++; }
+          else w++;
+          return { q, sel, corr };
+        });
+        tC+=c; tW+=w; tU+=u;
+        perSub[subj] = { details, stats: [c, w, u] };
       }
 
-      // summary cards
+      // Render summary cards
       document.getElementById("totalResult").innerHTML = `
-        <div class="metric-card metric-correct">
-          <h2>${tC}</h2><p>Correct</p>
-        </div>
-        <div class="metric-card metric-wrong">
-          <h2>${tW}</h2><p>Wrong</p>
-        </div>
-        <div class="metric-card metric-unans">
-          <h2>${tU}</h2><p>Unanswered</p>
-        </div>`;
+        <div class="metric-card metric-correct"><h2>${tC}</h2><p>Correct</p></div>
+        <div class="metric-card metric-wrong"><h2>${tW}</h2><p>Wrong</p></div>
+        <div class="metric-card metric-unans"><h2>${tU}</h2><p>Unanswered</p></div>
+      `;
+      drawDoughnut("overallChart", [tC, tW, tU], "Overall Analysis");
 
-      drawDoughnut("overallChart",[tC,tW,tU],"Overall Analysis");
-
-      // subject buttons
+      // Build subject buttons
       const bc = document.getElementById("buttonsContainer");
       bc.innerHTML = "";
-      subjects.forEach((s,i)=>{
+      subjects.forEach((subj, idx) => {
         const btn = document.createElement("button");
-        btn.textContent = s;
-        btn.onclick = ()=>{
-          bc.querySelectorAll("button").forEach(b=>b.classList.remove("active-button"));
-          btn.classList.add("active-button");
-          const d = perSub[s];
-          document.getElementById("sectionResult").innerHTML = `
-            <h3>${s} (Marks: ${d.score})</h3>${d.html}
-            <div class="chart-wrapper"><canvas id="subjectChart"></canvas></div>`;
-          drawDoughnut("subjectChart",[d.correct,d.wrong,d.unans],`${s} Analysis`);
-        };
+        btn.textContent = subj;
+        btn.addEventListener("click", () => showSubject(subj, idx===0));
         bc.append(btn);
-        if (i===0) btn.click();
       });
+      // Auto-click first
+      bc.firstChild.click();
+
+      // Show subject with pagination
+      function showSubject(subj) {
+        // Highlight active
+        bc.querySelectorAll("button").forEach(b => b.classList.remove("active-button"));
+        event.currentTarget.classList.add("active-button");
+
+        const { details, stats } = perSub[subj];
+        // render empty container
+        document.getElementById("sectionResult").innerHTML = `
+          <h3>${subj}</h3>
+          <div class="chart-wrapper"><canvas id="subjectChart"></canvas></div>
+          <div id="questionContainer"></div>
+          <div class="pager">
+            <button id="prevBtn">Previous</button>
+            <button id="nextBtn">Next</button>
+          </div>
+        `;
+        drawDoughnut("subjectChart", stats, `${subj} Analysis`);
+
+        let currentIndex = 0;
+        const qCont = document.getElementById("questionContainer");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
+
+        function renderQuestion(i) {
+          const { q, sel, corr } = details[i];
+          qCont.innerHTML = `
+            <div class="question-box">
+              <div class="question-header">Q (${i+1}/${details.length}): ${formatTextWithImages(q.question)}</div>
+              <div class="question-body">
+                <ul class="options">
+                  ${(q.options||[]).map(o=>
+                    `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
+                       ${formatTextWithImages(o)}
+                     </li>`).join("")}
+                </ul>
+                <div class="feedback">
+                  <span class="${sel===corr?"selected-correct":"selected-wrong"}">
+                    Your Answer: ${sel||"–"}
+                  </span>
+                  ${sel===corr?"":`<span class="correct-answer">Correct: ${corr}</span>`}
+                </div>
+                <div class="solution"><strong>Solution:</strong> ${formatTextWithImages(q.solution)}</div>
+              </div>
+            </div>
+          `;
+          prevBtn.disabled = (i===0);
+          nextBtn.disabled = (i===details.length-1);
+        }
+
+        prevBtn.addEventListener("click", () => {
+          if (currentIndex>0) renderQuestion(--currentIndex);
+        });
+        nextBtn.addEventListener("click", () => {
+          if (currentIndex<details.length-1) renderQuestion(++currentIndex);
+        });
+
+        renderQuestion(currentIndex);
+      }
     }
 
-    window.onload = ()=> displayResults().catch(e=>{
-      document.getElementById("totalResult").textContent = e.message;
-      console.error(e);
-    });
+    window.onload = () => {
+      displayResults().catch(err => {
+        document.getElementById("totalResult").textContent = err.message;
+        console.error(err);
+      });
+    };
   </script>
 </body>
 </html>

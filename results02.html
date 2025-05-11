@@ -33,8 +33,7 @@
     }
     body {
       background: linear-gradient(to bottom, var(--bg-start), var(--bg-end));
-      color: #333;
-      line-height: 1.4;
+      color: #333; line-height: 1.4;
     }
     .top-container {
       position: sticky; top: 0; z-index: 10;
@@ -55,15 +54,14 @@
       padding: 0 12px 30px;
     }
 
-    /* SUMMARY + CHART GRID */
+    /* METRIC CARDS ROW */
     #totalResult {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 160px;
+      grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
       gap: 16px;
-      margin-bottom: 30px;
-      align-items: center;
+      margin-bottom: 24px;
     }
-    .metric-card, .chart-card {
+    .metric-card {
       background: #fff;
       border-radius: var(--card-radius);
       padding: 14px;
@@ -71,9 +69,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       transition: transform .2s;
     }
-    .metric-card:hover {
-      transform: translateY(-2px);
-    }
+    .metric-card:hover { transform: translateY(-2px); }
     .metric-card.correct { border-top: 4px solid var(--green); }
     .metric-card.wrong   { border-top: 4px solid var(--red); }
     .metric-card.unans   { border-top: 4px solid var(--yellow); }
@@ -86,18 +82,25 @@
       font-size: 0.9rem;
       color: #555;
     }
-    .chart-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 8px;
+
+    /* CHART ROW */
+    .chart-wrapper {
+      max-width: 320px;
+      margin: 0 auto 40px;
     }
-    .chart-card canvas {
+    .chart-wrapper .chart-card {
+      background: #fff;
+      border-radius: var(--card-radius);
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      text-align: center;
+    }
+    .chart-wrapper canvas {
       max-width: 100%;
       height: auto !important;
     }
 
-    /* TABS */
+    /* SUBJECT TABS */
     #buttonsContainer {
       display: flex;
       flex-wrap: wrap;
@@ -227,7 +230,7 @@
 
     @media (max-width: 600px) {
       .container { padding: 0 8px 20px; }
-      #totalResult { grid-template-columns: repeat(auto-fit,minmax(100px,1fr)) 120px; }
+      #totalResult { grid-template-columns: repeat(auto-fit,minmax(100px,1fr)); }
       .question-header { padding: 8px 10px; }
       .question-body { padding: 12px; }
     }
@@ -240,9 +243,11 @@
   </div>
 
   <div class="container">
-    <!-- SUMMARY + CHART -->
-    <div id="totalResult">
-      <!-- metrics injected here -->
+    <!-- METRIC CARDS -->
+    <div id="totalResult"></div>
+
+    <!-- OVERALL CHART -->
+    <div class="chart-wrapper">
       <div class="chart-card">
         <canvas id="overallChart"></canvas>
       </div>
@@ -335,16 +340,16 @@
         perSub[subj] = { details };
       }
 
-      // render summary cards
+      // render metric cards
       const totalEl = document.getElementById("totalResult");
       totalEl.innerHTML = `
         <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
         <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
         <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
-      ` + totalEl.innerHTML;
+      `;
       drawDoughnut("overallChart", [totalC, totalW, totalU], "Overall Analysis");
 
-      // subject tabs
+      // build subject tabs
       const bc = document.getElementById("buttonsContainer");
       bc.innerHTML = "";
       subjects.forEach(subj => {
@@ -419,6 +424,5 @@
       });
     };
   </script>
-
 </body>
 </html>

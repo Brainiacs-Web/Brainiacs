@@ -54,14 +54,16 @@
       margin: 20px auto;
       padding: 0 12px 30px;
     }
-    /* SUMMARY */
+
+    /* SUMMARY + CHART GRID */
     #totalResult {
       display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) 160px;
       gap: 16px;
       margin-bottom: 30px;
+      align-items: center;
     }
-    .metric-card {
+    .metric-card, .chart-card {
       background: #fff;
       border-radius: var(--card-radius);
       padding: 14px;
@@ -69,12 +71,8 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       transition: transform .2s;
     }
-    .metric-card:hover { transform: translateY(-2px); }
-    .metric-card .icon {
-      font-size: 1.4rem;
-      margin-bottom: 6px;
-      display: inline-block;
-      color: var(--light-blue);
+    .metric-card:hover {
+      transform: translateY(-2px);
     }
     .metric-card h2 {
       font-size: 1.6rem;
@@ -85,11 +83,17 @@
       font-size: 0.9rem;
       color: #555;
     }
-    /* CHART */
-    .chart-wrapper {
-      max-width: 320px;
-      margin: 0 auto 36px;
+    .chart-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8px;
     }
+    .chart-card canvas {
+      max-width: 100%;
+      height: auto !important;
+    }
+
     /* TABS */
     #buttonsContainer {
       display: flex;
@@ -118,7 +122,8 @@
       background: var(--light-blue);
       color: #fff;
     }
-    /* QUESTION */
+
+    /* QUESTION CARD */
     .question-box {
       background: #fff;
       border-radius: var(--card-radius);
@@ -194,6 +199,7 @@
       font-size: 0.9rem;
       color: #444;
     }
+
     /* PAGINATION */
     .pager {
       display: flex;
@@ -218,7 +224,7 @@
 
     @media (max-width: 600px) {
       .container { padding: 0 8px 20px; }
-      .metric-card { padding: 12px; }
+      #totalResult { grid-template-columns: repeat(auto-fit,minmax(100px,1fr)) 120px; }
       .question-header { padding: 8px 10px; }
       .question-body { padding: 12px; }
     }
@@ -231,12 +237,12 @@
   </div>
 
   <div class="container">
-    <!-- SUMMARY -->
-    <div id="totalResult"></div>
-
-    <!-- OVERALL CHART -->
-    <div class="chart-wrapper">
-      <canvas id="overallChart"></canvas>
+    <!-- SUMMARY + CHART -->
+    <div id="totalResult">
+      <!-- metric-cards injected here -->
+      <div class="chart-card">
+        <canvas id="overallChart"></canvas>
+      </div>
     </div>
 
     <!-- SUBJECT TABS -->
@@ -262,6 +268,7 @@
     };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
     const params = new URLSearchParams(window.location.search);
     const testID    = params.get("test")    || alert("Test ID missing!");
     const batchName = params.get("batch")   || alert("Batch missing!");
@@ -325,24 +332,16 @@
         perSub[subj] = { details };
       }
 
-      // summary
-      document.getElementById("totalResult").innerHTML = `
-        <div class="metric-card">
-          <div class="icon">✅</div>
-          <h2>${totalC}</h2><p>Correct</p>
-        </div>
-        <div class="metric-card">
-          <div class="icon">❌</div>
-          <h2>${totalW}</h2><p>Wrong</p>
-        </div>
-        <div class="metric-card">
-          <div class="icon">➖</div>
-          <h2>${totalU}</h2><p>Unanswered</p>
-        </div>
-      `;
+      // render summary cards + leave chart-card in place
+      const totalEl = document.getElementById("totalResult");
+      totalEl.innerHTML = `
+        <div class="metric-card"><h2>${totalC}</h2><p>Correct</p></div>
+        <div class="metric-card"><h2>${totalW}</h2><p>Wrong</p></div>
+        <div class="metric-card"><h2>${totalU}</h2><p>Unanswered</p></div>
+      ` + totalEl.innerHTML;
       drawDoughnut("overallChart", [totalC, totalW, totalU], "Overall Analysis");
 
-      // subjects
+      // subject tabs
       const bc = document.getElementById("buttonsContainer");
       bc.innerHTML = "";
       subjects.forEach(subj => {
@@ -354,7 +353,7 @@
       bc.firstChild.click();
 
       function showSubject(subj, btn) {
-        bc.querySelectorAll("button").forEach(b=>b.classList.remove("active-button"));
+        bc.querySelectorAll("button").forEach(b => b.classList.remove("active-button"));
         btn.classList.add("active-button");
 
         const details = perSub[subj].details;
@@ -366,6 +365,7 @@
             <button id="nextBtn">Next</button>
           </div>
         `;
+
         const qCont = document.getElementById("questionContainer");
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");

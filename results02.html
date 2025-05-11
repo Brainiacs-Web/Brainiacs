@@ -23,107 +23,224 @@
       --bg-start: #e0f2ff;
       --bg-end: #f7faff;
     }
-    * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif }
-    body { background: linear-gradient(to bottom, var(--bg-start), var(--bg-end)); color:#333 }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+    body {
+      background: linear-gradient(to bottom, var(--bg-start), var(--bg-end));
+      color: #333; line-height: 1.6;
+    }
     .top-container {
-      position:sticky; top:0; z-index:10;
-      background:rgba(255,255,255,0.95); backdrop-filter:blur(6px);
-      box-shadow:0 2px 8px rgba(0,0,0,0.08); padding:20px; text-align:center;
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 20px;
+      text-align: center;
     }
-    .top-container h1 { font-weight:600; font-size:2rem; color:var(--blue) }
-    .container { max-width:1000px; margin:30px auto; padding:0 20px 40px }
-    /* Summary cards */
-    #totalResult { display:flex; justify-content:space-around; flex-wrap:wrap; gap:16px; margin-bottom:40px }
+    .top-container h1 {
+      color: var(--blue);
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px 40px;
+    }
+
+    /* SUMMARY GRID */
+    #totalResult {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
     .metric-card {
-      flex:1 1 28%; min-width:160px; background:#fff;
-      border-left:6px solid; border-radius:8px;
-      box-shadow:0 4px 12px rgba(0,0,0,0.05); padding:20px; text-align:center;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      position: relative;
+      overflow: hidden;
     }
-    .metric-card h2 { font-size:1.8rem; margin-bottom:8px; color:var(--blue) }
-    .metric-card p { font-size:1rem; color:#555 }
-    .metric-correct { border-color:var(--green) }
-    .metric-wrong   { border-color:var(--red) }
-    .metric-unans   { border-color:var(--yellow) }
-    .chart-wrapper { max-width:400px; margin:0 auto 40px }
-    /* Subject selector */
-    #buttonsContainer { text-align:center; margin-bottom:40px }
+    .metric-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 4px;
+      background: var(--light-blue);
+    }
+    .metric-card h2 {
+      font-size: 2rem;
+      margin: 12px 0 6px;
+      color: var(--blue);
+    }
+    .metric-card p {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    /* OVERALL CHART */
+    .chart-wrapper {
+      max-width: 360px;
+      margin: 0 auto 50px;
+    }
+
+    /* SUBJECT BUTTONS */
+    #buttonsContainer {
+      text-align: center;
+      margin-bottom: 30px;
+    }
     #buttonsContainer button {
-      margin:0 6px 8px; padding:10px 18px;
-      font-size:1rem; font-weight:500;
-      border:none; border-bottom:3px solid transparent;
-      background:none; color:var(--light-blue); cursor:pointer;
-      transition:border-color 0.2s, color 0.2s;
+      margin: 0 8px 12px;
+      padding: 8px 16px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--light-blue);
+      background: none;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
     #buttonsContainer button.active-button {
-      border-bottom-color:var(--light-blue); color:var(--blue);
+      background: var(--light-blue);
+      color: #fff;
+      border-color: var(--light-blue);
     }
-    #buttonsContainer button:hover { color:var(--blue) }
-    /* Section */
-    #sectionResult { position:relative }
-    #sectionResult h3 { margin-bottom:16px; font-weight:600; color:var(--blue) }
+    #buttonsContainer button:hover {
+      border-color: var(--light-blue);
+      color: var(--blue);
+    }
+
+    /* QUESTION CARD */
     .question-box {
-      background:#fff; border-radius:8px; margin-bottom:24px;
-      box-shadow:0 3px 10px rgba(0,0,0,0.04); overflow:hidden;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+      margin-bottom: 30px;
+      overflow: hidden;
     }
     .question-header {
-      background:var(--light-blue); color:#fff; padding:12px 16px; font-weight:500;
+      background: var(--light-blue);
+      color: #fff;
+      padding: 14px 18px;
+      font-size: 1rem;
+      font-weight: 500;
     }
-    .question-body { padding:16px }
-    .question-body p { margin-bottom:12px; font-size:1rem }
-    .options { list-style:none; padding:0; margin-bottom:12px }
+    .question-body {
+      padding: 18px;
+    }
+    .question-body p {
+      margin-bottom: 14px;
+      font-size: 1rem;
+    }
+    .options {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 14px;
+    }
     .option-box {
-      padding:10px 14px; margin:6px 0;
-      border:2px solid #ddd; border-radius:6px;
-      background:#f9f9f9; font-weight:500;
+      background: #f9f9f9;
+      padding: 10px 14px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 2px solid #ececec;
+      font-weight: 500;
     }
     .option-box.correct {
-      background:#d4edda !important; border-color:var(--green) !important; color:#155724;
+      background: #d4edda !important;
+      border-color: var(--green) !important;
+      color: #155724;
     }
-    .feedback { display:flex; flex-wrap:wrap; gap:12px; margin-top:12px }
+    .feedback {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
     .feedback span {
-      flex:1 1 45%; padding:8px 12px; border-radius:6px; font-weight:500;
+      flex: 1 1 45%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      text-align: center;
     }
-    .selected-correct { background:var(--green); color:#fff }
-    .selected-wrong   { background:var(--red);   color:#fff }
-    .correct-answer   { background:#d4edda; color:#155724 }
+    .selected-correct {
+      background: var(--green);
+      color: #fff;
+    }
+    .selected-wrong {
+      background: var(--red);
+      color: #fff;
+    }
+    .correct-answer {
+      background: #d4edda;
+      color: #155724;
+    }
     .solution {
-      margin-top:16px; padding:14px; background:#f1f1f1;
-      border-left:4px solid var(--blue); font-style:italic;
+      padding: 12px 14px;
+      background: #f1f1f1;
+      border-left: 4px solid var(--blue);
+      font-style: italic;
+      color: #444;
     }
-    /* Pagination */
+
+    /* PAGINATION */
     .pager {
-      display:flex; justify-content:space-between; margin-top:16px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 40px;
     }
     .pager button {
-      padding:8px 16px; font-size:0.95rem; font-weight:500;
-      border:none; border-radius:6px; cursor:pointer;
-      background:var(--light-blue); color:#fff;
-      transition:opacity 0.2s;
+      padding: 8px 16px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 6px;
+      background: var(--light-blue);
+      color: #fff;
+      cursor: pointer;
+      transition: opacity 0.2s;
     }
-    .pager button:disabled { opacity:0.5; cursor:default }
-    @media (max-width:600px){
-      .metric-card{flex:1 1 48%}
+    .pager button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 600px) {
+      .metric-card::before { height: 3px; }
+      .question-body { padding: 14px; }
+      .question-header { padding: 12px 14px; }
     }
   </style>
 </head>
 <body>
+
   <div class="top-container">
     <h1>Test Results</h1>
   </div>
 
   <div class="container">
-    <!-- Summary -->
-    <div id="totalResult"></div>
+    <!-- SUMMARY -->
+    <div id="totalResult">
+      <!-- JS injects three .metric-card elements here -->
+    </div>
 
-    <!-- Overall Chart -->
-    <div class="chart-wrapper"><canvas id="overallChart"></canvas></div>
+    <!-- OVERALL CHART -->
+    <div class="chart-wrapper">
+      <canvas id="overallChart"></canvas>
+    </div>
 
-    <!-- Subject Buttons -->
+    <!-- SUBJECT SELECTOR -->
     <div id="buttonsContainer"></div>
 
-    <!-- Question & Pagination -->
+    <!-- QUESTIONS & PAGINATION -->
     <div id="sectionResult">
-      <p>Select a subject to view details.</p>
+      <p style="text-align:center; color:#777;">Select a subject to begin.</p>
     </div>
   </div>
 
@@ -131,6 +248,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
+    // — your Firebase config —
     const firebaseConfig = {
       apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
       authDomain: "brainiacs-13a3f.firebaseapp.com",
@@ -141,39 +259,39 @@
     };
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
     const params = new URLSearchParams(window.location.search);
-    const testID = params.get("test")    || alert("Test ID missing!");
+    const testID    = params.get("test")    || alert("Test ID missing!");
     const batchName = params.get("batch")   || alert("Batch missing!");
-    const username = params.get("username")|| alert("Username missing!");
+    const username  = params.get("username")|| alert("Username missing!");
 
     function formatTextWithImages(text) {
       return text?.replace(
         /(https?:\/\/[^\s]+)/g,
-        url => `<img src="${url}" style="max-width:100%;border-radius:4px;">`
-      )|| "–";
+        url => `<img src="${url}" style="max-width:100%; border-radius:4px; margin-top:6px;">`
+      ) || "–";
     }
 
     async function loadTestStructure() {
       const snap = await getDoc(doc(db, "Questions", testID));
       if (!snap.exists()) throw new Error("Test structure not found");
-      const d = snap.data();
-      return { subjects: d.subjects||[] };
+      return snap.data().subjects || [];
     }
 
     async function loadUserResponses() {
       const u = await getDoc(doc(db, "Tests", testID, "Batches", batchName, "Users", username));
       if (!u.exists()) throw new Error("No submission for this user");
-      return u.data().subjects||{};
+      return u.data().subjects || {};
     }
 
     async function fetchSubjectQuestions(subj) {
       const s = await getDoc(doc(db, "Questions", testID, "Subjects", subj));
-      return s.exists() ? Object.values(s.data().questions||{}) : [];
+      return s.exists() ? Object.values(s.data().questions || {}) : [];
     }
 
     function drawDoughnut(canvasId, data, title) {
       const ctx = document.getElementById(canvasId).getContext("2d");
-      return new Chart(ctx, {
+      new Chart(ctx, {
         type: "doughnut",
         data: {
           labels: ["Correct", "Wrong", "Unanswered"],
@@ -184,59 +302,60 @@
     }
 
     async function displayResults() {
-      const { subjects } = await loadTestStructure();
+      const subjects = await loadTestStructure();
       const userResp = await loadUserResponses();
 
-      let tC=0, tW=0, tU=0;
+      let totalC = 0, totalW = 0, totalU = 0;
       const perSub = {};
 
-      // Preload per-subject stats & question arrays
+      // preload stats & question details
       for (let subj of subjects) {
         const qs = await fetchSubjectQuestions(subj);
         let c=0, w=0, u=0;
         const details = qs.map(q => {
-          const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer||"")
-                        .trim().toUpperCase();
-          const corr = (q.correctAnswer||"").trim().toUpperCase();
+          const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer || "").trim().toUpperCase();
+          const corr = (q.correctAnswer || "").trim().toUpperCase();
           if (!sel) u++;
-          else if (sel===corr) { c++; }
+          else if (sel === corr) c++;
           else w++;
           return { q, sel, corr };
         });
-        tC+=c; tW+=w; tU+=u;
-        perSub[subj] = { details, stats: [c, w, u] };
+        totalC += c; totalW += w; totalU += u;
+        perSub[subj] = { stats: [c,w,u], details };
       }
 
-      // Render summary cards
+      // render summary cards
       document.getElementById("totalResult").innerHTML = `
-        <div class="metric-card metric-correct"><h2>${tC}</h2><p>Correct</p></div>
-        <div class="metric-card metric-wrong"><h2>${tW}</h2><p>Wrong</p></div>
-        <div class="metric-card metric-unans"><h2>${tU}</h2><p>Unanswered</p></div>
+        <div class="metric-card">
+          <h2>${totalC}</h2><p>Correct</p>
+        </div>
+        <div class="metric-card">
+          <h2>${totalW}</h2><p>Wrong</p>
+        </div>
+        <div class="metric-card">
+          <h2>${totalU}</h2><p>Unanswered</p>
+        </div>
       `;
-      drawDoughnut("overallChart", [tC, tW, tU], "Overall Analysis");
 
-      // Build subject buttons
+      drawDoughnut("overallChart", [totalC, totalW, totalU], "Overall Analysis");
+
+      // build subject buttons
       const bc = document.getElementById("buttonsContainer");
       bc.innerHTML = "";
-      subjects.forEach((subj, idx) => {
+      subjects.forEach((subj, i) => {
         const btn = document.createElement("button");
         btn.textContent = subj;
         btn.addEventListener("click", () => showSubject(subj, btn));
         bc.append(btn);
       });
-      // Auto-click first
       bc.firstChild.click();
 
-      // Show subject with pagination
       function showSubject(subj, btn) {
-        // Highlight active
         bc.querySelectorAll("button").forEach(b => b.classList.remove("active-button"));
         btn.classList.add("active-button");
 
-        const { details, stats } = perSub[subj];
-        // render container
+        const { stats, details } = perSub[subj];
         document.getElementById("sectionResult").innerHTML = `
-          <h3>${subj}</h3>
           <div class="chart-wrapper"><canvas id="subjectChart"></canvas></div>
           <div id="questionContainer"></div>
           <div class="pager">
@@ -244,21 +363,24 @@
             <button id="nextBtn">Next</button>
           </div>
         `;
-        drawDoughnut("subjectChart", stats, `${subj} Analysis`);
+        // no per-subject chart requested — remove or comment this:
+        // drawDoughnut("subjectChart", stats, `${subj} Analysis`);
 
-        let currentIndex = 0;
+        let idx = 0;
         const qCont = document.getElementById("questionContainer");
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
 
-        function renderQuestion(i) {
+        function render(i) {
           const { q, sel, corr } = details[i];
           qCont.innerHTML = `
             <div class="question-box">
-              <div class="question-header">Q (${i+1}/${details.length}): ${formatTextWithImages(q.question)}</div>
+              <div class="question-header">
+                Q ${i+1} of ${details.length}: ${formatTextWithImages(q.question)}
+              </div>
               <div class="question-body">
                 <ul class="options">
-                  ${(q.options||[]).map(o=>
+                  ${(q.options||[]).map(o =>
                     `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
                        ${formatTextWithImages(o)}
                      </li>`).join("")}
@@ -269,29 +391,28 @@
                   </span>
                   ${sel===corr?"":`<span class="correct-answer">Correct: ${corr}</span>`}
                 </div>
-                <div class="solution"><strong>Solution:</strong> ${formatTextWithImages(q.solution)}</div>
+                <div class="solution">
+                  <strong>Solution:</strong> ${formatTextWithImages(q.solution)}
+                </div>
               </div>
             </div>
           `;
-          prevBtn.disabled = (i===0);
-          nextBtn.disabled = (i===details.length-1);
+          prevBtn.disabled = (i === 0);
+          nextBtn.disabled = (i === details.length - 1);
         }
 
-        prevBtn.addEventListener("click", () => {
-          if (currentIndex>0) renderQuestion(--currentIndex);
-        });
-        nextBtn.addEventListener("click", () => {
-          if (currentIndex<details.length-1) renderQuestion(++currentIndex);
-        });
+        prevBtn.onclick = () => { if (idx>0) render(--idx); };
+        nextBtn.onclick = () => { if (idx<details.length-1) render(++idx); };
 
-        renderQuestion(currentIndex);
+        render(idx);
       }
     }
 
     window.onload = () => {
-      displayResults().catch(err => {
-        document.getElementById("totalResult").textContent = err.message;
-        console.error(err);
+      displayResults().catch(e => {
+        document.getElementById("sectionResult").innerHTML =
+          `<p style="color:#c00; text-align:center;">${e.message}</p>`;
+        console.error(e);
       });
     };
   </script>

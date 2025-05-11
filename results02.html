@@ -221,20 +221,20 @@
       subjects.forEach((subj, idx) => {
         const btn = document.createElement("button");
         btn.textContent = subj;
-        btn.addEventListener("click", () => showSubject(subj, idx===0));
+        btn.addEventListener("click", () => showSubject(subj, btn));
         bc.append(btn);
       });
       // Auto-click first
       bc.firstChild.click();
 
       // Show subject with pagination
-      function showSubject(subj) {
+      function showSubject(subj, btn) {
         // Highlight active
         bc.querySelectorAll("button").forEach(b => b.classList.remove("active-button"));
-        event.currentTarget.classList.add("active-button");
+        btn.classList.add("active-button");
 
         const { details, stats } = perSub[subj];
-        // render empty container
+        // render container
         document.getElementById("sectionResult").innerHTML = `
           <h3>${subj}</h3>
           <div class="chart-wrapper"><canvas id="subjectChart"></canvas></div>

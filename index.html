@@ -1,322 +1,199 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Brainiacs • PDF→CBT Conversion</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BRAINIACS – Select Exam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f5f7fa;
-      color: #333;
-    }
     :root {
-      --accent1: #009e85;
-      --accent2: #14c38e;
-      --white: #ffffff;
-      --glass: rgba(255, 255, 255, 0.75);
-      --shadow: rgba(0, 0, 0, 0.08);
+      --primary:   #009688;
+      --secondary: #00796b;
+      --light:     #e0f2f1;
+      --text:      #333;
+      --shadow:    rgba(0,0,0,0.1);
+      --toast-bg:  #323232;
+      --toast-fg:  #fff;
+      --toast-accent: #ffca28;
     }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: "Poppins",sans-serif;
+      background: linear-gradient(135deg,var(--light),#fff);
+      color: var(--text);
+      display:flex;flex-direction:column;align-items:center;
+      min-height:100vh;padding:40px 20px;position:relative;
+    }
+    h1 { font-size:3rem;color:var(--primary);margin-bottom:.5em; }
 
-    /* NAVBAR */
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background: var(--glass);
-      backdrop-filter: blur(10px);
-      padding: 1rem 2rem;
-      z-index: 100;
-      box-shadow: 0 2px 10px var(--shadow);
+    .controls {
+      display:inline-flex;align-items:center;gap:.5em;
+      margin-bottom:2em;
     }
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: auto;
+    .controls button {
+      font-size:1.1rem;padding:.6em 1.2em;
+      border:none;border-radius:6px;cursor:pointer;
+      background:var(--primary);color:#fff;transition:background .3s;
     }
-    .nav-logo {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--accent1);
-    }
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-    }
-    .nav-links a {
-      color: #333;
-      font-weight: 500;
-      position: relative;
-    }
-    .nav-links a:hover {
-      color: var(--accent2);
-    }
-    .btn {
-      background: var(--accent1);
-      color: white;
-      border: none;
-      padding: 0.5rem 1.2rem;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: 0.3s ease;
-    }
-    .btn:hover {
-      background: var(--accent2);
-    }
+    .controls button:hover { background:var(--secondary); }
 
-    /* HERO */
-    .hero {
-      display: flex;
-      flex-direction: column-reverse;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 8rem 2rem 4rem;
-      background: linear-gradient(to right, #f0fdf4, #ffffff);
+    .icon-btn {
+      width:2.4em;height:2.4em;padding:0;
+      background:var(--primary);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
     }
-    .hero-content {
-      max-width: 600px;
-    }
-    .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: var(--accent1);
-    }
-    .hero p {
-      font-size: 1.1rem;
-      color: #444;
-      margin-bottom: 1.5rem;
-    }
-    .hero-animation {
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 2rem;
-    }
+    .icon-btn img { width:1.2em;height:1.2em; }
 
-    /* SECTIONS */
-    .section {
-      padding: 4rem 2rem;
-      max-width: 1100px;
-      margin: auto;
+    /* Toast */
+    #toast {
+      position:fixed;top:-100px;left:50%;
+      transform:translateX(-50%);
+      width:320px;background:var(--toast-bg);color:var(--toast-fg);
+      padding:1em 1.2em .6em;border-radius:6px;
+      box-shadow:0 4px 12px var(--shadow);
+      display:flex;align-items:center;gap:.6em;
+      opacity:0;pointer-events:none;z-index:1000;
+      animation:slideDown .5s forwards;animation-delay:0.2s;
     }
-    .section-title {
-      text-align: center;
-      font-size: 2rem;
-      color: var(--accent1);
-      margin-bottom: 2rem;
+    #toast.hide { animation:slideUp .5s forwards; }
+    #toast .icon { font-size:1.4em; color:var(--toast-accent); }
+    #toast .close { margin-left:auto;cursor:pointer;font-size:1.2em;line-height:1; }
+    #toast .progress {
+      position:absolute;bottom:0;left:0;height:4px;
+      background:var(--toast-accent);width:100%;
+      animation:progressBar 5s linear forwards;
     }
+    #toast:hover .progress { animation-play-state:paused; }
+    @keyframes slideDown { from{top:-100px;opacity:0;} to{top:20px;opacity:1;} }
+    @keyframes slideUp   { from{top:20px;opacity:1;}   to{top:-100px;opacity:0;} }
+    @keyframes progressBar { from{width:100%;} to{width:0;} }
 
-    .cards, .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.5rem;
+    .flash-container {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:24px;width:100%;max-width:800px;
+      margin-bottom:3em;
     }
-    .card, .step {
-      background: var(--white);
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 6px 20px var(--shadow);
-      text-align: center;
-      transition: 0.3s ease;
+    .flash-card {
+      position:relative;
+      background:#fff;border-radius:20px;padding:30px 20px;
+      text-align:center;font-size:1.3rem;font-weight:600;
+      color:var(--primary);box-shadow:0 4px 12px var(--shadow);
+      cursor:pointer;opacity:0;transform:translateY(20px);
+      animation:bounceIn .6s ease forwards;
+      transition:transform .3s,box-shadow .3s,background .3s,color .3s;
     }
-    .card:hover, .step:hover {
-      transform: translateY(-4px);
+    .flash-card:hover {
+      transform:translateY(-6px) scale(1.03);
+      box-shadow:0 8px 20px var(--shadow);
+      background:var(--primary);color:#fff;
     }
-    .card-icon, .step-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: var(--accent2);
-    }
-
-    /* CLIENT SECTION */
-    .clients {
-      text-align: center;
-      margin-top: 2rem;
-    }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.active {
-      display: flex;
-    }
-    .modal {
-      background: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 12px 24px var(--shadow);
-      position: relative;
-    }
-    .modal-close {
-      position: absolute;
-      top: 1rem; right: 1rem;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-    .modal input, .modal select {
-      width: 100%;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      font-size: 0.9rem;
-      background: #fff;
-      color: #666;
-    }
-
-    @media (max-width: 768px) {
-      .nav-links a:not(.btn) {
-        display: none;
-      }
-      .hero {
-        text-align: center;
-      }
+    @keyframes bounceIn {
+      0%   {opacity:0;transform:translateY(40px) scale(.95);}
+      60%  {opacity:1;transform:translateY(-10px) scale(1.02);}
+      100% {opacity:1;transform:translateY(0) scale(1);}
     }
   </style>
 </head>
 <body>
-
-  <!-- NAVBAR -->
-  <header>
-    <div class="nav">
-      <div class="nav-logo">Brainiacs</div>
-      <div class="nav-links">
-        <a href="#features">Why Us</a>
-        <a href="#process">How It Works</a>
-        <button class="btn" id="loginBtn">Login</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Convert PDF Tests to CBT</h1>
-      <p>We turn your PDF tests into interactive CBT exams with full explanations — ready in 24 hrs.</p>
-      <button class="btn" id="joinBtn">Join Our Telegram</button>
-    </div>
-    <div class="hero-animation">
-      <lottie-player
-        src="https://assets10.lottiefiles.com/packages/lf20_kkflmtur.json"
-        background="transparent"
-        speed="1"
-        loop
-        autoplay
-      ></lottie-player>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section id="features" class="section">
-    <h2 class="section-title">Why Brainiacs?</h2>
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">🛠️</div>
-        <h3>Expert QA</h3>
-        <p>Manually reviewed, perfectly formatted tests every time.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">⚡</div>
-        <h3>Fast Turnaround</h3>
-        <p>Delivered in under 24 hours, ready to use.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">📘</div>
-        <h3>Detailed Solutions</h3>
-        <p>Every question includes clear and concise explanations.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROCESS -->
-  <section id="process" class="section">
-    <h2 class="section-title">How It Works</h2>
-    <div class="steps">
-      <div class="step"><div class="step-icon">📤</div><h3>Upload PDF</h3></div>
-      <div class="step"><div class="step-icon">🔧</div><h3>Convert & Review</h3></div>
-      <div class="step"><div class="step-icon">🚀</div><h3>Launch & Share</h3></div>
-    </div>
-  </section>
-
-  <!-- CLIENTS -->
-  <section class="section">
-    <h2 class="section-title">Trusted by</h2>
-    <div class="clients">
-      <p><strong>Genius Hub</strong> – our exclusive premium partner</p>
-      <button class="btn" id="collabBtn">Collaborate With Us</button>
-    </div>
-  </section>
-
-  <!-- MODAL -->
-  <div class="modal-overlay" id="loginModal">
-    <div class="modal">
-      <button class="modal-close">&times;</button>
-      <h2>Login</h2>
-      <input type="text" id="username" placeholder="Username" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="password" id="password" placeholder="Password" required />
-      <select id="channel">
-        <option>Genius Hub</option>
-        <option>Other</option>
-      </select>
-      <button class="btn" id="confirmLoginBtn">Confirm</button>
-    </div>
+  <h1>BRAINIACS</h1>
+  <div class="controls">
+    <button id="jeeBtn">JEE</button>
+    <button id="neetBtn">NEET</button>
+    <button id="UdaanBtn">UDAAN</button>
+    <button id="keyBtn" class="icon-btn" title="Access Key">
+      <img id="lockIcon" src="https://i.postimg.cc/7hrpzw7g/secured-lock.png" alt="lock">
+    </button>
+  </div>
+  <!-- Toast -->
+  <div id="toast" role="alert" aria-live="assertive">
+    <span class="icon">🔔</span>
+    <span id="toastText"></span>
+    <span class="close" onclick="hideToast()">×</span>
+    <div class="progress"></div>
   </div>
 
-  <!-- FOOTER -->
-  <footer>© 2025 Brainiacs. All Rights Reserved.</footer>
-
-  <!-- SCRIPT -->
+  <div class="flash-container" id="flashContainer"></div>
   <script>
-    const di = id => document.getElementById(id);
-    const modal = di('loginModal');
+    const EXP_MS = 12 * 60 * 60 * 1000;
+    // Expire old key
+    const ts = localStorage.getItem('keyTimestamp');
+    if (ts && (Date.now() - +ts > EXP_MS)) {
+      localStorage.removeItem('keyID');
+      localStorage.removeItem('keyTimestamp');
+    }
+    // Toast logic
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toastText');
+    function hideToast(){ toast.classList.add('hide'); }
+    window.addEventListener('load', () => {
+      const key = localStorage.getItem('keyID');
+      if (key) {
+        const rem = Math.max(EXP_MS - (Date.now() - +localStorage.getItem('keyTimestamp')), 0);
+        const hrs = Math.floor(rem / 3600000);
+        const mins = Math.floor((rem % 3600000) / 60000);
+        toastText.textContent = `Welcome! Your key is valid for ${hrs} hrs ${mins} min.`;
+      } else {
+        toastText.textContent = 'Please generate your access key to unlock all tests.';
+      }
+      toast.classList.remove('hide');
+      toast.querySelector('.progress').addEventListener('animationend', hideToast);
+    });
+    // Lock‐icon logic
+    const lockIcon = document.getElementById('lockIcon');
+    if (localStorage.getItem('keyID')) {
+      lockIcon.src = 'https://i.postimg.cc/0QwTrb6k/padlock-unlock.png';
+      lockIcon.alt = 'unlocked';
+    }
+    document.getElementById('keyBtn').addEventListener('click', () => {
+      if (!localStorage.getItem('keyID')) {
+        window.location.href = 'key.html';
+      }
+    });
+    // Guard function
+    function redirectOrVisit(targetUrl) {
+      if (localStorage.getItem('keyID')) {
+        window.location.href = targetUrl;
+      } else {
+        window.location.href = 'visit.html';
+      }
+    }
 
-    di('loginBtn').onclick = () => modal.classList.add('active');
-    document.querySelector('.modal-close').onclick = () => modal.classList.remove('active');
-    modal.onclick = e => { if (e.target === modal) modal.classList.remove('active'); };
-
-    di('confirmLoginBtn').onclick = () => {
-      const u = di('username').value.trim(),
-            e = di('email').value.trim(),
-            p = di('password').value,
-            c = di('channel').value;
-      if (!u || !e || !p) return alert('Please fill in all fields.');
-      localStorage.setItem('username', u);
-      localStorage.setItem('email', e);
-      localStorage.setItem('password', p);
-      localStorage.setItem('channel', c);
-      window.location.href = 'main.html';
+    // Batch data (no adFree flag on Arjuna Jee)
+    const batches = {
+      jee: [
+        { label: 'Arjuna Jee',    url: 'Arjunajeetests.html'   },
+        { label: 'Lakshya Jee',   url: 'Lakshyajeetests.html'   },
+        { label: 'Prayas Jee',    url: 'prayasjeetests.html'    }
+      ],
+      neet: [
+        { label: 'Arjuna Neet',   url: 'Arjunaneettests.html'   },
+        { label: 'Lakshya Neet',  url: 'Lakshyaneettests.html'  }
+      ],
+      Udaan: [
+        { label: 'Udaan 2026',   url: 'udaantests.html'   },
+      ]
     };
-
-    di('joinBtn').onclick = () => window.location.href = 'https://t.me/brainiacs_team';
-    di('collabBtn').onclick = () => window.location.href = 'https://t.me/Brainiacs_support_bot';
+    // Render function
+    const fc = document.getElementById('flashContainer');
+    function render(exam) {
+      fc.innerHTML = '';
+      batches[exam].forEach((b, i) => {
+        const card = document.createElement('div');
+        card.className = 'flash-card';
+        card.textContent = b.label;
+        card.style.animationDelay = (i * 0.15) + 's';
+        // All cards now use the guarded redirect
+        card.onclick = () => redirectOrVisit(b.url);
+        fc.appendChild(card);
+      });
+    }
+    document.getElementById('jeeBtn').addEventListener('click', () => render('jee'));
+    document.getElementById('neetBtn').addEventListener('click', () => render('neet'));
+    document.getElementById('UdaanBtn').addEventListener('click', () => render('Udaan'));
+    // Initial load: show JEE batches
+    render('jee');
   </script>
 </body>
 </html>

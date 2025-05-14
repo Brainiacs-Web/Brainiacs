@@ -2,312 +2,173 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
   <title>Test Results</title>
 
-  <!-- Poppins + Material Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <!-- Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      --blue:        #0056b3;
-      --light-blue:  #338af3;
-      --green:       #1fae66;
-      --red:         #e74c3c;
-      --yellow:      #f39c12;
-      --bg-start:    #f0f4f8;
-      --bg-end:      #d9e2ec;
-      --card-radius: 12px;
-      --font-base:   15px;
-      --transition:  0.25s ease;
+      --blue: #007adf;
+      --light: #56b4ef;
+      --green: #28a745;
+      --red: #dc3545;
+      --yellow: #ffc107;
+      --bg: #f5f8fa;
+      --card-radius: 8px;
+      --font: "Poppins", sans-serif;
     }
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-      font-size: var(--font-base);
-      color: #333;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      font-family: var(--font);
+      background: var(--bg);
+      color: #333;
       line-height: 1.4;
       padding-bottom: 40px;
     }
-
-    /* Top bar */
     .top-container {
-      background: linear-gradient(90deg, var(--blue), var(--light-blue));
-      color: #fff;
+      background: #fff;
+      padding: 16px;
       text-align: center;
-      padding: 16px 12px;
-      border-radius: 0 0 var(--card-radius) var(--card-radius);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      position: sticky; top: 0; z-index: 10;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      position: sticky; top:0; z-index:10;
     }
     .top-container h1 {
-      font-size: 20px; font-weight: 600;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    }
-    .top-container .info {
-      font-size: 0.9rem;
-      opacity: 0.85;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 20px auto;
-      padding: 0 16px;
-    }
-
-    /* Metric cards */
-    #totalResult {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
-      gap: 20px;
-      margin: 30px 0;
-    }
-    .metric-card {
-      background: #fff;
-      border-radius: var(--card-radius);
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-      transition: transform var(--transition), box-shadow var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-    .metric-card:hover {
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.1);
-    }
-    .metric-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 6px;
-      background: var(--light-blue);
-    }
-    .metric-card.correct::before   { background: var(--green); }
-    .metric-card.wrong::before     { background: var(--red); }
-    .metric-card.unans::before     { background: var(--yellow); }
-    .metric-card.score::before     { background: var(--blue); }
-    .metric-card.percent::before   { background: linear-gradient(90deg,var(--green),var(--yellow)); }
-    .metric-card.accuracy::before  { background: var(--light-blue); }
-    .metric-card.completed::before { background: var(--green); }
-
-    .metric-card .material-icons {
-      font-size: 28px;
-      opacity: 0.6;
-      margin-bottom: 8px;
-    }
-    .metric-card h2 {
-      font-size: 2.2rem;
-      margin: 4px 0;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-      color: #222;
-    }
-    .metric-card p {
-      font-size: 0.9rem;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-    }
-
-    /* Info card */
-    .info-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #fff;
-      border-radius: var(--card-radius);
-      padding: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-      margin-bottom: 30px;
-    }
-    .info-left h3 {
-      margin-bottom: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
+      font-size: 18px; font-weight:600;
       color: var(--blue);
     }
-    .info-left .legend { display: flex; gap: 16px; }
-    .legend-item {
-      display: flex; align-items: center;
-      font-size: 0.9rem;
+    .top-container .info {
+      font-size: 0.9rem; color: #555;
+      margin-top: 4px;
     }
+    .container {
+      max-width: 880px; margin:20px auto; padding:0 16px;
+    }
+    /* Metrics */
+    #totalResult {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+      gap:16px; margin:24px 0;
+    }
+    .metric-card {
+      background:#fff; border-radius:var(--card-radius);
+      padding:14px; text-align:center;
+      box-shadow:0 2px 8px rgba(0,0,0,0.05);
+      transition:transform .2s;
+    }
+    .metric-card:hover { transform:translateY(-4px); }
+    .metric-card.correct { border-left:4px solid var(--green); }
+    .metric-card.wrong   { border-left:4px solid var(--red); }
+    .metric-card.unans   { border-left:4px solid var(--yellow); }
+    .metric-card.score   { border-left:4px solid var(--blue); }
+    .metric-card.percent { border-left:4px solid var(--light); }
+    .metric-card.accuracy{ border-left:4px solid var(--green); }
+    .metric-card.completed{border-left:4px solid var(--blue);}
+    .metric-card h2 {
+      font-size:1.6rem; margin:6px 0; color:var(--blue);
+    }
+    .metric-card p {
+      font-size:0.85rem; color:#666;
+    }
+    /* Doughnut + legend */
+    .info-card {
+      display:flex; align-items:center; justify-content:space-between;
+      background:#fff; padding:16px; border-radius:var(--card-radius);
+      box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-bottom:24px;
+    }
+    .info-left h3 { margin-bottom:8px; color:var(--blue); font-weight:600; }
+    .legend { display:flex; gap:12px; }
+    .legend-item { display:flex; align-items:center; font-size:0.85rem; color:#444; }
     .legend-color {
-      width: 14px; height: 14px; border-radius: 3px;
-      margin-right: 6px;
+      width:12px; height:12px; border-radius:2px; margin-right:6px;
     }
-    .legend-color.green  { background: var(--green); }
-    .legend-color.red    { background: var(--red); }
-    .legend-color.yellow { background: var(--yellow); }
-
-    .info-right {
-      width: 130px; height: 130px;
-    }
-    .info-right canvas {
-      max-width: 100%;
-      max-height: 100%;
-    }
-
+    .legend-color.green  { background:var(--green); }
+    .legend-color.red    { background:var(--red); }
+    .legend-color.yellow { background:var(--yellow); }
+    .info-right { width:100px; height:100px; }
     /* Tabs */
     #buttonsContainer {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 30px;
+      display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
+      margin-bottom:24px;
     }
     #buttonsContainer button {
-      padding: 8px 20px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #555;
-      background: #fff;
-      border: 2px solid var(--light-blue);
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all .2s;
+      padding:6px 14px; border:2px solid var(--light);
+      border-radius:20px; background:#fff; color:#555;
+      font-size:0.85rem; cursor:pointer; transition:background .2s,color .2s;
     }
-    #buttonsContainer button.active-button {
-      background: var(--light-blue);
-      color: #fff;
-      border-color: var(--light-blue);
-    }
+    #buttonsContainer button.active-button,
     #buttonsContainer button:hover {
-      background: var(--light-blue);
-      color: #fff;
+      background:var(--light); color:#fff; border-color:var(--light);
     }
-
-    /* Question card */
+    /* Questions */
     .question-box {
-      background: #fff;
-      border-radius: var(--card-radius);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-      margin-bottom: 28px;
-      overflow: hidden;
+      background:#fff; border-radius:var(--card-radius);
+      box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-bottom:24px;
+      overflow:hidden;
     }
     .question-header {
-      background: var(--light-blue);
-      color: #fff;
-      padding: 12px 18px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      position: relative;
+      background:var(--light); color:#fff; padding:10px 14px;
+      font-size:0.9rem; position:relative;
     }
     .question-header::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      height: 4px;
-      width: var(--progress,0%);
-      background: var(--green);
-      transition: width .2s;
+      content:""; position:absolute; bottom:0; left:0;
+      height:3px; width:var(--progress,0%); background:var(--green);
+      transition:width .2s;
     }
-    .question-body {
-      padding: 18px;
-    }
-    .options .option-box {
-      background: #fdfdfd;
-      padding: 10px 14px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 2px solid #ececec;
-      font-weight: 500;
-      transition: background .2s, border-color .2s;
+    .question-body { padding:14px; }
+    .options { list-style:none; margin-bottom:12px; padding:0; }
+    .option-box {
+      background:#fafafa; padding:8px 12px; margin:6px 0;
+      border-radius:4px; border:1px solid #ececec;
+      font-size:0.9rem; transition:border-color .2s;
     }
     .option-box.correct {
-      background: #e6f7ea!important;
-      border-color: var(--green)!important;
-      color: #155724;
+      border-color:var(--green); background:#e9f7ec; color:var(--green);
     }
     .feedback {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+      display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;
     }
     .feedback span {
-      flex: 1 1 45%;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-weight: 500;
-      font-size: 0.9rem;
-      text-align: center;
-      margin-top: 12px;
+      flex:1 1 45%; padding:6px 10px; border-radius:4px;
+      font-size:0.85rem; text-align:center; font-weight:500;
     }
-    .selected-correct { background: var(--green); color: #fff; }
-    .selected-wrong   { background: var(--red);   color: #fff; }
-    .correct-answer   { background: #e6f7ea; color: #155724; }
+    .selected-correct { background:var(--green); color:#fff; }
+    .selected-wrong   { background:var(--red);   color:#fff; }
+    .correct-answer   { background:#e9f7ec; color:var(--green); }
     .solution {
-      margin-top: 14px;
-      padding: 14px;
-      background: #f1f1f1;
-      border-left: 5px solid var(--blue);
-      font-style: italic;
-      font-size: 0.9rem;
-      color: #444;
+      background:#f1f1f1; padding:10px 12px;
+      border-left:4px solid var(--blue); font-size:0.85rem;
+      color:#444; font-style:italic;
     }
-
     /* Pager */
     .pager {
-      display: flex;
-      justify-content: space-between;
-      margin: 20px 0 40px;
+      display:flex; justify-content:space-between; margin:24px 0;
     }
     .pager button {
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      background: var(--blue);
-      color: #fff;
-      cursor: pointer;
-      transition: opacity .2s;
+      padding:6px 12px; background:var(--blue);
+      color:#fff; border:none; border-radius:4px;
+      font-size:0.9rem; cursor:pointer;
     }
-    .pager button:disabled {
-      opacity: 0.4; cursor: not-allowed;
-    }
-
-    /* Section-wise table */
+    .pager button:disabled { opacity:0.5; cursor:not-allowed; }
+    /* Section table */
     .section-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 40px;
-      background: #fff;
-      border-radius: var(--card-radius);
-      overflow: hidden;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      width:100%; border-collapse:collapse; margin-top:32px;
     }
     .section-table th,
     .section-table td {
-      border-bottom: 1px solid #eee;
-      padding: 12px 8px;
-      font-size: 0.85rem;
-      text-align: center;
+      border:1px solid #ddd; padding:8px; font-size:0.85rem;
+      text-align:center;
     }
     .section-table th {
-      background: var(--light-blue);
-      color: #fff;
-      font-weight: 600;
+      background:var(--light); color:#fff;
     }
-    .section-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    @media (max-width: 640px) {
-      .info-card { flex-direction: column; align-items: flex-start; gap: 20px; }
-      .info-right { margin: 0 auto; }
-      .top-container h1 { font-size: 18px; }
-      #totalResult { grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); }
+    @media (max-width:600px) {
+      .info-card { flex-direction:column; align-items:flex-start; }
+      .info-right { margin-top:12px; }
     }
   </style>
 </head>
@@ -315,16 +176,14 @@
 
   <div class="top-container">
     <h1>Practice Test 01</h1>
-    <div class="info">
-      75 Questions • 300 Marks • 180 mins  &nbsp;|&nbsp; Attempted on 11 May 2025
-    </div>
+    <div class="info">75 Questions • 300 Marks • 180 mins  &nbsp;|&nbsp; Attempted on 11 May 2025</div>
   </div>
 
   <div class="container">
-    <!-- 1. Metric Cards -->
+    <!-- Metrics -->
     <div id="totalResult"></div>
 
-    <!-- 2. Doughnut + Legend -->
+    <!-- Doughnut + Legend -->
     <div class="info-card">
       <div class="info-left">
         <h3>Overall Analysis</h3>
@@ -339,26 +198,22 @@
       </div>
     </div>
 
-    <!-- 3. Subject Tabs -->
+    <!-- Tabs -->
     <div id="buttonsContainer"></div>
 
-    <!-- 4. Questions + Pager -->
+    <!-- Questions -->
     <div id="sectionResult">
       <p style="text-align:center;color:#777;">Select a subject to begin.</p>
     </div>
 
-    <!-- 5. Section-Wise Table -->
-    <h3 style="margin-top:40px; color: var(--blue);">Section-Wise Performance</h3>
+    <!-- Section-Wise Table -->
+    <h3 style="margin-top:32px;color:var(--blue);">Section-Wise Performance</h3>
     <table class="section-table" id="sectionTable">
       <thead>
         <tr>
-          <th>Section</th>
-          <th>Score</th>
-          <th>Correct</th>
-          <th>Wrong</th>
-          <th>Unanswered</th>
-          <th>Accuracy</th>
-          <th>Time Taken</th>
+          <th>Section</th><th>Score</th><th>Correct</th>
+          <th>Wrong</th><th>Unanswered</th>
+          <th>Accuracy</th><th>Time Taken</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -401,19 +256,18 @@
     async function loadUserResponses() {
       const u = await getDoc(doc(db,"Tests",testID,"Batches",batchName,"Users",username));
       if (!u.exists()) throw new Error("No submission for this user");
-      return u.data(); // expects { subjects: {...}, percentile?, ... }
+      return u.data(); // { subjects: {...}, percentile?, ... }
     }
 
     async function fetchSubjectQuestions(subj){
       const s = await getDoc(doc(db,"Questions",testID,"Subjects",subj));
-      return s.exists() ? Object.values(s.data().questions || {}) : [];
+      return s.exists() ? Object.values(s.data().questions||{}) : [];
     }
 
     function drawDoughnut(id,data){
-      const ctx = document.getElementById(id).getContext("2d");
-      new Chart(ctx,{
+      new Chart(document.getElementById(id),{
         type:"doughnut",
-        data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:["#1fae66","#e74c3c","#f39c12"] }]},
+        data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:[ "--green","--red","--yellow" ].map(c=>getComputedStyle(document.documentElement).getPropertyValue(c)) }]},
         options:{ plugins:{ legend:{display:false} }, cutout:"60%" }
       });
     }
@@ -423,160 +277,121 @@
       const userData = await loadUserResponses();
       const userResp = userData.subjects || {};
 
-      let totalC=0, totalW=0, totalU=0, totalScore=0;
-      const perSub = {};
+      let totalC=0,totalW=0,totalU=0,totalScore=0;
+      const perSub={};
 
-      // Gather per-subject details
       for(let subj of subjects){
         const qs = await fetchSubjectQuestions(subj);
         let c=0,w=0,u=0;
         const details = qs.map(q=>{
-          const sel  = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
-          const corr = (q.correctAnswer||"").trim().toUpperCase();
-          if(!sel)            { u++; }
+          const sel=(userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
+          const corr=(q.correctAnswer||"").trim().toUpperCase();
+          if(!sel) u++;
           else if(sel===corr){ c++; totalScore+=4; }
-          else               { w++; totalScore-=1; }
+          else { w++; totalScore-=1; }
           return { q, sel, corr };
         });
         totalC+=c; totalW+=w; totalU+=u;
-        perSub[subj] = {
-          details,
-          timeTaken: userResp[subj]?.timeTaken || "–"
-        };
+        perSub[subj]={ details, timeTaken:userResp[subj]?.timeTaken||"–" };
       }
 
-      const totalQuestions = totalC + totalW + totalU;
-      const answered       = totalC + totalW;
-      const accuracy       = totalQuestions ? (totalC/totalQuestions*100) : 0;
-      const completedPct   = totalQuestions ? (answered/totalQuestions*100) : 0;
-      const percentile     = userData.percentile ?? accuracy;
+      const totalQ=totalC+totalW+totalU;
+      const acc = totalQ ? totalC/totalQ*100 : 0;
+      const pct = userData.percentile ?? acc;
+      const comp = totalQ ? (totalC+totalW)/totalQ*100 : 0;
 
-      // Metric cards
-      document.getElementById("totalResult").innerHTML = `
-        <div class="metric-card correct">
-          <span class="material-icons">check_circle</span>
-          <h2>${totalC}</h2><p>Correct</p>
-        </div>
-        <div class="metric-card wrong">
-          <span class="material-icons">cancel</span>
-          <h2>${totalW}</h2><p>Wrong</p>
-        </div>
-        <div class="metric-card unans">
-          <span class="material-icons">help_outline</span>
-          <h2>${totalU}</h2><p>Unanswered</p>
-        </div>
-        <div class="metric-card score">
-          <span class="material-icons">star</span>
-          <h2>${totalScore}</h2><p>Score</p>
-        </div>
-        <div class="metric-card percent">
-          <span class="material-icons">bar_chart</span>
-          <h2>${percentile.toFixed(2)}%</h2><p>Percentile</p>
-        </div>
-        <div class="metric-card accuracy">
-          <span class="material-icons">show_chart</span>
-          <h2>${accuracy.toFixed(2)}%</h2><p>Accuracy</p>
-        </div>
-        <div class="metric-card completed">
-          <span class="material-icons">done_all</span>
-          <h2>${completedPct.toFixed(2)}%</h2><p>Completed</p>
-        </div>
+      document.getElementById("totalResult").innerHTML=`
+        <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
+        <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
+        <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
+        <div class="metric-card score"><h2>${totalScore}</h2><p>Score</p></div>
+        <div class="metric-card percent"><h2>${pct.toFixed(2)}%</h2><p>Percentile</p></div>
+        <div class="metric-card accuracy"><h2>${acc.toFixed(2)}%</h2><p>Accuracy</p></div>
+        <div class="metric-card completed"><h2>${comp.toFixed(2)}%</h2><p>Completed</p></div>
       `;
 
-      // Doughnut
       drawDoughnut("overallChart",[totalC,totalW,totalU]);
 
-      // Subject tabs
-      const bc = document.getElementById("buttonsContainer");
-      bc.innerHTML = "";
-      subjects.forEach(subj => {
-        const btn = document.createElement("button");
-        btn.textContent = subj;
-        btn.onclick = () => showSubject(subj, btn);
+      const bc=document.getElementById("buttonsContainer");
+      bc.innerHTML="";
+      subjects.forEach(subj=>{
+        const btn=document.createElement("button");
+        btn.textContent=subj;
+        btn.onclick=()=>showSubject(subj,btn);
         bc.append(btn);
       });
-      bc.firstChild && bc.firstChild.click();
+      bc.firstChild?.click();
 
-      // Section-wise table
-      const tbody = document.querySelector("#sectionTable tbody");
-      tbody.innerHTML = subjects.map(subj => {
-        const d = perSub[subj];
-        const tot = d.details.length;
-        const c = d.details.filter(x=>x.sel===x.corr).length;
-        const w = d.details.filter(x=>x.sel && x.sel!==x.corr).length;
-        const u = tot - c - w;
-        const acc = tot ? (c/tot*100).toFixed(2) : "0.00";
-        const score = c*4 - w*1;
-        return `<tr>
-          <td>${subj}</td>
-          <td>${score}</td>
-          <td>${c}</td>
-          <td>${w}</td>
-          <td>${u}</td>
-          <td>${acc}%</td>
-          <td>${d.timeTaken}</td>
-        </tr>`;
-      }).join("");
+      // fill table
+      document.querySelector("#sectionTable tbody").innerHTML=
+        subjects.map(subj=>{
+          const d=perSub[subj], tot=d.details.length;
+          const c=d.details.filter(x=>x.sel===x.corr).length;
+          const w=d.details.filter(x=>x.sel&&x.sel!==x.corr).length;
+          const u=tot-c-w;
+          return `<tr>
+            <td>${subj}</td><td>${c*4 - w}</td><td>${c}</td>
+            <td>${w}</td><td>${u}</td>
+            <td>${tot? (c/tot*100).toFixed(2):"0.00"}%</td>
+            <td>${d.timeTaken}</td>
+          </tr>`;
+        }).join("");
 
-      // Show questions for one subject
-      function showSubject(subj, btn){
+      function showSubject(subj,btn){
         bc.querySelectorAll("button").forEach(b=>b.classList.remove("active-button"));
         btn.classList.add("active-button");
-
-        const details = perSub[subj].details;
-        let idx = 0;
-        document.getElementById("sectionResult").innerHTML = `
+        const details=perSub[subj].details;
+        let idx=0;
+        document.getElementById("sectionResult").innerHTML=`
           <div id="questionContainer"></div>
           <div class="pager">
             <button id="prevBtn">Previous</button>
             <button id="nextBtn">Next</button>
           </div>
         `;
-        const qCont  = document.getElementById("questionContainer");
-        const prevBtn = document.getElementById("prevBtn");
-        const nextBtn = document.getElementById("nextBtn");
-
+        const qCont=document.getElementById("questionContainer");
+        const pBtn=document.getElementById("prevBtn");
+        const nBtn=document.getElementById("nextBtn");
         function render(i){
-          const { q, sel, corr } = details[i];
-          const pct = Math.round(((i+1)/details.length)*100);
-          qCont.innerHTML = `
+          const { q, sel, corr }=details[i];
+          const pr=Math.round((i+1)/details.length*100);
+          qCont.innerHTML=`
             <div class="question-box">
-              <div class="question-header" style="--progress:${pct}%">
-                Q${i+1} of ${details.length}: ${formatTextWithImages(q.question)}
+              <div class="question-header" style="--progress:${pr}%">
+                Q${i+1}/${details.length}: ${formatTextWithImages(q.question)}
               </div>
               <div class="question-body">
                 <ul class="options">
-                  ${(q.options||[]).map(o=>`
-                    <li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
+                  ${(q.options||[]).map(o=>
+                    `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
                       ${formatTextWithImages(o)}
                     </li>`).join("")}
                 </ul>
                 <div class="feedback">
                   <span class="${sel===corr?'selected-correct':'selected-wrong'}">
-                    Your Answer: ${sel||'–'}
-                  </span>
-                  ${sel===corr ? "" : `<span class="correct-answer">Correct: ${corr}</span>`}
+                    Your: ${sel||'–'}</span>
+                  ${sel===corr?"":`<span class="correct-answer">Ans: ${corr}</span>`}
                 </div>
                 <div class="solution">
                   <strong>Solution:</strong> ${formatTextWithImages(q.solution)}
                 </div>
               </div>
-            </div>
-          `;
-          prevBtn.disabled = (i===0);
-          nextBtn.disabled = (i===details.length-1);
+            </div>`;
+          pBtn.disabled = i===0;
+          nBtn.disabled = i===details.length-1;
         }
-        prevBtn.onclick = ()=>{ if(idx>0) render(--idx); };
-        nextBtn.onclick = ()=>{ if(idx<details.length-1) render(++idx); };
+        pBtn.onclick = ()=> idx>0 && render(--idx);
+        nBtn.onclick = ()=> idx<details.length-1 && render(++idx);
         render(idx);
       }
     }
 
     window.onload = ()=>displayResults().catch(e=>{
       document.getElementById("sectionResult").innerHTML =
-        `<p style="color:#c00;text-align:center;">${e.message}</p>`;
+        `<p style="color:red;text-align:center;">${e.message}</p>`;
       console.error(e);
     });
   </script>
+
 </body>
 </html>

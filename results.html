@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-  <title>Test Results</title>
+  <title>Results</title>
 
   <!-- Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
@@ -28,31 +28,17 @@
       background: var(--bg);
       color: #333;
       line-height: 1.4;
-      padding-bottom: 40px;
-    }
-    .top-container {
-      background: #fff;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-      position: sticky; top:0; z-index:10;
-    }
-    .top-container h1 {
-      font-size: 18px; font-weight:600;
-      color: var(--blue);
-    }
-    .top-container .info {
-      font-size: 0.9rem; color: #555;
-      margin-top: 4px;
+      padding:20px;
     }
     .container {
-      max-width: 880px; margin:20px auto; padding:0 16px;
+      max-width: 880px;
+      margin: 0 auto;
     }
     /* Metrics */
     #totalResult {
       display:grid;
       grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-      gap:16px; margin:24px 0;
+      gap:16px; margin-bottom:24px;
     }
     .metric-card {
       background:#fff; border-radius:var(--card-radius);
@@ -61,18 +47,18 @@
       transition:transform .2s;
     }
     .metric-card:hover { transform:translateY(-4px); }
-    .metric-card.correct { border-left:4px solid var(--green); }
-    .metric-card.wrong   { border-left:4px solid var(--red); }
-    .metric-card.unans   { border-left:4px solid var(--yellow); }
-    .metric-card.score   { border-left:4px solid var(--blue); }
-    .metric-card.percent { border-left:4px solid var(--light); }
-    .metric-card.accuracy{ border-left:4px solid var(--green); }
-    .metric-card.completed{border-left:4px solid var(--blue);}
+    .metric-card.correct   { border-left:4px solid var(--green); }
+    .metric-card.wrong     { border-left:4px solid var(--red); }
+    .metric-card.unans     { border-left:4px solid var(--yellow); }
+    .metric-card.score     { border-left:4px solid var(--blue); }
+    .metric-card.percent   { border-left:4px solid var(--light); }
+    .metric-card.accuracy  { border-left:4px solid var(--green); }
+    .metric-card.completed { border-left:4px solid var(--blue); }
     .metric-card h2 {
       font-size:1.6rem; margin:6px 0; color:var(--blue);
     }
     .metric-card p {
-      font-size:0.85rem; color:#666;
+      font-size:0.85rem; color:#666; text-transform:uppercase;
     }
     /* Doughnut + legend */
     .info-card {
@@ -158,8 +144,7 @@
     .section-table {
       width:100%; border-collapse:collapse; margin-top:32px;
     }
-    .section-table th,
-    .section-table td {
+    .section-table th, .section-table td {
       border:1px solid #ddd; padding:8px; font-size:0.85rem;
       text-align:center;
     }
@@ -173,11 +158,6 @@
   </style>
 </head>
 <body>
-
-  <div class="top-container">
-    <h1>Practice Test 01</h1>
-    <div class="info">75 Questions • 300 Marks • 180 mins  &nbsp;|&nbsp; Attempted on 11 May 2025</div>
-  </div>
 
   <div class="container">
     <!-- Metrics -->
@@ -207,7 +187,6 @@
     </div>
 
     <!-- Section-Wise Table -->
-    <h3 style="margin-top:32px;color:var(--blue);">Section-Wise Performance</h3>
     <table class="section-table" id="sectionTable">
       <thead>
         <tr>
@@ -256,7 +235,7 @@
     async function loadUserResponses() {
       const u = await getDoc(doc(db,"Tests",testID,"Batches",batchName,"Users",username));
       if (!u.exists()) throw new Error("No submission for this user");
-      return u.data(); // { subjects: {...}, percentile?, ... }
+      return u.data(); // expects { subjects: {...}, percentile?, ... }
     }
 
     async function fetchSubjectQuestions(subj){
@@ -265,9 +244,9 @@
     }
 
     function drawDoughnut(id,data){
-      new Chart(document.getElementById(id),{
+      new Chart(document.getElementById(id), {
         type:"doughnut",
-        data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:[ "--green","--red","--yellow" ].map(c=>getComputedStyle(document.documentElement).getPropertyValue(c)) }]},
+        data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:[ "#28a745","#dc3545","#ffc107" ] }]},
         options:{ plugins:{ legend:{display:false} }, cutout:"60%" }
       });
     }

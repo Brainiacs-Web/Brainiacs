@@ -2,119 +2,172 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
   <title>Test Results</title>
 
-  <!-- Poppins font -->
+  <!-- Poppins + Material Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      --blue: #007adf;
-      --light-blue: #56b4ef;
-      --green: #28a745;
-      --red: #dc3545;
-      --yellow: #ffc107;
-      --bg-start: #e0f2ff;
-      --bg-end: #f7faff;
-      --card-radius: 10px;
-      --font-base: 14px;
+      --blue:        #0056b3;
+      --light-blue:  #338af3;
+      --green:       #1fae66;
+      --red:         #e74c3c;
+      --yellow:      #f39c12;
+      --bg-start:    #f0f4f8;
+      --bg-end:      #d9e2ec;
+      --card-radius: 12px;
+      --font-base:   15px;
+      --transition:  0.25s ease;
     }
     * {
       margin: 0; padding: 0; box-sizing: border-box;
       font-family: "Poppins", sans-serif;
       font-size: var(--font-base);
+      color: #333;
     }
     body {
-      background: linear-gradient(to bottom, var(--bg-start), var(--bg-end));
-      color: #333;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
       line-height: 1.4;
+      padding-bottom: 40px;
     }
+
+    /* Top bar */
     .top-container {
-      position: sticky; top: 0; background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(5px); padding: 14px; text-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08); z-index: 10;
+      background: linear-gradient(90deg, var(--blue), var(--light-blue));
+      color: #fff;
+      text-align: center;
+      padding: 16px 12px;
+      border-radius: 0 0 var(--card-radius) var(--card-radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: sticky; top: 0; z-index: 10;
     }
     .top-container h1 {
-      color: var(--blue);
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 20px; font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    .top-container .info {
+      font-size: 0.9rem;
+      opacity: 0.85;
     }
 
     .container {
-      max-width: 860px;
+      max-width: 900px;
       margin: 20px auto;
-      padding: 0 12px 30px;
+      padding: 0 16px;
     }
 
-    /* Metric cards row */
+    /* Metric cards */
     #totalResult {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
+      gap: 20px;
+      margin: 30px 0;
     }
     .metric-card {
       background: #fff;
       border-radius: var(--card-radius);
-      padding: 14px;
+      padding: 20px;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
     }
-    .metric-card.correct  { border-top: 4px solid var(--green); }
-    .metric-card.wrong    { border-top: 4px solid var(--red); }
-    .metric-card.unans    { border-top: 4px solid var(--yellow); }
-    .metric-card.score    { border-top: 4px solid var(--blue); }
-    .metric-card.accuracy { border-top: 4px solid var(--light-blue); }
-    .metric-card.percent  { border-top: 4px solid var(--blue); }
-    .metric-card.completed{ border-top: 4px solid var(--green); }
+    .metric-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+    }
+    .metric-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: var(--light-blue);
+    }
+    .metric-card.correct::before   { background: var(--green); }
+    .metric-card.wrong::before     { background: var(--red); }
+    .metric-card.unans::before     { background: var(--yellow); }
+    .metric-card.score::before     { background: var(--blue); }
+    .metric-card.percent::before   { background: linear-gradient(90deg,var(--green),var(--yellow)); }
+    .metric-card.accuracy::before  { background: var(--light-blue); }
+    .metric-card.completed::before { background: var(--green); }
 
+    .metric-card .material-icons {
+      font-size: 28px;
+      opacity: 0.6;
+      margin-bottom: 8px;
+    }
     .metric-card h2 {
-      font-size: 1.6rem;
-      margin: 6px 0 4px;
-      color: var(--blue);
+      font-size: 2.2rem;
+      margin: 4px 0;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      color: #222;
     }
     .metric-card p {
       font-size: 0.9rem;
       color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
     }
 
-    /* Info card with legend on the left, chart on the right */
+    /* Info card */
     .info-card {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
       background: #fff;
       border-radius: var(--card-radius);
-      padding: 16px 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      margin-bottom: 24px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
     }
-    .info-left { flex: 0 1 auto; }
-    .info-right { flex: 0 0 auto; margin-left: 16px; width: 100px; height: 100px; }
-    .info-right canvas { max-width: 100%; max-height: 100%; }
-    legend { display: flex; flex-direction: column; gap: 8px; }
-    .legend-item { display: flex; align-items: center; font-size: 0.9rem; color: #444; }
-    .legend-color { width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; }
+    .info-left h3 {
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--blue);
+    }
+    .info-left .legend { display: flex; gap: 16px; }
+    .legend-item {
+      display: flex; align-items: center;
+      font-size: 0.9rem;
+    }
+    .legend-color {
+      width: 14px; height: 14px; border-radius: 3px;
+      margin-right: 6px;
+    }
     .legend-color.green  { background: var(--green); }
     .legend-color.red    { background: var(--red); }
     .legend-color.yellow { background: var(--yellow); }
 
-    /* Subject tabs */
+    .info-right {
+      width: 130px; height: 130px;
+    }
+    .info-right canvas {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    /* Tabs */
     #buttonsContainer {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 30px;
     }
     #buttonsContainer button {
-      padding: 6px 16px;
+      padding: 8px 20px;
       font-size: 0.9rem;
       font-weight: 500;
       color: #555;
@@ -138,15 +191,15 @@
     .question-box {
       background: #fff;
       border-radius: var(--card-radius);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
       margin-bottom: 28px;
       overflow: hidden;
     }
     .question-header {
       background: var(--light-blue);
       color: #fff;
-      padding: 10px 14px;
-      font-size: 0.9rem;
+      padding: 12px 18px;
+      font-size: 0.95rem;
       font-weight: 500;
       position: relative;
     }
@@ -154,25 +207,25 @@
       content: '';
       position: absolute;
       bottom: 0; left: 0;
-      height: 3px;
-      width: var(--progress, 0%);
+      height: 4px;
+      width: var(--progress,0%);
       background: var(--green);
       transition: width .2s;
     }
-    .question-body { padding: 14px; }
-    .question-body p { margin-bottom: 10px; font-size: 0.9rem; }
-    .options { list-style: none; padding: 0; margin-bottom: 12px; }
-    .option-box {
-      background: #f9f9f9;
-      padding: 8px 12px;
-      margin: 6px 0;
-      border-radius: 6px;
+    .question-body {
+      padding: 18px;
+    }
+    .options .option-box {
+      background: #fdfdfd;
+      padding: 10px 14px;
+      margin: 8px 0;
+      border-radius: 8px;
       border: 2px solid #ececec;
       font-weight: 500;
-      font-size: 0.9rem;
+      transition: background .2s, border-color .2s;
     }
     .option-box.correct {
-      background: #d4edda!important;
+      background: #e6f7ea!important;
       border-color: var(--green)!important;
       color: #155724;
     }
@@ -180,60 +233,64 @@
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-bottom: 12px;
     }
     .feedback span {
       flex: 1 1 45%;
-      padding: 6px 10px;
-      border-radius: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
       font-weight: 500;
       font-size: 0.9rem;
       text-align: center;
+      margin-top: 12px;
     }
     .selected-correct { background: var(--green); color: #fff; }
     .selected-wrong   { background: var(--red);   color: #fff; }
-    .correct-answer   { background: #d4edda; color: #155724; }
+    .correct-answer   { background: #e6f7ea; color: #155724; }
     .solution {
-      padding: 10px 12px;
+      margin-top: 14px;
+      padding: 14px;
       background: #f1f1f1;
-      border-left: 4px solid var(--blue);
+      border-left: 5px solid var(--blue);
       font-style: italic;
       font-size: 0.9rem;
       color: #444;
     }
 
-    /* Pagination */
+    /* Pager */
     .pager {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 36px;
+      margin: 20px 0 40px;
     }
     .pager button {
-      padding: 6px 12px;
+      padding: 8px 16px;
       font-size: 0.9rem;
-      font-weight: 500;
+      font-weight: 600;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       background: var(--blue);
       color: #fff;
       cursor: pointer;
       transition: opacity .2s;
     }
     .pager button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+      opacity: 0.4; cursor: not-allowed;
     }
 
     /* Section-wise table */
     .section-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 30px;
+      margin-top: 40px;
+      background: #fff;
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.05);
     }
     .section-table th,
     .section-table td {
-      border: 1px solid #ddd;
-      padding: 8px;
+      border-bottom: 1px solid #eee;
+      padding: 12px 8px;
       font-size: 0.85rem;
       text-align: center;
     }
@@ -242,35 +299,39 @@
       color: #fff;
       font-weight: 600;
     }
+    .section-table tr:last-child td {
+      border-bottom: none;
+    }
 
-    @media (max-width: 600px) {
-      .container { padding: 0 8px 20px; }
-      #totalResult { grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); }
-      .question-header { padding: 8px 10px; }
-      .question-body { padding: 12px; }
-      .info-card { flex-direction: column; align-items: flex-start; gap: 16px; }
-      .info-right { margin: 0; }
+    @media (max-width: 640px) {
+      .info-card { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .info-right { margin: 0 auto; }
+      .top-container h1 { font-size: 18px; }
+      #totalResult { grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); }
     }
   </style>
 </head>
 <body>
 
   <div class="top-container">
-    <h1>Test Results</h1>
+    <h1>Practice Test 01</h1>
+    <div class="info">
+      75 Questions • 300 Marks • 180 mins  &nbsp;|&nbsp; Attempted on 11 May 2025
+    </div>
   </div>
 
   <div class="container">
-    <!-- 1: Metric Cards -->
+    <!-- 1. Metric Cards -->
     <div id="totalResult"></div>
 
-    <!-- 2: Info Card (Legend left, Chart right) -->
+    <!-- 2. Doughnut + Legend -->
     <div class="info-card">
       <div class="info-left">
         <h3>Overall Analysis</h3>
         <div class="legend">
-          <div class="legend-item"><div class="legend-color green"></div><span>Correct</span></div>
-          <div class="legend-item"><div class="legend-color red"></div><span>Wrong</span></div>
-          <div class="legend-item"><div class="legend-color yellow"></div><span>Unanswered</span></div>
+          <div class="legend-item"><div class="legend-color green"></div>Correct</div>
+          <div class="legend-item"><div class="legend-color red"></div>Wrong</div>
+          <div class="legend-item"><div class="legend-color yellow"></div>Unanswered</div>
         </div>
       </div>
       <div class="info-right">
@@ -278,16 +339,16 @@
       </div>
     </div>
 
-    <!-- 3: Subject Tabs -->
+    <!-- 3. Subject Tabs -->
     <div id="buttonsContainer"></div>
 
-    <!-- 4: Questions & Pagination -->
+    <!-- 4. Questions + Pager -->
     <div id="sectionResult">
       <p style="text-align:center;color:#777;">Select a subject to begin.</p>
     </div>
 
-    <!-- 5: Section-Wise Performance Table -->
-    <h3>Section-Wise Performance</h3>
+    <!-- 5. Section-Wise Table -->
+    <h3 style="margin-top:40px; color: var(--blue);">Section-Wise Performance</h3>
     <table class="section-table" id="sectionTable">
       <thead>
         <tr>
@@ -302,7 +363,6 @@
       </thead>
       <tbody></tbody>
     </table>
-
   </div>
 
   <script type="module">
@@ -341,7 +401,7 @@
     async function loadUserResponses() {
       const u = await getDoc(doc(db,"Tests",testID,"Batches",batchName,"Users",username));
       if (!u.exists()) throw new Error("No submission for this user");
-      return u.data();  // assuming your data has .subjects, .timeTaken, .percentile, etc
+      return u.data(); // expects { subjects: {...}, percentile?, ... }
     }
 
     async function fetchSubjectQuestions(subj){
@@ -353,8 +413,8 @@
       const ctx = document.getElementById(id).getContext("2d");
       new Chart(ctx,{
         type:"doughnut",
-        data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:["#28a745","#dc3545","#ffc107"] }]},
-        options:{ plugins:{ legend:{display:false}, title:{display:false} }, cutout:"60%" }
+        data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:["#1fae66","#e74c3c","#f39c12"] }]},
+        options:{ plugins:{ legend:{display:false} }, cutout:"60%" }
       });
     }
 
@@ -363,66 +423,93 @@
       const userData = await loadUserResponses();
       const userResp = userData.subjects || {};
 
-      let totalC = 0, totalW = 0, totalU = 0, totalScore = 0;
+      let totalC=0, totalW=0, totalU=0, totalScore=0;
       const perSub = {};
 
+      // Gather per-subject details
       for(let subj of subjects){
         const qs = await fetchSubjectQuestions(subj);
         let c=0,w=0,u=0;
         const details = qs.map(q=>{
           const sel  = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
           const corr = (q.correctAnswer||"").trim().toUpperCase();
-          if(!sel) { u++; }
-          else if(sel===corr) { c++; totalScore+=4; }
-          else { w++; totalScore-=1; }
+          if(!sel)            { u++; }
+          else if(sel===corr){ c++; totalScore+=4; }
+          else               { w++; totalScore-=1; }
           return { q, sel, corr };
         });
         totalC+=c; totalW+=w; totalU+=u;
-        perSub[subj]={ details, timeTaken: userResp[subj]?.timeTaken||"–" };
+        perSub[subj] = {
+          details,
+          timeTaken: userResp[subj]?.timeTaken || "–"
+        };
       }
 
-      const totalQ = totalC+totalW+totalU;
-      const accuracy  = totalQ ? (totalC/totalQ*100) : 0;
-      const completed = totalQ ? (totalQ/ (subjects.length * (perSub[subjects[0]].details.length)) *100) : 0;
-      // Demo percentile = accuracy (replace with userData.percentile)
-      const percentile = userData.percentile ?? accuracy;
+      const totalQuestions = totalC + totalW + totalU;
+      const answered       = totalC + totalW;
+      const accuracy       = totalQuestions ? (totalC/totalQuestions*100) : 0;
+      const completedPct   = totalQuestions ? (answered/totalQuestions*100) : 0;
+      const percentile     = userData.percentile ?? accuracy;
 
-      // render metric cards
+      // Metric cards
       document.getElementById("totalResult").innerHTML = `
-        <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
-        <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
-        <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
-        <div class="metric-card score"><h2>${totalScore}</h2><p>Score</p></div>
-        <div class="metric-card percent"><h2>${percentile.toFixed(2)}%</h2><p>Percentile</p></div>
-        <div class="metric-card accuracy"><h2>${accuracy.toFixed(2)}%</h2><p>Accuracy</p></div>
-        <div class="metric-card completed"><h2>${completed.toFixed(2)}%</h2><p>Completed</p></div>
+        <div class="metric-card correct">
+          <span class="material-icons">check_circle</span>
+          <h2>${totalC}</h2><p>Correct</p>
+        </div>
+        <div class="metric-card wrong">
+          <span class="material-icons">cancel</span>
+          <h2>${totalW}</h2><p>Wrong</p>
+        </div>
+        <div class="metric-card unans">
+          <span class="material-icons">help_outline</span>
+          <h2>${totalU}</h2><p>Unanswered</p>
+        </div>
+        <div class="metric-card score">
+          <span class="material-icons">star</span>
+          <h2>${totalScore}</h2><p>Score</p>
+        </div>
+        <div class="metric-card percent">
+          <span class="material-icons">bar_chart</span>
+          <h2>${percentile.toFixed(2)}%</h2><p>Percentile</p>
+        </div>
+        <div class="metric-card accuracy">
+          <span class="material-icons">show_chart</span>
+          <h2>${accuracy.toFixed(2)}%</h2><p>Accuracy</p>
+        </div>
+        <div class="metric-card completed">
+          <span class="material-icons">done_all</span>
+          <h2>${completedPct.toFixed(2)}%</h2><p>Completed</p>
+        </div>
       `;
 
+      // Doughnut
       drawDoughnut("overallChart",[totalC,totalW,totalU]);
 
-      // subject tabs
+      // Subject tabs
       const bc = document.getElementById("buttonsContainer");
-      bc.innerHTML="";
-      subjects.forEach(subj=>{
+      bc.innerHTML = "";
+      subjects.forEach(subj => {
         const btn = document.createElement("button");
-        btn.textContent=subj;
-        btn.onclick=()=>showSubject(subj,btn);
+        btn.textContent = subj;
+        btn.onclick = () => showSubject(subj, btn);
         bc.append(btn);
       });
-      bc.firstChild.click();
+      bc.firstChild && bc.firstChild.click();
 
-      // fill section-wise table
+      // Section-wise table
       const tbody = document.querySelector("#sectionTable tbody");
-      tbody.innerHTML = subjects.map(subj=>{
+      tbody.innerHTML = subjects.map(subj => {
         const d = perSub[subj];
         const tot = d.details.length;
         const c = d.details.filter(x=>x.sel===x.corr).length;
         const w = d.details.filter(x=>x.sel && x.sel!==x.corr).length;
         const u = tot - c - w;
         const acc = tot ? (c/tot*100).toFixed(2) : "0.00";
+        const score = c*4 - w*1;
         return `<tr>
           <td>${subj}</td>
-          <td>${(c*4 - w*1)}</td>
+          <td>${score}</td>
           <td>${c}</td>
           <td>${w}</td>
           <td>${u}</td>
@@ -431,7 +518,8 @@
         </tr>`;
       }).join("");
 
-      function showSubject(subj,btn){
+      // Show questions for one subject
+      function showSubject(subj, btn){
         bc.querySelectorAll("button").forEach(b=>b.classList.remove("active-button"));
         btn.classList.add("active-button");
 
@@ -444,7 +532,7 @@
             <button id="nextBtn">Next</button>
           </div>
         `;
-        const qCont = document.getElementById("questionContainer");
+        const qCont  = document.getElementById("questionContainer");
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
 
@@ -454,20 +542,20 @@
           qCont.innerHTML = `
             <div class="question-box">
               <div class="question-header" style="--progress:${pct}%">
-                Q ${i+1} of ${details.length}: ${formatTextWithImages(q.question)}
+                Q${i+1} of ${details.length}: ${formatTextWithImages(q.question)}
               </div>
               <div class="question-body">
                 <ul class="options">
-                  ${(q.options||[]).map(o=>
-                    `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
+                  ${(q.options||[]).map(o=>`
+                    <li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
                       ${formatTextWithImages(o)}
-                    </li>`).join('')}
+                    </li>`).join("")}
                 </ul>
                 <div class="feedback">
                   <span class="${sel===corr?'selected-correct':'selected-wrong'}">
                     Your Answer: ${sel||'–'}
                   </span>
-                  ${sel===corr?'':`<span class="correct-answer">Correct: ${corr}</span>`}
+                  ${sel===corr ? "" : `<span class="correct-answer">Correct: ${corr}</span>`}
                 </div>
                 <div class="solution">
                   <strong>Solution:</strong> ${formatTextWithImages(q.solution)}

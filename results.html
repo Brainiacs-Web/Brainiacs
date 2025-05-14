@@ -1,223 +1,206 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Test Results</title>
 
-  <!-- Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <!-- Poppins font -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 
   <!-- Chart.js -->
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      --primary:   #007adf;
-      --success:   #28a745;
-      --danger:    #dc3545;
-      --warning:   #ffc107;
-      --bg:        #f9fbfc;
-      --border:    #e1e5e8;
-      --radius:    6px;
-      --font:      "Poppins", sans-serif;
+      --blue: #007adf;
+      --light-blue: #56b4ef;
+      --green: #28a745;
+      --red: #dc3545;
+      --yellow: #ffc107;
+      --bg-start: #e0f2ff;
+      --bg-end: #f7faff;
+      --card-radius: 10px;
+      --font-base: 14px;
     }
-    * { margin:0; padding:0; box-sizing:border-box }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+      font-size: var(--font-base);
+    }
     body {
-      font-family: var(--font);
-      background: var(--bg);
+      background: linear-gradient(to bottom, var(--bg-start), var(--bg-end));
       color: #333;
-      line-height:1.5;
-      padding:16px;
+      line-height: 1.4;
     }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
+    .top-container {
+      position: sticky; top: 0; background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(5px); padding: 14px; text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08); z-index: 10;
+    }
+    .top-container h1 {
+      color: var(--blue);
+      font-size: 18px;
+      font-weight: 600;
     }
 
-    /* 1. Metric cards grid */
+    .container {
+      max-width: 860px;
+      margin: 20px auto;
+      padding: 0 12px 30px;
+    }
+
+    /* Metric cards row */
     #totalResult {
       display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    /* Make the last card (Completed) span all 3 columns */
-    #totalResult .metric-card:nth-child(7) {
-      grid-column: 1 / -1;
-      justify-self: center;
-      max-width: 200px;
+      grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
     .metric-card {
       background: #fff;
-      border-left: 4px solid var(--primary);
-      padding: 12px;
+      border-radius: var(--card-radius);
+      padding: 14px;
       text-align: center;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     }
-    .metric-card.correct   { border-color: var(--success); }
-    .metric-card.wrong     { border-color: var(--danger); }
-    .metric-card.unans     { border-color: var(--warning); }
-    .metric-card.score     { border-color: var(--primary); }
-    .metric-card.percent   { border-color: var(--primary); }
-    .metric-card.accuracy  { border-color: var(--success); }
-    .metric-card.completed { border-color: var(--primary); }
-
+    .metric-card.correct { border-top: 4px solid var(--green); }
+    .metric-card.wrong   { border-top: 4px solid var(--red); }
+    .metric-card.unans   { border-top: 4px solid var(--yellow); }
+    .metric-card.score   { border-top: 4px solid var(--blue); }
     .metric-card h2 {
       font-size: 1.6rem;
-      margin-bottom: 4px;
-      color: var(--primary);
+      margin: 6px 0 4px;
+      color: var(--blue);
     }
     .metric-card p {
-      font-size: 0.85rem;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    /* 2. Overall completion bar */
-    .completion-bar {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px;
-      margin-bottom: 24px;
-    }
-    .completion-bar .label {
       font-size: 0.9rem;
       color: #555;
-      margin-bottom: 6px;
-    }
-    .bar-outer {
-      background: #ececec;
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 10px;
-    }
-    .bar-inner {
-      height: 100%;
-      background: var(--primary);
-      width: 0;
-      transition: width .4s;
     }
 
-    /* 3. Doughnut + legend */
+    /* Info card with legend on the left, chart on the right */
     .info-card {
       display: flex;
-      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
       background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
+      border-radius: var(--card-radius);
+      padding: 16px 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       margin-bottom: 24px;
-      align-items: center;
     }
+
     .info-left {
-      flex: 1 1 200px;
+      flex: 0 1 auto;
     }
-    .info-left h3 {
-      color: var(--primary);
-      margin-bottom: 8px;
-      font-size: 1rem;
+
+    .info-right {
+      flex: 0 0 auto;
+      margin-left: 16px;
+      width: 100px;
+      height: 100px;
     }
-    .legend {
+    .info-right canvas {
+      max-width: 100%;
+      max-height: 100%;
+    }
+
+    legend {
       display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 8px;
     }
     .legend-item {
       display: flex;
       align-items: center;
-      font-size: 0.85rem;
-      color: #555;
+      font-size: 0.9rem;
+      color: #444;
     }
     .legend-color {
       width: 12px; height: 12px;
-      margin-right: 6px;
       border-radius: 2px;
+      margin-right: 8px;
     }
-    .legend-color.success { background: var(--success); }
-    .legend-color.danger  { background: var(--danger); }
-    .legend-color.warning { background: var(--warning); }
+    .legend-color.green  { background: var(--green); }
+    .legend-color.red    { background: var(--red); }
+    .legend-color.yellow { background: var(--yellow); }
 
-    .info-right {
-      flex: 0 0 120px;
-      margin-left: auto;
-      height: 120px;
-    }
-    .info-right canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    /* 4. Tabs */
+    /* Subject tabs */
     #buttonsContainer {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
       justify-content: center;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 30px;
     }
     #buttonsContainer button {
-      padding: 6px 14px;
-      font-size: 0.85rem;
+      padding: 6px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
       color: #555;
       background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border: 2px solid var(--light-blue);
+      border-radius: 50px;
       cursor: pointer;
-      transition: background .2s, color .2s;
+      transition: all .2s;
     }
     #buttonsContainer button.active-button {
-      background: var(--primary);
+      background: var(--light-blue);
       color: #fff;
-      border-color: var(--primary);
+      border-color: var(--light-blue);
+    }
+    #buttonsContainer button:hover {
+      background: var(--light-blue);
+      color: #fff;
     }
 
-    /* 5. Question card */
+    /* Question card */
     .question-box {
       background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 24px;
+      border-radius: var(--card-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 28px;
       overflow: hidden;
     }
     .question-header {
+      background: var(--light-blue);
+      color: #fff;
       padding: 10px 14px;
-      background: #f0f0f0;
-      position: relative;
       font-size: 0.9rem;
+      font-weight: 500;
+      position: relative;
     }
     .question-header::after {
       content: '';
       position: absolute;
       bottom: 0; left: 0;
       height: 3px;
-      width: var(--progress,0%);
-      background: var(--success);
+      width: var(--progress, 0%);
+      background: var(--green);
       transition: width .2s;
     }
-    .question-body {
-      padding: 14px;
-    }
-    .options {
-      list-style: none;
-      margin-bottom: 12px;
-    }
+    .question-body { padding: 14px; }
+    .question-body p { margin-bottom: 10px; font-size: 0.9rem; }
+    .options { list-style: none; padding: 0; margin-bottom: 12px; }
     .option-box {
+      background: #f9f9f9;
       padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 8px;
-      transition: border-color .2s;
+      margin: 6px 0;
+      border-radius: 6px;
+      border: 2px solid #ececec;
+      font-weight: 500;
+      font-size: 0.9rem;
     }
     .option-box.correct {
-      border-color: var(--success);
-      background: #e8f5e9;
-      color: var(--success);
+      background: #d4edda!important;
+      border-color: var(--green)!important;
+      color: #155724;
     }
-
     .feedback {
       display: flex;
       gap: 8px;
@@ -226,143 +209,92 @@
     }
     .feedback span {
       flex: 1 1 45%;
-      padding: 6px;
-      font-size: 0.85rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 0.9rem;
       text-align: center;
-      border-radius: var(--radius);
     }
-    .selected-correct { background: var(--success); color: #fff; }
-    .selected-wrong   { background: var(--danger);  color: #fff; }
-    .correct-answer   { background: #e8f5e9; color: var(--success); }
-
+    .selected-correct { background: var(--green); color: #fff; }
+    .selected-wrong   { background: var(--red);   color: #fff; }
+    .correct-answer   { background: #d4edda; color: #155724; }
     .solution {
       padding: 10px 12px;
-      background: #fafafa;
-      border-left: 3px solid var(--primary);
-      font-size: 0.85rem;
+      background: #f1f1f1;
+      border-left: 4px solid var(--blue);
       font-style: italic;
-      color: #555;
+      font-size: 0.9rem;
+      color: #444;
     }
 
-    /* 6. Pager */
+    /* Pagination */
     .pager {
       display: flex;
       justify-content: space-between;
-      margin-top: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 36px;
     }
     .pager button {
-      padding: 6px 10px;
-      background: var(--primary);
-      color: #fff;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
       border: none;
-      border-radius: var(--radius);
+      border-radius: 6px;
+      background: var(--blue);
+      color: #fff;
       cursor: pointer;
-      font-size: 0.85rem;
+      transition: opacity .2s;
     }
     .pager button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
-    /* 7. Section table */
-    .section-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .section-table th,
-    .section-table td {
-      padding: 8px;
-      text-align: center;
-      font-size: 0.85rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-table th {
-      background: #f0f0f0;
-      color: #555;
-    }
-    .section-table tr:last-child td {
-      border-bottom: none;
-    }
-    .progress-cell {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .progress-cell .bar-outer {
-      flex: 1;
-      height: 8px;
-      background: #ececec;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .progress-cell .bar-inner {
-      height: 100%;
-      background: var(--primary);
-    }
-
-    /* Responsive tweaks */
-    @media (max-width: 640px) {
-      #totalResult {
-        grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
-      }
-      .info-card { flex-direction: column; }
-      .info-right { margin-top: 12px; }
-      .pager { flex-direction: column; }
-      .pager button { width: 100%; margin-bottom: 8px; }
+    @media (max-width: 600px) {
+      .container { padding: 0 8px 20px; }
+      #totalResult { grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); }
+      .question-header { padding: 8px 10px; }
+      .question-body { padding: 12px; }
+      .info-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .info-right { margin: 0; }
     }
   </style>
+
 </head>
 <body>
+
+  <div class="top-container">
+    <h1>Test Results</h1>
+  </div>
+
   <div class="container">
-    <!-- 1. Metric Cards -->
+    <!-- 1: Metric Cards -->
     <div id="totalResult"></div>
 
-    <!-- 2. Overall Completion Bar -->
-    <div class="completion-bar">
-      <div class="label">Overall Completion</div>
-      <div class="bar-outer"><div class="bar-inner" id="overallCompletion"></div></div>
+```
+<!-- 2: Info Card (Legend left, Chart right) -->
+<div class="info-card">
+  <div class="info-left">
+    <h3>Overall Analysis</h3>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color green"></div><span>Correct</span></div>
+      <div class="legend-item"><div class="legend-color red"></div><span>Wrong</span></div>
+      <div class="legend-item"><div class="legend-color yellow"></div><span>Unanswered</span></div>
     </div>
+  </div>
+  <div class="info-right">
+    <canvas id="overallChart"></canvas>
+  </div>
+</div>
 
-    <!-- 3. Doughnut + Legend -->
-    <div class="info-card">
-      <div class="info-left">
-        <h3>Overall Analysis</h3>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-color success"></div>Correct</div>
-          <div class="legend-item"><div class="legend-color danger"></div>Wrong</div>
-          <div class="legend-item"><div class="legend-color warning"></div>Unanswered</div>
-        </div>
-      </div>
-      <div class="info-right">
-        <canvas id="overallChart"></canvas>
-      </div>
-    </div>
+<!-- 3: Subject Tabs -->
+<div id="buttonsContainer"></div>
 
-    <!-- 4. Subject Tabs -->
-    <div id="buttonsContainer"></div>
+<!-- 4: Questions & Pagination -->
+<div id="sectionResult">
+  <p style="text-align:center;color:#777;">Select a subject to begin.</p>
+</div>
+```
 
-    <!-- 5. Questions & Pagination -->
-    <div id="sectionResult">
-      <p style="text-align:center;color:#777;">Select a subject to begin.</p>
-    </div>
-
-    <!-- 6. Section-Wise Table -->
-    <table class="section-table" id="sectionTable">
-      <thead>
-        <tr>
-          <th>Section</th><th>Score</th><th>Correct</th>
-          <th>Wrong</th><th>Unanswered</th><th>Accuracy</th>
-          <th>Progress</th><th>Time Taken</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
   </div>
 
   <script type="module">
@@ -388,741 +320,143 @@
     function formatTextWithImages(text) {
       return text?.replace(
         /(https?:\/\/[^\s]+)/g,
-        url=>`<img src="${url}" style="max-width:100%;border-radius:4px;margin-top:4px;">`
-      )||"–";
+        url => `<img src="${url}" style="max-width:100%;border-radius:4px;margin-top:4px;">`
+      ) || "–";
     }
 
-    async function loadTestStructure(){
+    async function loadTestStructure() {
       const snap = await getDoc(doc(db,"Questions",testID));
-      if(!snap.exists()) throw new Error("Test structure not found");
-      return snap.data().subjects||[];
+      if (!snap.exists()) throw new Error("Test structure not found");
+      return snap.data().subjects || [];
     }
 
-    async function loadUserResponses(){
+    async function loadUserResponses() {
       const u = await getDoc(doc(db,"Tests",testID,"Batches",batchName,"Users",username));
-      if(!u.exists()) throw new Error("No submission for this user");
-      return u.data(); // { subjects: {...}, percentile?, timeTaken? }
+      if (!u.exists()) throw new Error("No submission for this user");
+      return u.data().subjects || {};
     }
 
     async function fetchSubjectQuestions(subj){
       const s = await getDoc(doc(db,"Questions",testID,"Subjects",subj));
-      return s.exists()? Object.values(s.data().questions||{}):[];
+      return s.exists() ? Object.values(s.data().questions || {}) : [];
     }
 
     function drawDoughnut(id,data){
-      new Chart(document.getElementById(id),{
+      const ctx = document.getElementById(id).getContext("2d");
+      new Chart(ctx,{
         type:"doughnut",
-        data:{ labels:["Correct","Wrong","Unanswered"],
-               datasets:[{ data, backgroundColor:["#28a745","#dc3545","#ffc107"] }]},
-        options:{ plugins:{ legend:{display:false} }, cutout:"60%" }
+        data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:["#28a745","#dc3545","#ffc107"] }]},
+        options:{ plugins:{ legend:{display:false}, title:{display:false} }, cutout:"60%" }
       });
     }
 
     async function displayResults(){
       const subjects = await loadTestStructure();
-      const userData = await loadUserResponses();
-      const userResp = userData.subjects||{};
+      const userResp = await loadUserResponses();
 
-      let totalC=0, totalW=0, totalU=0, totalScore=0;
+      let totalC = 0, totalW = 0, totalU = 0, totalScore = 0;
       const perSub = {};
 
       for(let subj of subjects){
         const qs = await fetchSubjectQuestions(subj);
-        let c=0,w=0,u=0;
+        let c=0, w=0, u=0;
         const details = qs.map(q=>{
-          const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
-          const corr= (q.correctAnswer||"").trim().toUpperCase();
-          if(!sel) u++;
-          else if(sel===corr){ c++; totalScore+=4; }
-          else { w++; totalScore-=1; }
-          return {q,sel,corr};
+          const sel  = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
+          const corr = (q.correctAnswer||"").trim().toUpperCase();
+          if(!sel) {
+            u++;
+          } else if(sel === corr) {
+            c++;
+            totalScore += 4;
+          } else {
+            w++;
+            totalScore -= 1;
+          }
+          return { q, sel, corr };
         });
-        totalC+=c; totalW+=w; totalU+=u;
-        perSub[subj]={details, timeTaken:userResp[subj]?.timeTaken||"–"};
+        totalC += c; totalW += w; totalU += u;
+        perSub[subj] = { details };
       }
 
-      const totalQ    = totalC+totalW+totalU;
-      const accuracy  = totalQ? (totalC/totalQ*100):0;
-      const completed = totalQ? ((totalC+totalW)/totalQ*100):0;
-      const percentile= userData.percentile??accuracy;
-
-      // 1. metrics
-      document.getElementById("totalResult").innerHTML=`
+      // render metric cards (including Score)
+      document.getElementById("totalResult").innerHTML = `
         <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
         <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
         <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
         <div class="metric-card score"><h2>${totalScore}</h2><p>Score</p></div>
-        <div class="metric-card percent"><h2>${percentile.toFixed(1)}%</h2><p>Percentile</p></div>
-        <div class="metric-card accuracy"><h2>${accuracy.toFixed(1)}%</h2><p>Accuracy</p></div>
-        <div class="metric-card completed"><h2>${completed.toFixed(1)}%</h2><p>Completed</p></div>`;
+      `;
 
-      // 2. completion bar
-      document.getElementById("overallCompletion").style.width = completed+"%";
-
-      // 3. doughnut
       drawDoughnut("overallChart",[totalC,totalW,totalU]);
 
-      // 4. tabs
+      // subject tabs
       const bc = document.getElementById("buttonsContainer");
-      bc.innerHTML="";
-      subjects.forEach(subj=>{
-        const btn=document.createElement("button");
-        btn.textContent=subj;
-        btn.onclick=()=>showSubject(subj,btn);
+      bc.innerHTML = "";
+      subjects.forEach(subj => {
+        const btn = document.createElement("button");
+        btn.textContent = subj;
+        btn.onclick = ()=>showSubject(subj,btn);
         bc.append(btn);
       });
-      bc.firstChild?.click();
+      bc.firstChild.click();
 
-      // 5. table
-      const tbody = document.querySelector("#sectionTable tbody");
-      tbody.innerHTML = subjects.map(subj=>{
-        const d = perSub[subj];
-        const tot = d.details.length;
-        const c   = d.details.filter(x=>x.sel===x.corr).length;
-        const w   = d.details.filter(x=>x.sel&&x.sel!==x.corr).length;
-        const u   = tot-c-w;
-        const acc = tot? (c/tot*100).toFixed(1):"0.0";
-        const comp= tot? ((c+w)/tot*100).toFixed(1):"0.0";
-        return `
-          <tr>
-            <td>${subj}</td>
-            <td>${c*4 - w}</td>
-            <td>${c}</td>
-            <td>${w}</td>
-            <td>${u}</td>
-            <td>${acc}%</td>
-            <td class="progress-cell">
-              <div>${comp}%</div>
-              <div class="bar-outer">
-                <div class="bar-inner" style="width:${comp}%"></div>
-              </div>
-            </td>
-            <td>${d.timeTaken}</td>
-          </tr>`;
-      }).join("");
-
-      // 6. question view
       function showSubject(subj,btn){
         bc.querySelectorAll("button").forEach(b=>b.classList.remove("active-button"));
         btn.classList.add("active-button");
 
         const details = perSub[subj].details;
-        let idx=0;
-        document.getElementById("sectionResult").innerHTML=`
+        let idx = 0;
+        document.getElementById("sectionResult").innerHTML = `
           <div id="questionContainer"></div>
           <div class="pager">
             <button id="prevBtn">Previous</button>
             <button id="nextBtn">Next</button>
-          </div>`;
-        const qCont=document.getElementById("questionContainer");
-        const pBtn=document.getElementById("prevBtn");
-        const nBtn=document.getElementById("nextBtn");
+          </div>
+        `;
+        const qCont = document.getElementById("questionContainer");
+        const prevBtn = document.getElementById("prevBtn");
+        const nextBtn = document.getElementById("nextBtn");
 
         function render(i){
-          const {q,sel,corr} = details[i];
-          const pr = Math.round((i+1)/details.length*100);
-          qCont.innerHTML=`
+          const { q, sel, corr } = details[i];
+          const pct = Math.round(((i+1)/details.length)*100);
+          qCont.innerHTML = `
             <div class="question-box">
-              <div class="question-header" style="--progress:${pr}%">
-                Q${i+1}/${details.length}: ${formatTextWithImages(q.question)}
+              <div class="question-header" style="--progress:${pct}%">
+                Q ${i+1} of ${details.length}: ${formatTextWithImages(q.question)}
               </div>
               <div class="question-body">
                 <ul class="options">
                   ${(q.options||[]).map(o=>
                     `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
                       ${formatTextWithImages(o)}
-                    </li>`).join("")}
+                    </li>`).join('')}
                 </ul>
                 <div class="feedback">
                   <span class="${sel===corr?'selected-correct':'selected-wrong'}">
-                    Your: ${sel||'–'}
+                    Your Answer: ${sel||'–'}
                   </span>
-                  ${sel===corr?"":`<span class="correct-answer">Ans: ${corr}</span>`}
+                  ${sel===corr?'':`<span class="correct-answer">Correct: ${corr}</span>`}
                 </div>
                 <div class="solution">
                   <strong>Solution:</strong> ${formatTextWithImages(q.solution)}
                 </div>
               </div>
-            </div>`;
-          pBtn.disabled = i===0;
-          nBtn.disabled = i===details.length-1;
+            </div>
+          `;
+          prevBtn.disabled = (i===0);
+          nextBtn.disabled = (i===details.length-1);
         }
-
-        pBtn.onclick = ()=> idx>0 && render(--idx);
-        nBtn.onclick = ()=> idx<details.length-1 && render(++idx);
+        prevBtn.onclick = ()=>{ if(idx>0) render(--idx); };
+        nextBtn.onclick = ()=>{ if(idx<details.length-1) render(++idx); };
         render(idx);
       }
     }
 
     window.onload = ()=>displayResults().catch(e=>{
-      document.getElementById("sectionResult").innerHTML=
-        `<p style="color:red;text-align:center;">${e.message}</p>`;
+      document.getElementById("sectionResult").innerHTML = `<p style="color:#c00;text-align:center;">${e.message}</p>`;
       console.error(e);
     });
   </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Test Results</title>
 
-  <!-- Poppins -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    :root {
-      --primary:   #007adf;
-      --success:   #28a745;
-      --danger:    #dc3545;
-      --warning:   #ffc107;
-      --bg:        #f9fbfc;
-      --border:    #e1e5e8;
-      --radius:    6px;
-      --font:      "Poppins", sans-serif;
-    }
-    * { margin:0; padding:0; box-sizing:border-box }
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: #333;
-      line-height:1.5;
-      padding:16px;
-    }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    /* 1. Metric cards grid */
-    #totalResult {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    /* Make the last card (Completed) span all 3 columns */
-    #totalResult .metric-card:nth-child(7) {
-      grid-column: 1 / -1;
-      justify-self: center;
-      max-width: 200px;
-    }
-    .metric-card {
-      background: #fff;
-      border-left: 4px solid var(--primary);
-      padding: 12px;
-      text-align: center;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-    }
-    .metric-card.correct   { border-color: var(--success); }
-    .metric-card.wrong     { border-color: var(--danger); }
-    .metric-card.unans     { border-color: var(--warning); }
-    .metric-card.score     { border-color: var(--primary); }
-    .metric-card.percent   { border-color: var(--primary); }
-    .metric-card.accuracy  { border-color: var(--success); }
-    .metric-card.completed { border-color: var(--primary); }
-
-    .metric-card h2 {
-      font-size: 1.6rem;
-      margin-bottom: 4px;
-      color: var(--primary);
-    }
-    .metric-card p {
-      font-size: 0.85rem;
-      color: #555;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    /* 2. Overall completion bar */
-    .completion-bar {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px;
-      margin-bottom: 24px;
-    }
-    .completion-bar .label {
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 6px;
-    }
-    .bar-outer {
-      background: #ececec;
-      border-radius: var(--radius);
-      overflow: hidden;
-      height: 10px;
-    }
-    .bar-inner {
-      height: 100%;
-      background: var(--primary);
-      width: 0;
-      transition: width .4s;
-    }
-
-    /* 3. Doughnut + legend */
-    .info-card {
-      display: flex;
-      flex-wrap: wrap;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 24px;
-      align-items: center;
-    }
-    .info-left {
-      flex: 1 1 200px;
-    }
-    .info-left h3 {
-      color: var(--primary);
-      margin-bottom: 8px;
-      font-size: 1rem;
-    }
-    .legend {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      font-size: 0.85rem;
-      color: #555;
-    }
-    .legend-color {
-      width: 12px; height: 12px;
-      margin-right: 6px;
-      border-radius: 2px;
-    }
-    .legend-color.success { background: var(--success); }
-    .legend-color.danger  { background: var(--danger); }
-    .legend-color.warning { background: var(--warning); }
-
-    .info-right {
-      flex: 0 0 120px;
-      margin-left: auto;
-      height: 120px;
-    }
-    .info-right canvas {
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    /* 4. Tabs */
-    #buttonsContainer {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 24px;
-    }
-    #buttonsContainer button {
-      padding: 6px 14px;
-      font-size: 0.85rem;
-      color: #555;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background .2s, color .2s;
-    }
-    #buttonsContainer button.active-button {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    /* 5. Question card */
-    .question-box {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 24px;
-      overflow: hidden;
-    }
-    .question-header {
-      padding: 10px 14px;
-      background: #f0f0f0;
-      position: relative;
-      font-size: 0.9rem;
-    }
-    .question-header::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      height: 3px;
-      width: var(--progress,0%);
-      background: var(--success);
-      transition: width .2s;
-    }
-    .question-body {
-      padding: 14px;
-    }
-    .options {
-      list-style: none;
-      margin-bottom: 12px;
-    }
-    .option-box {
-      padding: 8px 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 8px;
-      transition: border-color .2s;
-    }
-    .option-box.correct {
-      border-color: var(--success);
-      background: #e8f5e9;
-      color: var(--success);
-    }
-
-    .feedback {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    .feedback span {
-      flex: 1 1 45%;
-      padding: 6px;
-      font-size: 0.85rem;
-      text-align: center;
-      border-radius: var(--radius);
-    }
-    .selected-correct { background: var(--success); color: #fff; }
-    .selected-wrong   { background: var(--danger);  color: #fff; }
-    .correct-answer   { background: #e8f5e9; color: var(--success); }
-
-    .solution {
-      padding: 10px 12px;
-      background: #fafafa;
-      border-left: 3px solid var(--primary);
-      font-size: 0.85rem;
-      font-style: italic;
-      color: #555;
-    }
-
-    /* 6. Pager */
-    .pager {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
-      margin-bottom: 24px;
-    }
-    .pager button {
-      padding: 6px 10px;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
-    .pager button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* 7. Section table */
-    .section-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .section-table th,
-    .section-table td {
-      padding: 8px;
-      text-align: center;
-      font-size: 0.85rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-table th {
-      background: #f0f0f0;
-      color: #555;
-    }
-    .section-table tr:last-child td {
-      border-bottom: none;
-    }
-    .progress-cell {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .progress-cell .bar-outer {
-      flex: 1;
-      height: 8px;
-      background: #ececec;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-    .progress-cell .bar-inner {
-      height: 100%;
-      background: var(--primary);
-    }
-
-    /* Responsive tweaks */
-    @media (max-width: 640px) {
-      #totalResult {
-        grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
-      }
-      .info-card { flex-direction: column; }
-      .info-right { margin-top: 12px; }
-      .pager { flex-direction: column; }
-      .pager button { width: 100%; margin-bottom: 8px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- 1. Metric Cards -->
-    <div id="totalResult"></div>
-
-    <!-- 2. Overall Completion Bar -->
-    <div class="completion-bar">
-      <div class="label">Overall Completion</div>
-      <div class="bar-outer"><div class="bar-inner" id="overallCompletion"></div></div>
-    </div>
-
-    <!-- 3. Doughnut + Legend -->
-    <div class="info-card">
-      <div class="info-left">
-        <h3>Overall Analysis</h3>
-        <div class="legend">
-          <div class="legend-item"><div class="legend-color success"></div>Correct</div>
-          <div class="legend-item"><div class="legend-color danger"></div>Wrong</div>
-          <div class="legend-item"><div class="legend-color warning"></div>Unanswered</div>
-        </div>
-      </div>
-      <div class="info-right">
-        <canvas id="overallChart"></canvas>
-      </div>
-    </div>
-
-    <!-- 4. Subject Tabs -->
-    <div id="buttonsContainer"></div>
-
-    <!-- 5. Questions & Pagination -->
-    <div id="sectionResult">
-      <p style="text-align:center;color:#777;">Select a subject to begin.</p>
-    </div>
-
-    <!-- 6. Section-Wise Table -->
-    <table class="section-table" id="sectionTable">
-      <thead>
-        <tr>
-          <th>Section</th><th>Score</th><th>Correct</th>
-          <th>Wrong</th><th>Unanswered</th><th>Accuracy</th>
-          <th>Progress</th><th>Time Taken</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey:    "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
-      authDomain:"brainiacs-13a3f.firebaseapp.com",
-      projectId: "brainiacs-13a3f",
-      storageBucket:"brainiacs-13a3f.firebasestorage.app",
-      messagingSenderId:"530382354851",
-      appId:      "1:530382354851:web:f65bde4a1b3f86d75d8216"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
-
-    const params    = new URLSearchParams(window.location.search);
-    const testID    = params.get("test")    || alert("Test ID missing!");
-    const batchName = params.get("batch")   || alert("Batch missing!");
-    const username  = params.get("username")|| alert("Username missing!");
-
-    function formatTextWithImages(text) {
-      return text?.replace(
-        /(https?:\/\/[^\s]+)/g,
-        url=>`<img src="${url}" style="max-width:100%;border-radius:4px;margin-top:4px;">`
-      )||"–";
-    }
-
-    async function loadTestStructure(){
-      const snap = await getDoc(doc(db,"Questions",testID));
-      if(!snap.exists()) throw new Error("Test structure not found");
-      return snap.data().subjects||[];
-    }
-
-    async function loadUserResponses(){
-      const u = await getDoc(doc(db,"Tests",testID,"Batches",batchName,"Users",username));
-      if(!u.exists()) throw new Error("No submission for this user");
-      return u.data(); // { subjects: {...}, percentile?, timeTaken? }
-    }
-
-    async function fetchSubjectQuestions(subj){
-      const s = await getDoc(doc(db,"Questions",testID,"Subjects",subj));
-      return s.exists()? Object.values(s.data().questions||{}):[];
-    }
-
-    function drawDoughnut(id,data){
-      new Chart(document.getElementById(id),{
-        type:"doughnut",
-        data:{ labels:["Correct","Wrong","Unanswered"],
-               datasets:[{ data, backgroundColor:["#28a745","#dc3545","#ffc107"] }]},
-        options:{ plugins:{ legend:{display:false} }, cutout:"60%" }
-      });
-    }
-
-    async function displayResults(){
-      const subjects = await loadTestStructure();
-      const userData = await loadUserResponses();
-      const userResp = userData.subjects||{};
-
-      let totalC=0, totalW=0, totalU=0, totalScore=0;
-      const perSub = {};
-
-      for(let subj of subjects){
-        const qs = await fetchSubjectQuestions(subj);
-        let c=0,w=0,u=0;
-        const details = qs.map(q=>{
-          const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
-          const corr= (q.correctAnswer||"").trim().toUpperCase();
-          if(!sel) u++;
-          else if(sel===corr){ c++; totalScore+=4; }
-          else { w++; totalScore-=1; }
-          return {q,sel,corr};
-        });
-        totalC+=c; totalW+=w; totalU+=u;
-        perSub[subj]={details, timeTaken:userResp[subj]?.timeTaken||"–"};
-      }
-
-      const totalQ    = totalC+totalW+totalU;
-      const accuracy  = totalQ? (totalC/totalQ*100):0;
-      const completed = totalQ? ((totalC+totalW)/totalQ*100):0;
-      const percentile= userData.percentile??accuracy;
-
-      // 1. metrics
-      document.getElementById("totalResult").innerHTML=`
-        <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
-        <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
-        <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
-        <div class="metric-card score"><h2>${totalScore}</h2><p>Score</p></div>
-        <div class="metric-card percent"><h2>${percentile.toFixed(1)}%</h2><p>Percentile</p></div>
-        <div class="metric-card accuracy"><h2>${accuracy.toFixed(1)}%</h2><p>Accuracy</p></div>
-        <div class="metric-card completed"><h2>${completed.toFixed(1)}%</h2><p>Completed</p></div>`;
-
-      // 2. completion bar
-      document.getElementById("overallCompletion").style.width = completed+"%";
-
-      // 3. doughnut
-      drawDoughnut("overallChart",[totalC,totalW,totalU]);
-
-      // 4. tabs
-      const bc = document.getElementById("buttonsContainer");
-      bc.innerHTML="";
-      subjects.forEach(subj=>{
-        const btn=document.createElement("button");
-        btn.textContent=subj;
-        btn.onclick=()=>showSubject(subj,btn);
-        bc.append(btn);
-      });
-      bc.firstChild?.click();
-
-      // 5. table
-      const tbody = document.querySelector("#sectionTable tbody");
-      tbody.innerHTML = subjects.map(subj=>{
-        const d = perSub[subj];
-        const tot = d.details.length;
-        const c   = d.details.filter(x=>x.sel===x.corr).length;
-        const w   = d.details.filter(x=>x.sel&&x.sel!==x.corr).length;
-        const u   = tot-c-w;
-        const acc = tot? (c/tot*100).toFixed(1):"0.0";
-        const comp= tot? ((c+w)/tot*100).toFixed(1):"0.0";
-        return `
-          <tr>
-            <td>${subj}</td>
-            <td>${c*4 - w}</td>
-            <td>${c}</td>
-            <td>${w}</td>
-            <td>${u}</td>
-            <td>${acc}%</td>
-            <td class="progress-cell">
-              <div>${comp}%</div>
-              <div class="bar-outer">
-                <div class="bar-inner" style="width:${comp}%"></div>
-              </div>
-            </td>
-            <td>${d.timeTaken}</td>
-          </tr>`;
-      }).join("");
-
-      // 6. question view
-      function showSubject(subj,btn){
-        bc.querySelectorAll("button").forEach(b=>b.classList.remove("active-button"));
-        btn.classList.add("active-button");
-
-        const details = perSub[subj].details;
-        let idx=0;
-        document.getElementById("sectionResult").innerHTML=`
-          <div id="questionContainer"></div>
-          <div class="pager">
-            <button id="prevBtn">Previous</button>
-            <button id="nextBtn">Next</button>
-          </div>`;
-        const qCont=document.getElementById("questionContainer");
-        const pBtn=document.getElementById("prevBtn");
-        const nBtn=document.getElementById("nextBtn");
-
-        function render(i){
-          const {q,sel,corr} = details[i];
-          const pr = Math.round((i+1)/details.length*100);
-          qCont.innerHTML=`
-            <div class="question-box">
-              <div class="question-header" style="--progress:${pr}%">
-                Q${i+1}/${details.length}: ${formatTextWithImages(q.question)}
-              </div>
-              <div class="question-body">
-                <ul class="options">
-                  ${(q.options||[]).map(o=>
-                    `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
-                      ${formatTextWithImages(o)}
-                    </li>`).join("")}
-                </ul>
-                <div class="feedback">
-                  <span class="${sel===corr?'selected-correct':'selected-wrong'}">
-                    Your: ${sel||'–'}
-                  </span>
-                  ${sel===corr?"":`<span class="correct-answer">Ans: ${corr}</span>`}
-                </div>
-                <div class="solution">
-                  <strong>Solution:</strong> ${formatTextWithImages(q.solution)}
-                </div>
-              </div>
-            </div>`;
-          pBtn.disabled = i===0;
-          nBtn.disabled = i===details.length-1;
-        }
-
-        pBtn.onclick = ()=> idx>0 && render(--idx);
-        nBtn.onclick = ()=> idx<details.length-1 && render(++idx);
-        render(idx);
-      }
-    }
-
-    window.onload = ()=>displayResults().catch(e=>{
-      document.getElementById("sectionResult").innerHTML=
-        `<p style="color:red;text-align:center;">${e.message}</p>`;
-      console.error(e);
-    });
-  </script>
 </body>
 </html>

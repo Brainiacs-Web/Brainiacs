@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,13 +6,11 @@
   <title>Test Results</title>
 
   <!-- Poppins font -->
-
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 
   <!-- Chart.js -->
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -55,7 +52,6 @@
       padding: 0 12px 30px;
     }
 
-    /* Metric cards row */
     #totalResult {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
@@ -72,7 +68,6 @@
     .metric-card.correct { border-top: 4px solid var(--green); }
     .metric-card.wrong   { border-top: 4px solid var(--red); }
     .metric-card.unans   { border-top: 4px solid var(--yellow); }
-    .metric-card.score   { border-top: 4px solid var(--blue); }
     .metric-card h2 {
       font-size: 1.6rem;
       margin: 6px 0 4px;
@@ -83,7 +78,6 @@
       color: #555;
     }
 
-    /* Info card with legend on the left, chart on the right */
     .info-card {
       display: flex;
       align-items: flex-start;
@@ -94,11 +88,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       margin-bottom: 24px;
     }
-
-    .info-left {
-      flex: 0 1 auto;
-    }
-
+    .info-left { flex: 0 1 auto; }
     .info-right {
       flex: 0 0 auto;
       margin-left: 16px;
@@ -109,8 +99,7 @@
       max-width: 100%;
       max-height: 100%;
     }
-
-    legend {
+    .legend {
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -130,7 +119,6 @@
     .legend-color.red    { background: var(--red); }
     .legend-color.yellow { background: var(--yellow); }
 
-    /* Subject tabs */
     #buttonsContainer {
       display: flex;
       flex-wrap: wrap;
@@ -154,12 +142,7 @@
       color: #fff;
       border-color: var(--light-blue);
     }
-    #buttonsContainer button:hover {
-      background: var(--light-blue);
-      color: #fff;
-    }
 
-    /* Question card */
     .question-box {
       background: #fff;
       border-radius: var(--card-radius);
@@ -227,7 +210,6 @@
       color: #444;
     }
 
-    /* Pagination */
     .pager {
       display: flex;
       justify-content: space-between;
@@ -242,7 +224,6 @@
       background: var(--blue);
       color: #fff;
       cursor: pointer;
-      transition: opacity .2s;
     }
     .pager button:disabled {
       opacity: 0.5;
@@ -250,51 +231,32 @@
     }
 
     @media (max-width: 600px) {
-      .container { padding: 0 8px 20px; }
-      #totalResult { grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); }
-      .question-header { padding: 8px 10px; }
-      .question-body { padding: 12px; }
       .info-card { flex-direction: column; align-items: flex-start; gap: 16px; }
       .info-right { margin: 0; }
     }
   </style>
-
 </head>
 <body>
 
-  <div class="top-container">
-    <h1>Test Results</h1>
-  </div>
+  <div class="top-container"><h1>Test Results</h1></div>
 
   <div class="container">
-    <!-- 1: Metric Cards -->
     <div id="totalResult"></div>
-
-```
-<!-- 2: Info Card (Legend left, Chart right) -->
-<div class="info-card">
-  <div class="info-left">
-    <h3>Overall Analysis</h3>
-    <div class="legend">
-      <div class="legend-item"><div class="legend-color green"></div><span>Correct</span></div>
-      <div class="legend-item"><div class="legend-color red"></div><span>Wrong</span></div>
-      <div class="legend-item"><div class="legend-color yellow"></div><span>Unanswered</span></div>
+    <div class="info-card">
+      <div class="info-left">
+        <h3>Overall Analysis</h3>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color green"></div><span>Correct</span></div>
+          <div class="legend-item"><div class="legend-color red"></div><span>Wrong</span></div>
+          <div class="legend-item"><div class="legend-color yellow"></div><span>Unanswered</span></div>
+        </div>
+      </div>
+      <div class="info-right"><canvas id="overallChart"></canvas></div>
     </div>
-  </div>
-  <div class="info-right">
-    <canvas id="overallChart"></canvas>
-  </div>
-</div>
-
-<!-- 3: Subject Tabs -->
-<div id="buttonsContainer"></div>
-
-<!-- 4: Questions & Pagination -->
-<div id="sectionResult">
-  <p style="text-align:center;color:#777;">Select a subject to begin.</p>
-</div>
-```
-
+    <div id="buttonsContainer"></div>
+    <div id="sectionResult">
+      <p style="text-align:center;color:#777;">Select a subject to begin.</p>
+    </div>
   </div>
 
   <script type="module">
@@ -305,23 +267,19 @@
       apiKey:    "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
       authDomain:"brainiacs-13a3f.firebaseapp.com",
       projectId: "brainiacs-13a3f",
-      storageBucket:"brainiacs-13a3f.firebasestorage.app",
+      storageBucket:"brainiacs-13a3f.appspot.com",
       messagingSenderId:"530382354851",
       appId:      "1:530382354851:web:f65bde4a1b3f86d75d8216"
     };
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
 
-    const params    = new URLSearchParams(window.location.search);
-    const testID    = params.get("test")    || alert("Test ID missing!");
-    const batchName = params.get("batch")   || alert("Batch missing!");
-    const username  = params.get("username")|| alert("Username missing!");
-
+    const params = new URLSearchParams(window.location.search);
+    const testID = params.get("test") || alert("Test ID missing!");
+    const batchName = params.get("batch") || alert("Batch missing!");
+    const username = params.get("username") || alert("Username missing!");
     function formatTextWithImages(text) {
-      return text?.replace(
-        /(https?:\/\/[^\s]+)/g,
-        url => `<img src="${url}" style="max-width:100%;border-radius:4px;margin-top:4px;">`
-      ) || "–";
+      return text?.replace(/(https?:\/\/[^\s]+)/g, url => <img src="${url}" style="max-width:100%;border-radius:4px;margin-top:4px;">) || "–";
     }
 
     async function loadTestStructure() {
@@ -346,49 +304,36 @@
       new Chart(ctx,{
         type:"doughnut",
         data:{ labels:["Correct","Wrong","Unanswered"], datasets:[{ data, backgroundColor:["#28a745","#dc3545","#ffc107"] }]},
-        options:{ plugins:{ legend:{display:false}, title:{display:false} }, cutout:"60%" }
+        options:{ plugins:{ legend:{display:false} }, cutout:"60%" }
       });
     }
 
     async function displayResults(){
       const subjects = await loadTestStructure();
       const userResp = await loadUserResponses();
-
-      let totalC = 0, totalW = 0, totalU = 0, totalScore = 0;
+      let totalC=0, totalW=0, totalU=0;
       const perSub = {};
 
       for(let subj of subjects){
         const qs = await fetchSubjectQuestions(subj);
         let c=0, w=0, u=0;
         const details = qs.map(q=>{
-          const sel  = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
-          const corr = (q.correctAnswer||"").trim().toUpperCase();
-          if(!sel) {
-            u++;
-          } else if(sel === corr) {
-            c++;
-            totalScore += 4;
-          } else {
-            w++;
-            totalScore -= 1;
-          }
+          const sel = (userResp[subj]?.[q.questionId]?.selectedAnswer||"").trim().toUpperCase();
+          const corr= (q.correctAnswer||"").trim().toUpperCase();
+          if(!sel) u++; else if(sel===corr) c++; else w++;
           return { q, sel, corr };
         });
         totalC += c; totalW += w; totalU += u;
         perSub[subj] = { details };
       }
 
-      // render metric cards (including Score)
-      document.getElementById("totalResult").innerHTML = `
+      document.getElementById("totalResult").innerHTML = 
         <div class="metric-card correct"><h2>${totalC}</h2><p>Correct</p></div>
         <div class="metric-card wrong"><h2>${totalW}</h2><p>Wrong</p></div>
         <div class="metric-card unans"><h2>${totalU}</h2><p>Unanswered</p></div>
-        <div class="metric-card score"><h2>${totalScore}</h2><p>Score</p></div>
-      `;
-
+      ;
       drawDoughnut("overallChart",[totalC,totalW,totalU]);
 
-      // subject tabs
       const bc = document.getElementById("buttonsContainer");
       bc.innerHTML = "";
       subjects.forEach(subj => {
@@ -405,13 +350,13 @@
 
         const details = perSub[subj].details;
         let idx = 0;
-        document.getElementById("sectionResult").innerHTML = `
+        document.getElementById("sectionResult").innerHTML = 
           <div id="questionContainer"></div>
           <div class="pager">
             <button id="prevBtn">Previous</button>
             <button id="nextBtn">Next</button>
           </div>
-        `;
+        ;
         const qCont = document.getElementById("questionContainer");
         const prevBtn = document.getElementById("prevBtn");
         const nextBtn = document.getElementById("nextBtn");
@@ -427,22 +372,22 @@
               <div class="question-body">
                 <ul class="options">
                   ${(q.options||[]).map(o=>
-                    `<li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
+                    <li class="option-box${o.trim().toUpperCase()===corr?" correct":""}">
                       ${formatTextWithImages(o)}
-                    </li>`).join('')}
+                    </li>).join('')}
                 </ul>
                 <div class="feedback">
                   <span class="${sel===corr?'selected-correct':'selected-wrong'}">
                     Your Answer: ${sel||'–'}
                   </span>
-                  ${sel===corr?'':`<span class="correct-answer">Correct: ${corr}</span>`}
+                  ${sel===corr?'':<span class="correct-answer">Correct: ${corr}</span>}
                 </div>
                 <div class="solution">
                   <strong>Solution:</strong> ${formatTextWithImages(q.solution)}
                 </div>
               </div>
             </div>
-          `;
+          ;
           prevBtn.disabled = (i===0);
           nextBtn.disabled = (i===details.length-1);
         }
@@ -453,10 +398,9 @@
     }
 
     window.onload = ()=>displayResults().catch(e=>{
-      document.getElementById("sectionResult").innerHTML = `<p style="color:#c00;text-align:center;">${e.message}</p>`;
+      document.getElementById("sectionResult").innerHTML = <p style="color:#c00;text-align:center;">${e.message}</p>`;
       console.error(e);
     });
   </script>
-
 </body>
 </html>

@@ -899,8 +899,8 @@ window.submitTest = async function(auto=false) {
   localStorage.clear();
   alert(auto ? "Auto-submitted." : "Submitted successfully!");
   location.href = auto
-    ? "result.html"
-    : `result.html?test=${testID}&batch=${encodeURIComponent(batchName)}&username=${encodeURIComponent(username)}`;
+    ? "results01.html"
+    : `results01.html?test=${testID}&batch=${encodeURIComponent(batchName)}&username=${encodeURIComponent(username)}`;
 };
 
 // page load: wait for user to hit Continue

@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-   :root {
+    :root {
       --primary-color: #009688;
       --secondary-color: #00796b;
       --accent-color: #ff5722;
@@ -93,7 +93,6 @@
     .test-card h3 { font-size:1.2rem; color:var(--secondary-color); }
     .test-card p { font-size:.95rem; margin-top:4px; }
 
-    /* —— Syllabus Button —— */
     .card-actions {
       display: flex;
       align-items: center;
@@ -119,7 +118,6 @@
       transform: translateY(0);
     }
 
-    /* —— Modal Overlay —— */
     .modal {
       position: fixed;
       inset: 0;
@@ -129,8 +127,6 @@
       justify-content: center;
       z-index: 200;
     }
-
-    /* —— Modal Box —— */
     .modal-content {
       background: var(--white);
       width: 90%;
@@ -140,8 +136,6 @@
       overflow: hidden;
       animation: slideDown 0.3s ease-out;
     }
-
-    /* —— Modal Header —— */
     .modal-header {
       display: flex;
       align-items: center;
@@ -150,40 +144,23 @@
       color: var(--white);
       padding: 12px 16px;
     }
-    .modal-header h3 {
-      margin: 0;
-      font-size: 1.2rem;
-    }
-    .close {
-      font-size: 1.4rem;
-      cursor: pointer;
-    }
-
-    /* —— Modal Body —— */
+    .modal-header h3 { margin: 0; font-size: 1.2rem; }
+    .close { font-size: 1.4rem; cursor: pointer; }
     .modal-body {
       padding: 16px;
       max-height: 60vh;
       overflow-y: auto;
     }
     .modal-body h4 {
-      margin-top: 12px;
-      margin-bottom: 6px;
+      margin-top: 12px; margin-bottom: 6px;
       color: var(--secondary-color);
     }
-    .modal-body ul {
-      padding-left: 20px;
-      margin-bottom: 12px;
-    }
-    .modal-body li {
-      margin-bottom: 4px;
-    }
-
-    /* —— Animation —— */
+    .modal-body ul { padding-left: 20px; margin-bottom: 12px; }
+    .modal-body li { margin-bottom: 4px; }
     @keyframes slideDown {
       from { transform: translateY(-20px); opacity: 0; }
       to   { transform: translateY(0);     opacity: 1; }
     }
-
   </style>
 </head>
 <body>
@@ -198,7 +175,7 @@
 
   <main class="main-content">
     <section class="test-series">
-      <h2 id="batchTitle">Arjuna NEET 2026</h2>
+      <h2 id="batchTitle">Loading batch…</h2>
       <div id="testSeriesContainer">Loading tests…</div>
     </section>
   </main>
@@ -217,7 +194,18 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script>
-    // Firebase init (with corrected storageBucket)
+    // —— Utility to read ?params from URL ——
+    function getParam(name, defaultVal) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || defaultVal;
+    }
+
+    // —— Read batch info from URL (fallback to your old hard-coded values) ——
+    const batchId   = getParam('batchId',   'vq5VWCrbiTp64TiRYtyX');
+    const batchName = getParam('batchName', 'Arjuna Neet');
+    document.getElementById('batchTitle').textContent = batchName;
+
+    // —— Firebase init ——
     const firebaseConfig = {
       apiKey: "AIzaSyDOYPyulIXHzVhse8xWfpXoCBOkE3VSHts",
       authDomain: "brainiacs-13a3f.firebaseapp.com",
@@ -228,8 +216,6 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    const batchId = "vq5VWCrbiTp64TiRYtyX"; // your batch
 
     const container   = document.getElementById("testSeriesContainer");
     const searchBtn   = document.getElementById("searchBtn");
@@ -269,34 +255,42 @@
           <div>${data.published ? '<i class="fas fa-arrow-right"></i>' : ""}</div>
         `;
 
-        // If published, clicking the card (outside the syllabus button) navigates
+        // —— Dual-redirect logic with batch params ——
         if (data.published) {
           card.addEventListener("click", () => {
             const name = data.testName.trim().toLowerCase();
-            const targetPage = (name === "short practice test-01")
+            const targetPage = (name === "short practice test - 01")
                              ? "testpage01.html"
                              : "testpage.html";
-            window.location.href = `${targetPage}?test=${id}`;
+
+            const params = new URLSearchParams({
+              test:      id,
+              batchId:   batchId,
+              batchName: batchName
+            });
+
+            window.location.href = `${targetPage}?${params.toString()}`;
           });
         }
 
-        // Open syllabus modal when syllabus button clicked
-        const syllabusBtn = card.querySelector(".syllabus-btn");
-        syllabusBtn.addEventListener("click", e => {
-          e.stopPropagation();                // don’t trigger the card’s navigation
-          openSyllabusModal(data.testName, data.subjects);
-        });
+        // Syllabus button
+        card.querySelector(".syllabus-btn")
+          .addEventListener("click", e => {
+            e.stopPropagation();
+            openSyllabusModal(data.testName, data.subjects);
+          });
 
         container.appendChild(card);
       });
     }
 
-    // Fetch, sort by createdAt descending, then render
+    // —— Fetch tests for this batch ——
     db.collection("Questions")
       .where("batch", "==", batchId)
       .get()
       .then(snap => {
-        allTests = snap.docs.map(d => ({ id: d.id, data: d.data() }))
+        allTests = snap.docs
+          .map(d => ({ id: d.id, data: d.data() }))
           .sort((a, b) => {
             const ta = a.data.createdAt.seconds
                      ? a.data.createdAt.seconds * 1000
@@ -309,7 +303,7 @@
         renderTests(allTests);
       });
 
-    // Search functionality
+    // —— Search ——
     function filterTests() {
       const q = searchInput.value.trim().toLowerCase();
       renderTests(
@@ -319,16 +313,19 @@
       );
     }
     searchBtn.addEventListener("click", filterTests);
-    searchInput.addEventListener("keypress", e => { if (e.key === "Enter") filterTests(); });
+    searchInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") filterTests();
+    });
 
-    // Dark‑mode toggle
+    // —— Dark-mode toggle ——
     document.getElementById("darkToggle").addEventListener("click", () => {
       document.body.classList.toggle("dark-mode");
       const icon = document.body.classList.contains("dark-mode") ? "fa-sun" : "fa-moon";
-      document.getElementById("darkToggle").innerHTML = `<i class="fas ${icon}"></i>`;
+      document.getElementById("darkToggle")
+              .innerHTML = `<i class="fas ${icon}"></i>`;
     });
 
-    // Modal elements
+    // —— Syllabus modal handlers ——
     const modal       = document.getElementById("syllabusModal");
     const modalTitle  = document.getElementById("syllabusTitle");
     const modalBody   = document.getElementById("syllabusContent");
@@ -337,7 +334,6 @@
     modalClose.addEventListener("click", () => modal.style.display = "none");
     window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
 
-    // Open and populate syllabus modal
     function openSyllabusModal(testName, subjects) {
       modalTitle.textContent = `Syllabus: ${testName}`;
       modalBody.innerHTML = `<p>Loading chapters…</p>`;
